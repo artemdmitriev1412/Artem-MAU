@@ -1,79 +1,596 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Upgrade v2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #2c2c2c;
+            font-family: 'Courier New', Courier, monospace;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+        }
 
-    <link rel="stylesheet" href="style.css" />
-    <title>MC Upgrader</title>
-  </head>
-  <body>
-    <div id="app">
-      <header>
-        <div>
-          <img src="assets/slot.svg" />
-        </div>
-        <div class="spinner-container">
-          <canvas
-            id="c"
-            width="256"
-            height="256"
-            class="spinner-canvas"
-          ></canvas>
-          <img
-            src="assets/spinner-bezel.svg"
-            width="256"
-            height="256"
-            class="spinner-bezel"
-          />
-          <p id="win-chance">0%</p>
-        </div>
-        <div>
-          <img src="assets/slot.svg" />
-        </div>
-      </header>
-      <main>
-        <button class="btn-primary">Крутить</button>
-      </main>
+        .game-container {
+            display: flex;
+            gap: 40px;
+            background: #3e3e3e;
+            padding: 30px;
+            border: 4px solid #555;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* --- ИНВЕНТАРЬ --- */
+        .inventory-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .inventory-title {
+            font-size: 16px;
+            color: #fff;
+            text-shadow: 2px 2px 0 #333;
+            margin-bottom: 5px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            grid-template-rows: repeat(4, 60px);
+            gap: 4px;
+            background: #c6c6c6;
+            padding: 8px;
+            border: 4px solid #555;
+            border-radius: 4px;
+            box-shadow: inset 4px 4px 0 rgba(255,255,255,0.4), inset -4px -4px 0 rgba(0,0,0,0.4);
+        }
+
+        .slot {
+            background: #8b8b8b;
+            border: 2px solid #373737;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .slot:hover {
+            background: #9b9b9b;
+        }
+
+        /* Подсветка выбранного слота */
+        .slot.selected {
+            background: #c6c6c6;
+            border: 2px solid #fff;
+            box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #888, 0 0 10px #ffcc00;
+        }
+
+        /* --- ПРЕДМЕТЫ --- */
+        .item {
+            width: 42px;
+            height: 42px;
+            image-rendering: pixelated;
+            position: relative;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        .item-dirt {
+            background-color: #6b4423;
+            background-image: 
+                radial-gradient(circle at 20% 30%, #4a2e16 3px, transparent 3px),
+                radial-gradient(circle at 70% 60%, #4a2e16 4px, transparent 4px),
+                radial-gradient(circle at 40% 80%, #3e2611 2px, transparent 2px),
+                radial-gradient(circle at 80% 20%, #8b5a2b 3px, transparent 3px);
+            border: 2px solid #4a2e16;
+        }
+
+        .item-grass {
+            background: linear-gradient(to bottom, #5d9c32 35%, #6b4423 35%);
+            border: 2px solid #2e4a16;
+        }
+        .item-grass::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 35%;
+            background: #6b4423;
+            background-image: radial-gradient(circle at 30% 50%, #4a2e16 2px, transparent 2px);
+        }
+
+        .item-stone {
+            background-color: #888888;
+            background-image: 
+                radial-gradient(circle at 30% 30%, #555 4px, transparent 4px),
+                radial-gradient(circle at 70% 70%, #666 5px, transparent 5px),
+                radial-gradient(circle at 50% 10%, #777 3px, transparent 3px);
+            border: 2px solid #555;
+            border-top-color: #aaa;
+            border-left-color: #aaa;
+        }
+.item-iron {
+            background-color: #d8d8d8;
+            border: 2px solid #aaa;
+            border-top-color: #fff;
+            border-left-color: #fff;
+            box-shadow: inset -2px -2px 0 #888, inset 2px 2px 0 #fff;
+            border-radius: 4px;
+        }
+        .item-iron::after {
+            content: '';
+            position: absolute;
+            top: 20%; left: 20%;
+            width: 30%; height: 30%;
+            background: rgba(255,255,255,0.6);
+            border-radius: 2px;
+        }
+
+        .item-diamond {
+            background-color: #4aedd9;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            box-shadow: inset 0 0 10px #fff, 0 0 10px rgba(74, 237, 217, 0.5);
+            border: none;
+        }
+        .item-diamond::after {
+            content: '';
+            position: absolute;
+            top: 20%; left: 20%;
+            width: 20%; height: 20%;
+            background: #fff;
+            transform: rotate(45deg);
+        }
+
+        /* --- РУЛЕТКА --- */
+        .roulette-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            min-width: 240px;
+        }
+
+        .chance-info {
+            font-size: 14px;
+            color: #ffcc00;
+            text-shadow: 1px 1px 0 #000;
+            text-align: center;
+            height: 20px;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* background задается динамически через JS */
+            border: 6px solid #555;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+            transition: transform 4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .wheel-label {
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
+            pointer-events: none;
+            z-index: 5;
+            white-space: nowrap;
+        }
+
+        .arrow {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; 
+            height: 0; 
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid #ffcc00;
+            z-index: 20;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+        }
+
+        /* Кнопки */
+        .btn {
+            border: 3px solid #2a5c2a;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            text-shadow: 2px 2px 0 #000;
+            width: 200px;
+        }
+
+        .btn-spin {
+            background-color: #3b8b3b;
+        }
+
+        .btn-split {
+            background-color: #8b6b3b;
+            border-color: #5c452a;
+        }
+
+        .btn:active {
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+            transform: translateY(2px);
+        }
+
+        .btn:disabled {
+            background-color: #666 !important;
+            border-color: #444 !important;
+            cursor: not-allowed;
+            color: #aaa;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-message {
+            height: 25px;
+            font-size: 18px;
+            text-align: center;
+            text-shadow: 2px 2px 0 #000;
+            transition: opacity 0.3s;
+        }
+        .win { color: #4ade80; }
+        .lose { color: #f87171; }
+        .info { color: #ffcc00; }
+.btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- Инвентарь -->
+    <div class="inventory-section">
+        <div class="inventory-title">📦 Инвентарь (кликни, чтобы выбрать)</div>
+        <div class="grid-container" id="inventoryGrid"></div>
     </div>
-    <footer>
-      <p class="credits">
-        The "Minecraft Rus" font is based on the "Minecraft" font by
-        <a href="https://djdch.com" target="_blank" rel="noopener">DjDCH</a>
-        (font style by Notch; Cyrillic version by BOGDAN Software). Licensed
-        under
-        <a
-          href="https://creativecommons.org/licenses/by-sa/3.0/"
-          target="_blank"
-          rel="noopener"
-          >CC BY-SA 3.0</a
-        >. Minecraft is a trademark of Mojang AB. This project is not affiliated
-        with Mojang or Microsoft.
-      </p>
-    </footer>
-  </body>
-  <script src="spinner.js"></script>
-  <script>
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    let percents = 0;
-    let animationId = 0;
-    const MAX_ANIM_TIME_S = 0.5;
+    <!-- Рулетка -->
+    <div class="roulette-section">
+        <div class="chance-info" id="chanceInfo">Выбери предмет из инвентаря</div>
+        
+        <div class="wheel-wrapper">
+            <div class="arrow"></div>
+            <div class="wheel" id="wheel">
+                <div class="wheel-label" id="labelWin"></div>
+                <div class="wheel-label" id="labelLose"></div>
+            </div>
+        </div>
 
-    async function drawFromTo(from, to) {
-      const myId = ++animationId; // новая анимация отменяет старую
-      const step = to >= from ? 1 : -1;
-      const sleepTime = (MAX_ANIM_TIME_S * 1000) / Math.abs(to - from);
+        <div class="btn-group">
+            <button class="btn btn-spin" id="spinBtn" disabled>🎰 Крутить</button>
+            <button class="btn btn-split" id="splitBtn" disabled>✂️ Раздвоить</button>
+        </div>
+        
+        <div class="result-message" id="resultMsg"></div>
+    </div>
+</div>
 
-      for (let now = from; now !== to + step; now += step) {
-        if (myId !== animationId) return; // запущена более новая, выходим
+<script>
+    // --- КОНФИГУРАЦИЯ ПРЕДМЕТОВ ---
+    const items = [
+        { id: 'dirt',    name: 'Земля',  class: 'item-dirt',    level: 1, winChance: 0.6 },
+        { id: 'grass',   name: 'Трава',  class: 'item-grass',   level: 2, winChance: 0.5 },
+        { id: 'stone',   name: 'Камень', class: 'item-stone',   level: 3, winChance: 0.4 },
+        { id: 'iron',    name: 'Железо', class: 'item-iron',    level: 4, winChance: 0.3 },
+        { id: 'diamond', name: 'Алмаз',  class: 'item-diamond', level: 5, winChance: 0.0 } // Максимум
+    ];
 
-        await window.Spinner.draw(now);
-        percents = now;
-        await sleep(sleepTime);
-      }
+    // Инвентарь: массив из 16 слотов (null или объект предмета)
+    let inventory = new Array(16).fill(null);
+    // Кладем землю в первый слот
+    inventory[0] = { ...items[0] };
+
+    let selectedSlot = 0; // Индекс выбранного слота
+    let isSpinning = false;
+    let currentRotation = 0;
+    let timeoutId = null;
+
+    // DOM
+    const gridContainer = document.getElementById('inventoryGrid');
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spinBtn');
+    const splitBtn = document.getElementById('splitBtn');
+    const resultMsg = document.getElementById('resultMsg');
+    const chanceInfo = document.getElementById('chanceInfo');
+    const labelWin = document.getElementById('labelWin');
+    const labelLose = document.getElementById('labelLose');
+
+    // --- ОТРИСОВКА ИНВЕНТАРЯ ---
+    function renderInventory() {
+        gridContainer.innerHTML = '';
+        for (let i = 0; i < 16; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'slot';
+            slot.dataset.index = i;
+            
+            if (i === selectedSlot) slot.classList.add('selected');
+            
+            const item = inventory[i];
+            if (item) {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = item ${item.class};
+                slot.appendChild(itemDiv);
+            }
+            
+            slot.addEventListener('click', () => selectSlot(i));
+            gridContainer.appendChild(slot);
+        }
+        updateButtons();
     }
 
-    window.Spinner.draw(percents);
-  </script>
+    function selectSlot(index) {
+        if (isSpinning) return;
+        if (!inventory[index]) return; // Пустой слот нельзя выбрать
+        selectedSlot = index;
+        renderInventory();
+        updateWheelChances();
+    }
+
+    function getSelectedItem() {
+        return inventory[selectedSlot];
+    }
+
+    // --- КОЛЕСО И ШАНСЫ ---
+    function updateWheelChances() {
+        const item = getSelectedItem();
+        
+        if (!item) {
+            chanceInfo.textContent = "Выбери предмет из инвентаря";
+            wheel.style.background = conic-gradient(#555 0deg 360deg);
+            labelWin.textContent = '';
+            labelLose.textContent = '';
+            return;
+        }
+if (item.level === 5) {
+            chanceInfo.textContent = "Алмаз — максимальный уровень!";
+            wheel.style.background = conic-gradient(#4aedd9 0deg 360deg);
+            labelWin.textContent = '';
+            labelLose.textContent = '';
+            return;
+        }
+
+        const winPercent = item.winChance * 100;
+        const losePercent = 100 - winPercent;
+
+        chanceInfo.textContent = ${item.name} → ${items[item.level].name} | Шанс: ${winPercent}%;
+
+        // Обновляем колесо
+        // winPercent сектор зеленый, остальное красное
+        // Начинаем с 0: зеленый сектор идет первым (сверху по часовой)
+        // Но удобнее: зеленый в конце, чтобы стрелка сверху начинала с красного? 
+        // Пусть зеленый будет в конце (как раньше), начиная с winPercent.
+        
+        // conic-gradient(from 0deg, red 0deg Xdeg, green Xdeg 360deg)
+        // Тут красный от 0 до (360-winPercent*3.6), зеленый от этого до 360.
+        const greenEnd = 360;
+        const greenStart = 360 - (winPercent * 3.6);
+
+        wheel.style.background = conic-gradient(
+            #8b1a1a 0deg ${greenStart}deg, 
+            #1a8b2e ${greenStart}deg ${greenEnd}deg
+        );
+
+        // Позиционируем надписи
+        // Зеленый сектор: от greenStart до 360. Центр: (greenStart + 360) / 2
+        const greenCenter = (greenStart + 360) / 2;
+        // Красный сектор: от 0 до greenStart. Центр: greenStart / 2
+        const redCenter = greenStart / 2;
+
+        labelWin.textContent = ${winPercent}%;
+        labelLose.textContent = ${losePercent}%;
+
+        // Расстояние от центра колеса до текста
+        const radius = 70;
+        // Углы: CSS rotate(0deg) смотрит вверх. 
+        // Чтобы разместить текст на угле X (от 0 до 360 по часовой от верха), 
+        // нужно повернуть на X и сдвинуть вверх на radius, затем вернуть текст в вертикальное положение.
+        
+        labelWin.style.left = '50%';
+        labelWin.style.top = '50%';
+        labelWin.style.transform = translate(-50%, -50%) rotate(${greenCenter}deg) translateY(-${radius}px) rotate(-${greenCenter}deg);
+
+        labelLose.style.left = '50%';
+        labelLose.style.top = '50%';
+        labelLose.style.transform = translate(-50%, -50%) rotate(${redCenter}deg) translateY(-${radius}px) rotate(-${redCenter}deg);
+    }
+
+    function updateButtons() {
+        const item = getSelectedItem();
+        const canPlay = item && !isSpinning;
+        
+        spinBtn.disabled = !canPlay || (item && item.level === 5);
+        splitBtn.disabled = !canPlay || (item && item.level === 1); // Землю нельзя раздвоить
+        
+        // Если максимум - кнопка крутить заблокирована
+        if (item && item.level === 5) {
+            spinBtn.disabled = true;
+        }
+    }
+
+    // --- ЛОГИКА КРУЧЕНИЯ ---
+    function spin() {
+        if (isSpinning) return;
+        const item = getSelectedItem();
+        if (!item) return;
+        if (item.level === 5) {
+            resultMsg.textContent = "Алмаз — максимум!";
+            resultMsg.className = "result-message info";
+            return;
+        }
+
+        isSpinning = true;
+        spinBtn.disabled = true;
+        splitBtn.disabled = true;
+        resultMsg.textContent = "";
+        resultMsg.className = "result-message";
+
+        if (timeoutId) clearTimeout(timeoutId);
+
+        const winChance = item.winChance;
+        const isWin = Math.random() < winChance;
+
+        // Вычисляем угол для попадания в нужный сектор
+        // Зеленый сектор: от greenStart до 360
+        // Красный сектор: от 0 до greenStart
+        const winPercent = winChance * 100;
+        const greenStart = 360 - (winPercent * 3.6);
+
+        let targetAngle;
+        if (isWin) {
+            // Случайный угол в зеленом секторе
+            targetAngle = Math.random() * (360 - greenStart) + greenStart;
+        } else {
+            // Случайный угол в красном секторе
+            targetAngle = Math.random() * greenStart;
+        }
+const fullSpins = 360 * 5;
+        const currentMod = currentRotation % 360;
+        
+        let diff = targetAngle - currentMod;
+        if (diff < 0) diff += 360;
+        
+        currentRotation += fullSpins + diff;
+
+        wheel.style.transform = rotate(${currentRotation}deg);
+
+        timeoutId = setTimeout(() => {
+            isSpinning = false;
+            
+            if (isWin) {
+                resultMsg.textContent = "✅ УСПЕХ!";
+                resultMsg.className = "result-message win";
+                upgradeSelectedItem();
+            } else {
+                resultMsg.textContent = "❌ ПРОВАЛ! Предмет сгорел";
+                resultMsg.className = "result-message lose";
+                destroySelectedItem();
+            }
+
+            renderInventory();
+            updateWheelChances();
+        }, 4000);
+    }
+
+    function upgradeSelectedItem() {
+        const item = getSelectedItem();
+        if (!item) return;
+        
+        const nextItem = items.find(i => i.level === item.level + 1);
+        if (nextItem) {
+            inventory[selectedSlot] = { ...nextItem };
+        }
+    }
+
+    function destroySelectedItem() {
+        inventory[selectedSlot] = null;
+        
+        // Если это был последний предмет - даем землю
+        const hasAnyItem = inventory.some(i => i !== null);
+        if (!hasAnyItem) {
+            setTimeout(() => {
+                inventory[0] = { ...items[0] };
+                selectedSlot = 0;
+                resultMsg.textContent = "Выдана новая Земля";
+                resultMsg.className = "result-message info";
+                renderInventory();
+                updateWheelChances();
+            }, 1500);
+        } else {
+            // Автоматически выбираем следующий доступный слот
+            const nextSlot = inventory.findIndex(i => i !== null);
+            if (nextSlot !== -1) {
+                selectedSlot = nextSlot;
+            }
+        }
+    }
+
+    // --- ЛОГИКА РАЗДВОЕНИЯ ---
+    function splitItem() {
+        if (isSpinning) return;
+        const item = getSelectedItem();
+        if (!item) return;
+        
+        // Нельзя раздвоить Землю (нет предмета ниже)
+        if (item.level === 1) {
+            resultMsg.textContent = "Землю нельзя раздвоить!";
+            resultMsg.className = "result-message info";
+            return;
+        }
+
+        // Получаем предмет на уровень ниже
+        const lowerItem = items.find(i => i.level === item.level - 1);
+        if (!lowerItem) return;
+
+        // Ищем 2 свободных слота
+        const freeSlots = [];
+        for (let i = 0; i < inventory.length; i++) {
+            if (inventory[i] === null && i !== selectedSlot) {
+                freeSlots.push(i);
+                if (freeSlots.length === 2) break;
+            }
+        }
+
+        if (freeSlots.length < 2) {
+            resultMsg.textContent = "Нет места в инвентаре!";
+            resultMsg.className = "result-message lose";
+            return;
+        }
+
+        // Убираем исходный предмет, кладем 2 копии ниже уровнем
+        inventory[selectedSlot] = null;
+        inventory[freeSlots[0]] = { ...lowerItem };
+        inventory[freeSlots[1]] = { ...lowerItem };
+
+        resultMsg.textContent = Раздвоено на 2x ${lowerItem.name};
+        resultMsg.className = "result-message info";
+
+        // Выбираем первый из новых предметов
+        selectedSlot = freeSlots[0];
+
+        renderInventory();
+        updateWheelChances();
+    }
+
+    // --- ИНИЦИАЛИЗАЦИЯ ---
+    spinBtn.addEventListener('click', spin);
+    splitBtn.addEventListener('click', splitItem);
+    
+    renderInventory();
+    updateWheelChances();
+</script>
+
+</body>
 </html>
