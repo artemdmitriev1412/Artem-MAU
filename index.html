@@ -8,31 +8,48 @@
     <title>MC Upgrader</title>
   </head>
   <body>
-    <header>
-      <div>
-        <img src="assets/slot.svg"/>
-      </div>
-      <div class="spinner-container">
-        <canvas id="c" width="256" height="256" class="spinner-canvas"></canvas>
-        <img src="assets/spinner-bezel.svg" width="256" height="256" class="spinner-bezel"/>
-        <p id="win-chance">0%</p>
-      </div>
-      <div>
-        <img src="assets/slot.svg"/>
-      </div>
-    </header>
-    <main>
-      <button class="btn-primary">Крутить</button>
-    </main>
+    <div id="app">
+      <header>
+        <div>
+          <img src="assets/slot.svg" />
+        </div>
+        <div class="spinner-container">
+          <canvas
+            id="c"
+            width="256"
+            height="256"
+            class="spinner-canvas"
+          ></canvas>
+          <img
+            src="assets/spinner-bezel.svg"
+            width="256"
+            height="256"
+            class="spinner-bezel"
+          />
+          <p id="win-chance">0%</p>
+        </div>
+        <div>
+          <img src="assets/slot.svg" />
+        </div>
+      </header>
+      <main>
+        <button class="btn-primary">Крутить</button>
+      </main>
+    </div>
     <footer>
-        <p class="credits">
-    The "Minecraft Rus" font is based on the "Minecraft" font by
-    <a href="https://djdch.com" target="_blank" rel="noopener">DjDCH</a>
-    (font style by Notch; Cyrillic version by BOGDAN Software).
-    Licensed under
-    <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>.
-    Minecraft is a trademark of Mojang AB. This project is not affiliated with Mojang or Microsoft.
-</p>
+      <p class="credits">
+        The "Minecraft Rus" font is based on the "Minecraft" font by
+        <a href="https://djdch.com" target="_blank" rel="noopener">DjDCH</a>
+        (font style by Notch; Cyrillic version by BOGDAN Software). Licensed
+        under
+        <a
+          href="https://creativecommons.org/licenses/by-sa/3.0/"
+          target="_blank"
+          rel="noopener"
+          >CC BY-SA 3.0</a
+        >. Minecraft is a trademark of Mojang AB. This project is not affiliated
+        with Mojang or Microsoft.
+      </p>
     </footer>
   </body>
   <script src="spinner.js"></script>
