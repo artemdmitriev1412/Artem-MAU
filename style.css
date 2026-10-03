@@ -1,0 +1,101 @@
+/*
+  Font: "Minecraft Rus"
+  Based on "Minecraft" by DjDCH (djdch.com), style by Notch.
+  Cyrillic version: BOGDAN Software.
+  License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0/
+*/
+@font-face {
+    font-family: "Minecraft Rus";
+    src: 
+        local('Minecraft RUS'),
+        url('minecraft.ttf') format('truetype');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Minecraft Rus', sans-serif; 
+}
+:root, body {
+    background-color: #2b2f39;
+    color: #FFFFFF;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    gap: 64px;
+    align-items: center;
+}
+
+.btn-primary {
+    background-color: #11673B;
+    border: 2px solid #1f7a4c;
+    padding: 16px 32px;
+    color: #FFFFFF;
+    position: relative;
+    cursor: pointer;
+}
+.btn-primary:active {
+    margin-top: 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    
+    background-color: #11673b;
+    border-color: #35875e;
+}
+.btn-primary::before {
+    content: '';
+    width: 50px;
+    height: 2px;
+    background-color: #FFFFFF;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    min-height: 100vh;
+}
+
+.spinner-container {
+    position: relative;
+    width: 256px;
+    height: 256px;
+}
+.spinner-canvas, .spinner-bezel {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#win-chance {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    font-size: 36px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    max-width: calc(100% - 456px * 2);
+    opacity: 0.5;
+}
+
+footer > p {
+    font-family: sans-serif;
+}
+footer > p > a {
+    font-family: sans-serif;
+    color: #006aff;
+}

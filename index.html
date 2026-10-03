@@ -1,11 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <H1>Hello, world!</H1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="style.css" />
+    <title>MC Upgrader</title>
+  </head>
+  <body>
+    <header>
+      <div>
+        <img src="assets/slot.svg"/>
+      </div>
+      <div class="spinner-container">
+        <canvas id="c" width="256" height="256" class="spinner-canvas"></canvas>
+        <img src="assets/spinner-bezel.svg" width="256" height="256" class="spinner-bezel"/>
+        <p id="win-chance">0%</p>
+      </div>
+      <div>
+        <img src="assets/slot.svg"/>
+      </div>
+    </header>
+    <main>
+      <button class="btn-primary">Крутить</button>
+    </main>
+    <footer>
+        <p class="credits">
+    The "Minecraft Rus" font is based on the "Minecraft" font by
+    <a href="https://djdch.com" target="_blank" rel="noopener">DjDCH</a>
+    (font style by Notch; Cyrillic version by BOGDAN Software).
+    Licensed under
+    <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>.
+    Minecraft is a trademark of Mojang AB. This project is not affiliated with Mojang or Microsoft.
+</p>
+    </footer>
+  </body>
+  <script src="spinner.js"></script>
+  <script>
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    let percents = 0;
+    let animationId = 0;
+    const MAX_ANIM_TIME_S = 0.5;
+
+    async function drawFromTo(from, to) {
+      const myId = ++animationId; // новая анимация отменяет старую
+      const step = to >= from ? 1 : -1;
+      const sleepTime = (MAX_ANIM_TIME_S * 1000) / Math.abs(to - from);
+
+      for (let now = from; now !== to + step; now += step) {
+        if (myId !== animationId) return; // запущена более новая, выходим
+
+        await window.Spinner.draw(now);
+        percents = now;
+        await sleep(sleepTime);
+      }
+    }
+
+    window.Spinner.draw(percents);
+  </script>
 </html>
