@@ -1,194 +1,886 @@
-<!DOCTYPE html>
-<html lang="ru"><head><meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>mineupgrade</title>
 
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png">
-    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
 
     <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
       }
-    </script><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Колесо фортуны — Minecraft</title>
-<style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--gui:#c6c6c6;--slot:#8b8b8b;--ink:#404040;--dk:#373737;--lt:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gui:#b4b4b4}}
-:root[data-theme="dark"]{--gui:#b4b4b4}
-*,*:before,*:after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;min-height:100vh;background:#4a3322;font-family:"Courier New",ui-monospace,monospace;font-weight:bold;image-rendering:pixelated;color:var(--ink)}
-.wrap{max-width:640px;margin:0 auto;padding:14px}
-.gui{background:var(--gui);padding:12px;border:4px solid #000;box-shadow:inset 4px 4px 0 var(--lt),inset -4px -4px 0 var(--dk);position:relative}
-.gui.shake{animation:sh .45s}
-@keyframes sh{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-h1{margin:0 0 8px;font-size:clamp(17px,4.5vw,24px);text-shadow:2px 2px #fff8;letter-spacing:1px}
-h2{margin:14px 0 4px;font-size:14px}
-.stage{display:flex;align-items:center;justify-content:center;gap:clamp(8px,3vw,22px);flex-wrap:wrap;margin:10px 0}
-.sb{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px}
-.slot{width:clamp(48px,12vw,60px);aspect-ratio:1;background:var(--slot);border:0;border-top:3px solid var(--dk);border-left:3px solid var(--dk);border-right:3px solid var(--lt);border-bottom:3px solid var(--lt);padding:0;position:relative;display:flex;align-items:center;justify-content:center;font:inherit;color:inherit}
-.slot.big{width:clamp(70px,18vw,92px)}
-button.slot{cursor:pointer}
-button.slot:hover:not(:disabled):after,button.slot:focus-visible:after{content:"";position:absolute;inset:0;background:#fff8}
-button.slot:disabled{cursor:default}
-.slot.sel{outline:3px solid #ffd84a;outline-offset:-3px}
-.slot.dim .ic{opacity:.35}
-.ic{width:78%;height:78%;image-rendering:pixelated;pointer-events:none}
-.n{position:absolute;right:2px;bottom:-2px;color:#fff;font-size:16px;text-shadow:2px 2px #3f3f3f;pointer-events:none;z-index:1}
-.q{opacity:.35;font-size:28px;pointer-events:none}
-.ww{position:relative;width:clamp(190px,50vw,270px);aspect-ratio:1}
-.wheel{position:absolute;inset:0;transition:transform 4.6s cubic-bezier(.12,.65,.08,1)}
-.wheel canvas{width:100%;height:100%;image-rendering:pixelated;border-radius:50%;display:block}
-.lbl{position:absolute;left:50%;top:50%;color:#fff;font-size:clamp(14px,3.8vw,20px);text-shadow:2px 2px #000;white-space:nowrap}
-.ptr{position:absolute;left:50%;top:-12px;transform:translateX(-50%);border:13px solid transparent;border-top:28px solid #f5c518;border-bottom:0;filter:drop-shadow(0 0 0 #000) drop-shadow(2px 2px 0 #000);z-index:3}
-.info{text-align:center;min-height:2.8em;margin:12px 0 8px;font-size:15px}
-.info.win{color:#117a11}.info.lose{color:#a00}
-.btn{display:block;width:min(320px,100%);margin:0 auto;padding:11px 8px;font:inherit;font-size:19px;color:#fff;text-shadow:2px 2px #3f3f3f;background:#7a7a7a;border:3px solid #000;box-shadow:inset 3px 3px 0 #b8b8b8,inset -3px -3px 0 #4a4a4a;cursor:pointer}
-.btn:hover:not(:disabled){background:#6f7cb0;color:#ffffa0;box-shadow:inset 3px 3px 0 #a9b4e0,inset -3px -3px 0 #3d4672}
-.btn:active:not(:disabled){transform:translateY(2px)}
-.btn:disabled{background:#474747;color:#9a9a9a;text-shadow:none;box-shadow:inset 3px 3px 0 #5e5e5e,inset -3px -3px 0 #2c2c2c;cursor:not-allowed}
-.btn.spin{animation:pl .8s infinite alternate}
-@keyframes pl{to{color:#ffffa0}}
-.inv{display:grid;grid-template-columns:repeat(9,1fr);gap:0}
-.inv .slot{width:100%}
-.hint{font-size:12px;margin:8px 0 0;text-align:center;opacity:.8}
-.ov{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:14px;z-index:10}.ov.on{display:flex}
-.menu{max-width:400px;width:100%;max-height:92vh;overflow:auto}
-.grid{display:grid;grid-template-columns:repeat(5,1fr)}
-.grid .slot{width:100%}
-#tip{position:fixed;pointer-events:none;z-index:30;display:none;background:#100010f0;border:2px solid #2a0a6a;box-shadow:inset 0 0 0 2px #5a1fb0;color:#fff;padding:5px 9px;font-size:14px;text-shadow:2px 2px #3f3f3f}
-#tip small{display:block;color:#aaa;font-weight:normal}
-#toast{position:fixed;left:50%;top:12px;transform:translate(-50%,-140%);transition:transform .5s;background:#222;border:3px solid #000;box-shadow:inset 0 0 0 3px #555;color:#fff;padding:8px 14px 8px 8px;display:flex;gap:10px;align-items:center;z-index:40;font-size:13px;min-width:230px}
-#toast.on{transform:translate(-50%,calc(env(safe-area-inset-top,0px) + 4px))}
-#toast b{color:#ffff55;display:block}
-#toast img{width:38px;height:38px;image-rendering:pixelated;background:#555;padding:4px}
-</style></head><body>
-<div class="wrap"><div class="gui" id="gui">
-<h1>Колесо фортуны</h1>
-<div class="stage">
- <div class="sb">Ставка<button class="slot big" id="bet" aria-label="Слот ставки"></button></div>
- <div class="ww"><div class="ptr"></div><div class="wheel" id="wheel"><canvas id="wc" width="96" height="96"></canvas></div></div>
- <div class="sb">Цель<button class="slot big" id="tgt" aria-label="Выбрать желаемый предмет"></button></div>
-</div>
-<div class="info" id="info"></div>
-<button class="btn" id="go" disabled>Крутить!</button>
-<h2>Инвентарь</h2>
-<div class="inv" id="inv"></div>
-<p class="hint">Клик по предмету — в слот ставки. Клик по слоту цели — выбор предмета.</p>
-<p class="hint" id="sv"></p>
-<button class="btn" id="rs" style="width:auto;margin:6px auto 0;font-size:13px;padding:6px 12px">Сбросить прогресс</button>
-</div></div>
-<div class="ov" id="ov"><div class="gui menu"><h2 style="margin-top:0">Выбери желаемый предмет</h2><div class="grid" id="grid"></div><p class="hint">Esc — закрыть</p></div></div>
-<div id="tip"></div>
-<div id="toast"><img id="ti"><div><b>Достижение получено!</b><span id="tn"></span></div></div>
-<script>
-const $=id=>document.getElementById(id);
-function R(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-const pk=(a,r)=>a[Math.floor(r()*a.length)];
-function mk(seed,fn){const c=document.createElement('canvas');c.width=c.height=16;const x=c.getContext('2d'),r=R(seed);
- fn((i,j,col)=>{x.fillStyle=col;x.fillRect(i,j,1,1)},r);return c.toDataURL()}
-const noise=pal=>(p,r)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++)p(i,j,pk(pal,r))};
-const ingot=q=>(p,r)=>{for(let y=5;y<=11;y++)for(let x=2;x<=13;x++)
- p(x,y,y==5||y==11||x==2||x==13?q[0]:y==6?q[1]:y==10?q[3]:r()<.25?q[1]:q[2])};
-const gem=(q,sx)=>(p)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const dx=i-7.5,dy=j-7.5,m=Math.abs(dx)*sx+Math.abs(dy);
- if(m<=7)p(i,j,m>6?q[0]:dx+dy<-2?q[1]:dx+dy>2?q[3]:q[2])}};
-const ITEMS=[
-{id:'dirt',n:'Земля',v:1,f:noise(['#866043','#79553a','#6b4a30','#94694a','#5a3e28'])},
-{id:'wood',n:'Дубовые доски',v:2,f:(p,r)=>{for(let y=0;y<16;y++)for(let x=0;x<16;x++)p(x,y,y%4==3||x==((y>>2)%2?3:11)?'#7d5f35':pk(['#b8945f','#ae8a56','#c29c66'],r))}},
-{id:'stone',n:'Камень',v:3,f:noise(['#7f7f7f','#8b8b8b','#737373','#959595'])},
-{id:'coal',n:'Уголь',v:5,f:(p,r)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const d=Math.hypot(i-7.5,j-7.5)+(r()-.5)*2.6;if(d<6)p(i,j,i+j<12&&r()<.4?'#4d4d4d':pk(['#1c1c1c','#2b2b2b','#111'],r))}}},
-{id:'iron',n:'Железный слиток',v:8,f:ingot(['#3a3a3a','#f0f0f0','#d4d4d4','#9a9a9a'])},
-{id:'gold',n:'Золотой слиток',v:13,f:ingot(['#6b4a00','#fff3a0','#fbd635','#c9981a'])},
-{id:'red',n:'Редстоун',v:18,f:(p,r)=>{for(let k=0;k<70;k++){const a=r()*6.28,d=r()*6.5;p(Math.round(7.5+Math.cos(a)*d),Math.round(7.5+Math.sin(a)*d),pk(['#ff2a2a','#cc0000','#8a0000','#ff6a5a'],r))}}},
-{id:'dia',n:'Алмаз',v:30,f:gem(['#0a4a55','#c8fff8','#3fe6d6','#1b9aa6'],1)},{id:'em',n:'Изумруд',v:45,f:gem(['#0a3a14','#b8ffc8','#2fd35a','#17893a'],1.4)},
-{id:'neth',n:'Незеритовый слиток',v:80,f:ingot(['#120c0c','#7a6868','#4a3f3f','#2f2626'])}];
-ITEMS.forEach((i,k)=>i.img=mk(k+7,i.f));
-const dirtTile=mk(3,ITEMS[0].f);
-document.body.style.backgroundImage=`linear-gradient(#000a,#000a),url(${dirtTile})`;
-document.body.style.backgroundSize='auto,96px';
-const by=id=>ITEMS.find(i=>i.id===id);
-let inv={dirt:5},bet=null,tgt=null,spinning=false,rot=0,hold=false,ac;
-let storeOk=true;
-function load(){try{const s=JSON.parse(localStorage.getItem('mcw2')||'null');if(!s)return;
- if(s.inv){const o={};for(const k in s.inv){const n=Math.floor(+s.inv[k]);if(by(k)&&n>0)o[k]=Math.min(n,9999)}if(Object.keys(o).length)inv=o}
- if(by(s.bet)&&inv[s.bet]>0)bet=s.bet;if(by(s.tgt)&&s.tgt!==bet)tgt=s.tgt}catch(e){storeOk=false}}
-function save(d){try{localStorage.setItem('mcw2',JSON.stringify({inv:d||inv,bet,tgt}))}catch(e){storeOk=false}
- const s=$('sv');if(s)s.textContent=storeOk?'Прогресс сохраняется автоматически':'Сохранение недоступно в этом браузере'}
-load();
-if(!Object.values(inv).some(v=>v>0))inv={dirt:5};
-function snd(f,d,t,f2){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;
- if(f2)o.frequency.linearRampToValueAtTime(f2,ac.currentTime+d);g.gain.setValueAtTime(.12,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+d);
- o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
-function chance(){return bet&&tgt?Math.max(3,Math.min(95,Math.round(by(bet).v/by(tgt).v*45))):0}
-function slot(el,id,n){el.innerHTML=id?`<img class="ic" src="${by(id).img}" alt="">`+(n>1?`<span class="n">${n}</span>`:''):'<span class="q">?</span>';
- if(id){el.dataset.tip=by(id).n;el.dataset.sub='Ценность: '+by(id).v}else{delete el.dataset.tip}}
-function paint(c){const cv=$('wc'),x=cv.getContext('2d'),N=96,d=x.createImageData(N,N),a=c*3.6;
- for(let j=0;j<N;j++)for(let i=0;i<N;i++){const dx=i-N/2+.5,dy=j-N/2+.5,r=Math.hypot(dx,dy);if(r>N/2)continue;
-  const h=Math.abs(Math.sin(i*12.9898+j*78.233)*43758.5453)%1,v=.82+.36*h,k=(j*N+i)*4;
-  const ang=(Math.atan2(dx,-dy)*57.2958+360)%360;let col;
-  if(r>46.3||(r<=45&&r>43.6)||(r<=10.5&&r>8.8))col=[25,25,25];
-  else if(r>45)col=[125,125,125].map(z=>z*v);
-  else if(r<8.8)col=[85,85,85].map(z=>z*v);
-  else if(!c)col=[110,110,110].map(z=>z*v);
-  else if(Math.min(Math.abs(ang-a),ang,360-ang)*Math.PI/180*r<1.3)col=[25,25,25];
-  else col=(ang<a?[62,165,62]:[178,46,38]).map(z=>z*v);
-  d.data.set([col[0],col[1],col[2],255],k)}
- x.putImageData(d,0,0)}
-function labels(c){const w=$('wheel');w.querySelectorAll('.lbl').forEach(e=>e.remove());if(!c)return;
- const a=c*3.6,W=w.clientWidth;
- [[a/2,c],[a+(360-a)/2,100-c]].forEach(([g,t])=>{const l=document.createElement('div');l.className='lbl';l.textContent=t+'%';
-  l.style.transform=`rotate(${g-90}deg) translateX(${W*.27}px) rotate(${90-g}deg) translate(-50%,-50%)`;w.appendChild(l)})}
-function setInfo(t,c){const e=$('info');e.textContent=t;e.className='info '+(c||'')}
-function render(){
- if(!(inv[bet]>0))bet=null;
- slot($('bet'),bet,bet?inv[bet]:0);slot($('tgt'),tgt,0);
- $('bet').disabled=$('tgt').disabled=spinning;
- const box=$('inv');box.innerHTML='';const have=ITEMS.filter(i=>inv[i.id]>0);
- for(let k=0;k<27;k++){const i=have[k];let b;
-  if(i){b=document.createElement('button');b.className='slot'+(bet===i.id?' sel':'');slot(b,i.id,inv[i.id]);b.disabled=spinning;
-   b.onclick=()=>{snd(500,.05,'square');bet=bet===i.id?null:i.id;if(bet===tgt)tgt=null;hold=false;render()}}
-  else{b=document.createElement('div');b.className='slot'}
-  box.appendChild(b)}
- const c=chance();paint(c);labels(c);
- const g=$('go');g.disabled=spinning||!bet||!tgt;g.classList.toggle('spin',spinning);g.textContent=spinning?'Крутится...':'Крутить!';
- if(!spinning&&!hold)setInfo(bet&&tgt?`${by(bet).n} → ${by(tgt).n}. Шанс успеха: ${c}%`:'Положи предмет в левый слот и выбери цель справа.');if(!spinning)save()}
-$('bet').onclick=()=>{if(bet){bet=null;hold=false;render()}};
-$('tgt').onclick=()=>{if(spinning)return;snd(500,.05,'square');
- const g=$('grid');g.innerHTML='';
- ITEMS.forEach(i=>{const b=document.createElement('button');b.className='slot'+(i.id===bet?' dim':'');slot(b,i.id,0);b.disabled=i.id===bet;
-  b.onclick=()=>{tgt=i.id;hold=false;$('ov').classList.remove('on');$('tip').style.display='none';render()};g.appendChild(b)});
- $('ov').classList.add('on')};
-$('ov').onclick=e=>{if(e.target===$('ov'))$('ov').classList.remove('on')};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')$('ov').classList.remove('on')});
-document.addEventListener('mousemove',e=>{const t=e.target.closest&&e.target.closest('[data-tip]'),tp=$('tip');
- if(!t){tp.style.display='none';return}
- tp.innerHTML=t.dataset.tip+'<small>'+t.dataset.sub+'</small>';tp.style.display='block';
- tp.style.left=Math.min(e.clientX+14,innerWidth-tp.offsetWidth-6)+'px';tp.style.top=(e.clientY-8)+'px'});
-$('go').onclick=()=>{
- if(spinning||!bet||!tgt||!(inv[bet]>0))return;
- const c=chance(),a=c*3.6,win=Math.random()*100<c,pad=Math.min(6,(win?a:360-a)/4);
- const lo=win?pad:a+pad,hi=win?a-pad:360-pad,ang=lo+Math.random()*(hi-lo);
- rot=Math.ceil(rot/360)*360+360*6+(360-ang);
- const b=bet,t=tgt;spinning=true;hold=true;render();
- {const after={...inv};if(win){after[t]=(after[t]||0)+1}else{after[b]--;if(after[b]<=0)delete after[b]}save(Object.values(after).some(v=>v>0)?after:{dirt:1})}
- setInfo('Колесо вращается...');snd(300,.2,'square',600);
- $('wheel').style.transform=`rotate(${rot}deg)`;
- setTimeout(()=>{spinning=false;let m,cl;
-  if(win){inv[t]=(inv[t]||0)+1;m='Успех! Получено: '+by(t).n;cl='win';snd(660,.12,'square');setTimeout(()=>snd(990,.25,'square'),120);
-   $('ti').src=by(t).img;$('tn').textContent=by(t).n;$('toast').classList.add('on');setTimeout(()=>$('toast').classList.remove('on'),3200)}
-  else{inv[b]--;if(inv[b]<=0)delete inv[b];m='Провал... Потерян предмет: '+by(b).n;cl='lose';snd(220,.4,'sawtooth',90);
-   const g=$('gui');g.classList.remove('shake');void g.offsetWidth;g.classList.add('shake')}
-  if(!Object.values(inv).some(v=>v>0)){inv={dirt:1};m+=' Инвентарь пуст — выдана 1 земля.'}
-  render();setInfo(m,cl)},4700)};
-addEventListener('resize',()=>labels(chance()));
-let rc=0;$('rs').onclick=()=>{if(spinning)return;const b=$('rs');
- if(!rc){b.textContent='Нажми ещё раз для сброса';rc=setTimeout(()=>{rc=0;b.textContent='Сбросить прогресс'},3000);return}
- clearTimeout(rc);rc=0;b.textContent='Сбросить прогресс';inv={dirt:5};bet=tgt=null;hold=false;render()};
-render();
-</script></body><script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }</html>
+    </script>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Колесо фортуны — Minecraft</title>
+    <style>
+      :root {
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        --gui: #c6c6c6;
+        --slot: #8b8b8b;
+        --ink: #404040;
+        --dk: #373737;
+        --lt: #fff;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --gui: #b4b4b4;
+        }
+      }
+      :root[data-theme="dark"] {
+        --gui: #b4b4b4;
+      }
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #4a3322;
+        font-family: "Courier New", ui-monospace, monospace;
+        font-weight: bold;
+        image-rendering: pixelated;
+        color: var(--ink);
+      }
+      .wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 14px;
+      }
+      .gui {
+        background: var(--gui);
+        padding: 12px;
+        border: 4px solid #000;
+        box-shadow:
+          inset 4px 4px 0 var(--lt),
+          inset -4px -4px 0 var(--dk);
+        position: relative;
+      }
+      .gui.shake {
+        animation: sh 0.45s;
+      }
+      @keyframes sh {
+        20% {
+          transform: translateX(-8px);
+        }
+        40% {
+          transform: translateX(8px);
+        }
+        60% {
+          transform: translateX(-5px);
+        }
+        80% {
+          transform: translateX(5px);
+        }
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(17px, 4.5vw, 24px);
+        text-shadow: 2px 2px #fff8;
+        letter-spacing: 1px;
+      }
+      h2 {
+        margin: 14px 0 4px;
+        font-size: 14px;
+      }
+      .stage {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(8px, 3vw, 22px);
+        flex-wrap: wrap;
+        margin: 10px 0;
+      }
+      .sb {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+      }
+      .slot {
+        width: clamp(48px, 12vw, 60px);
+        aspect-ratio: 1;
+        background: var(--slot);
+        border: 0;
+        border-top: 3px solid var(--dk);
+        border-left: 3px solid var(--dk);
+        border-right: 3px solid var(--lt);
+        border-bottom: 3px solid var(--lt);
+        padding: 0;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font: inherit;
+        color: inherit;
+      }
+      .slot.big {
+        width: clamp(70px, 18vw, 92px);
+      }
+      button.slot {
+        cursor: pointer;
+      }
+      button.slot:hover:not(:disabled):after,
+      button.slot:focus-visible:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: #fff8;
+      }
+      button.slot:disabled {
+        cursor: default;
+      }
+      .slot.sel {
+        outline: 3px solid #ffd84a;
+        outline-offset: -3px;
+      }
+      .slot.dim .ic {
+        opacity: 0.35;
+      }
+      .ic {
+        width: 78%;
+        height: 78%;
+        image-rendering: pixelated;
+        pointer-events: none;
+      }
+      .n {
+        position: absolute;
+        right: 2px;
+        bottom: -2px;
+        color: #fff;
+        font-size: 16px;
+        text-shadow: 2px 2px #3f3f3f;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .q {
+        opacity: 0.35;
+        font-size: 28px;
+        pointer-events: none;
+      }
+      .ww {
+        position: relative;
+        width: clamp(190px, 50vw, 270px);
+        aspect-ratio: 1;
+      }
+      .wheel {
+        position: absolute;
+        inset: 0;
+        transition: transform 4.6s cubic-bezier(0.12, 0.65, 0.08, 1);
+      }
+      .wheel canvas {
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+        border-radius: 50%;
+        display: block;
+      }
+      .lbl {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        color: #fff;
+        font-size: clamp(14px, 3.8vw, 20px);
+        text-shadow: 2px 2px #000;
+        white-space: nowrap;
+      }
+      .ptr {
+        position: absolute;
+        left: 50%;
+        top: -12px;
+        transform: translateX(-50%);
+        border: 13px solid transparent;
+        border-top: 28px solid #f5c518;
+        border-bottom: 0;
+        filter: drop-shadow(0 0 0 #000) drop-shadow(2px 2px 0 #000);
+        z-index: 3;
+      }
+      .info {
+        text-align: center;
+        min-height: 2.8em;
+        margin: 12px 0 8px;
+        font-size: 15px;
+      }
+      .info.win {
+        color: #117a11;
+      }
+      .info.lose {
+        color: #a00;
+      }
+      .btn {
+        display: block;
+        width: min(320px, 100%);
+        margin: 0 auto;
+        padding: 11px 8px;
+        font: inherit;
+        font-size: 19px;
+        color: #fff;
+        text-shadow: 2px 2px #3f3f3f;
+        background: #7a7a7a;
+        border: 3px solid #000;
+        box-shadow:
+          inset 3px 3px 0 #b8b8b8,
+          inset -3px -3px 0 #4a4a4a;
+        cursor: pointer;
+      }
+      .btn:hover:not(:disabled) {
+        background: #6f7cb0;
+        color: #ffffa0;
+        box-shadow:
+          inset 3px 3px 0 #a9b4e0,
+          inset -3px -3px 0 #3d4672;
+      }
+      .btn:active:not(:disabled) {
+        transform: translateY(2px);
+      }
+      .btn:disabled {
+        background: #474747;
+        color: #9a9a9a;
+        text-shadow: none;
+        box-shadow:
+          inset 3px 3px 0 #5e5e5e,
+          inset -3px -3px 0 #2c2c2c;
+        cursor: not-allowed;
+      }
+      .btn.spin {
+        animation: pl 0.8s infinite alternate;
+      }
+      @keyframes pl {
+        to {
+          color: #ffffa0;
+        }
+      }
+      .inv {
+        display: grid;
+        grid-template-columns: repeat(9, 1fr);
+        gap: 0;
+      }
+      .inv .slot {
+        width: 100%;
+      }
+      .hint {
+        font-size: 12px;
+        margin: 8px 0 0;
+        text-align: center;
+        opacity: 0.8;
+      }
+      .ov {
+        position: fixed;
+        inset: 0;
+        background: #000b;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+        z-index: 10;
+      }
+      .ov.on {
+        display: flex;
+      }
+      .menu {
+        max-width: 400px;
+        width: 100%;
+        max-height: 92vh;
+        overflow: auto;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+      }
+      .grid .slot {
+        width: 100%;
+      }
+      #tip {
+        position: fixed;
+        pointer-events: none;
+        z-index: 30;
+        display: none;
+        background: #100010f0;
+        border: 2px solid #2a0a6a;
+        box-shadow: inset 0 0 0 2px #5a1fb0;
+        color: #fff;
+        padding: 5px 9px;
+        font-size: 14px;
+        text-shadow: 2px 2px #3f3f3f;
+      }
+      #tip small {
+        display: block;
+        color: #aaa;
+        font-weight: normal;
+      }
+      #toast {
+        position: fixed;
+        left: 50%;
+        top: 12px;
+        transform: translate(-50%, -140%);
+        transition: transform 0.5s;
+        background: #222;
+        border: 3px solid #000;
+        box-shadow: inset 0 0 0 3px #555;
+        color: #fff;
+        padding: 8px 14px 8px 8px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        z-index: 40;
+        font-size: 13px;
+        min-width: 230px;
+      }
+      #toast.on {
+        transform: translate(-50%, calc(env(safe-area-inset-top, 0px) + 4px));
+      }
+      #toast b {
+        color: #ffff55;
+        display: block;
+      }
+      #toast img {
+        width: 38px;
+        height: 38px;
+        image-rendering: pixelated;
+        background: #555;
+        padding: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="gui" id="gui">
+        <h1>Колесо фортуны</h1>
+        <div class="stage">
+          <div class="sb">
+            Ставка<button
+              class="slot big"
+              id="bet"
+              aria-label="Слот ставки"
+            ></button>
+          </div>
+          <div class="ww">
+            <div class="ptr"></div>
+            <div class="wheel" id="wheel">
+              <canvas id="wc" width="96" height="96"></canvas>
+            </div>
+          </div>
+          <div class="sb">
+            Цель<button
+              class="slot big"
+              id="tgt"
+              aria-label="Выбрать желаемый предмет"
+            ></button>
+          </div>
+        </div>
+        <div class="info" id="info"></div>
+        <button class="btn" id="go" disabled>Крутить!</button>
+        <h2>Инвентарь</h2>
+        <div class="inv" id="inv"></div>
+        <p class="hint">
+          Клик по предмету — в слот ставки. Клик по слоту цели — выбор предмета.
+        </p>
+        <p class="hint" id="sv"></p>
+        <button
+          class="btn"
+          id="rs"
+          style="
+            width: auto;
+            margin: 6px auto 0;
+            font-size: 13px;
+            padding: 6px 12px;
+          "
+        >
+          Сбросить прогресс
+        </button>
+      </div>
+    </div>
+    <div class="ov" id="ov">
+      <div class="gui menu">
+        <h2 style="margin-top: 0">Выбери желаемый предмет</h2>
+        <div class="grid" id="grid"></div>
+        <p class="hint">Esc — закрыть</p>
+      </div>
+    </div>
+    <div id="tip"></div>
+    <div id="toast">
+      <img id="ti" />
+      <div><b>Достижение получено!</b><span id="tn"></span></div>
+    </div>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      function R(a) {
+        return () => {
+          a |= 0;
+          a = (a + 0x6d2b79f5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      const pk = (a, r) => a[Math.floor(r() * a.length)];
+      function mk(seed, fn) {
+        const c = document.createElement("canvas");
+        c.width = c.height = 16;
+        const x = c.getContext("2d"),
+          r = R(seed);
+        fn((i, j, col) => {
+          x.fillStyle = col;
+          x.fillRect(i, j, 1, 1);
+        }, r);
+        return c.toDataURL();
+      }
+      const noise = (pal) => (p, r) => {
+        for (let i = 0; i < 16; i++)
+          for (let j = 0; j < 16; j++) p(i, j, pk(pal, r));
+      };
+      const ingot = (q) => (p, r) => {
+        for (let y = 5; y <= 11; y++)
+          for (let x = 2; x <= 13; x++)
+            p(
+              x,
+              y,
+              y == 5 || y == 11 || x == 2 || x == 13
+                ? q[0]
+                : y == 6
+                  ? q[1]
+                  : y == 10
+                    ? q[3]
+                    : r() < 0.25
+                      ? q[1]
+                      : q[2],
+            );
+      };
+      const gem = (q, sx) => (p) => {
+        for (let i = 0; i < 16; i++)
+          for (let j = 0; j < 16; j++) {
+            const dx = i - 7.5,
+              dy = j - 7.5,
+              m = Math.abs(dx) * sx + Math.abs(dy);
+            if (m <= 7)
+              p(
+                i,
+                j,
+                m > 6 ? q[0] : dx + dy < -2 ? q[1] : dx + dy > 2 ? q[3] : q[2],
+              );
+          }
+      };
+      const ITEMS = [
+        {
+          id: "dirt",
+          n: "Земля",
+          v: 1,
+          f: noise(["#866043", "#79553a", "#6b4a30", "#94694a", "#5a3e28"]),
+        },
+        {
+          id: "wood",
+          n: "Дубовые доски",
+          v: 2,
+          f: (p, r) => {
+            for (let y = 0; y < 16; y++)
+              for (let x = 0; x < 16; x++)
+                p(
+                  x,
+                  y,
+                  y % 4 == 3 || x == ((y >> 2) % 2 ? 3 : 11)
+                    ? "#7d5f35"
+                    : pk(["#b8945f", "#ae8a56", "#c29c66"], r),
+                );
+          },
+        },
+        {
+          id: "stone",
+          n: "Камень",
+          v: 3,
+          f: noise(["#7f7f7f", "#8b8b8b", "#737373", "#959595"]),
+        },
+        {
+          id: "coal",
+          n: "Уголь",
+          v: 5,
+          f: (p, r) => {
+            for (let i = 0; i < 16; i++)
+              for (let j = 0; j < 16; j++) {
+                const d = Math.hypot(i - 7.5, j - 7.5) + (r() - 0.5) * 2.6;
+                if (d < 6)
+                  p(
+                    i,
+                    j,
+                    i + j < 12 && r() < 0.4
+                      ? "#4d4d4d"
+                      : pk(["#1c1c1c", "#2b2b2b", "#111"], r),
+                  );
+              }
+          },
+        },
+        {
+          id: "iron",
+          n: "Железный слиток",
+          v: 8,
+          f: ingot(["#3a3a3a", "#f0f0f0", "#d4d4d4", "#9a9a9a"]),
+        },
+        {
+          id: "gold",
+          n: "Золотой слиток",
+          v: 13,
+          f: ingot(["#6b4a00", "#fff3a0", "#fbd635", "#c9981a"]),
+        },
+        {
+          id: "red",
+          n: "Редстоун",
+          v: 18,
+          f: (p, r) => {
+            for (let k = 0; k < 70; k++) {
+              const a = r() * 6.28,
+                d = r() * 6.5;
+              p(
+                Math.round(7.5 + Math.cos(a) * d),
+                Math.round(7.5 + Math.sin(a) * d),
+                pk(["#ff2a2a", "#cc0000", "#8a0000", "#ff6a5a"], r),
+              );
+            }
+          },
+        },
+        {
+          id: "dia",
+          n: "Алмаз",
+          v: 30,
+          f: gem(["#0a4a55", "#c8fff8", "#3fe6d6", "#1b9aa6"], 1),
+        },
+        {
+          id: "em",
+          n: "Изумруд",
+          v: 45,
+          f: gem(["#0a3a14", "#b8ffc8", "#2fd35a", "#17893a"], 1.4),
+        },
+        {
+          id: "neth",
+          n: "Незеритовый слиток",
+          v: 80,
+          f: ingot(["#120c0c", "#7a6868", "#4a3f3f", "#2f2626"]),
+        },
+      ];
+      ITEMS.forEach((i, k) => (i.img = mk(k + 7, i.f)));
+      const dirtTile = mk(3, ITEMS[0].f);
+      document.body.style.backgroundImage = `linear-gradient(#000a,#000a),url(${dirtTile})`;
+      document.body.style.backgroundSize = "auto,96px";
+      const by = (id) => ITEMS.find((i) => i.id === id);
+      let inv = { dirt: 5 },
+        bet = null,
+        tgt = null,
+        spinning = false,
+        rot = 0,
+        hold = false,
+        ac;
+      let storeOk = true;
+      function load() {
+        try {
+          const s = JSON.parse(localStorage.getItem("mcw2") || "null");
+          if (!s) return;
+          if (s.inv) {
+            const o = {};
+            for (const k in s.inv) {
+              const n = Math.floor(+s.inv[k]);
+              if (by(k) && n > 0) o[k] = Math.min(n, 9999);
+            }
+            if (Object.keys(o).length) inv = o;
+          }
+          if (by(s.bet) && inv[s.bet] > 0) bet = s.bet;
+          if (by(s.tgt) && s.tgt !== bet) tgt = s.tgt;
+        } catch (e) {
+          storeOk = false;
+        }
+      }
+      function save(d) {
+        try {
+          localStorage.setItem(
+            "mcw2",
+            JSON.stringify({ inv: d || inv, bet, tgt }),
+          );
+        } catch (e) {
+          storeOk = false;
+        }
+        const s = $("sv");
+        if (s)
+          s.textContent = storeOk
+            ? "Прогресс сохраняется автоматически"
+            : "Сохранение недоступно в этом браузере";
+      }
+      load();
+      if (!Object.values(inv).some((v) => v > 0)) inv = { dirt: 5 };
+      function snd(f, d, t, f2) {
+        try {
+          ac = ac || new AudioContext();
+          const o = ac.createOscillator(),
+            g = ac.createGain();
+          o.type = t;
+          o.frequency.value = f;
+          if (f2) o.frequency.linearRampToValueAtTime(f2, ac.currentTime + d);
+          g.gain.setValueAtTime(0.12, ac.currentTime);
+          g.gain.linearRampToValueAtTime(0, ac.currentTime + d);
+          o.connect(g);
+          g.connect(ac.destination);
+          o.start();
+          o.stop(ac.currentTime + d);
+        } catch (e) {}
+      }
+      function chance() {
+        return bet && tgt
+          ? Math.max(3, Math.min(95, Math.round((by(bet).v / by(tgt).v) * 45)))
+          : 0;
+      }
+      function slot(el, id, n) {
+        el.innerHTML = id
+          ? `<img class="ic" src="${by(id).img}" alt="">` +
+            (n > 1 ? `<span class="n">${n}</span>` : "")
+          : '<span class="q">?</span>';
+        if (id) {
+          el.dataset.tip = by(id).n;
+          el.dataset.sub = "Ценность: " + by(id).v;
+        } else {
+          delete el.dataset.tip;
+        }
+      }
+      function paint(c) {
+        const cv = $("wc"),
+          x = cv.getContext("2d"),
+          N = 96,
+          d = x.createImageData(N, N),
+          a = c * 3.6;
+        for (let j = 0; j < N; j++)
+          for (let i = 0; i < N; i++) {
+            const dx = i - N / 2 + 0.5,
+              dy = j - N / 2 + 0.5,
+              r = Math.hypot(dx, dy);
+            if (r > N / 2) continue;
+            const h =
+                Math.abs(Math.sin(i * 12.9898 + j * 78.233) * 43758.5453) % 1,
+              v = 0.82 + 0.36 * h,
+              k = (j * N + i) * 4;
+            const ang = (Math.atan2(dx, -dy) * 57.2958 + 360) % 360;
+            let col;
+            if (r > 46.3 || (r <= 45 && r > 43.6) || (r <= 10.5 && r > 8.8))
+              col = [25, 25, 25];
+            else if (r > 45) col = [125, 125, 125].map((z) => z * v);
+            else if (r < 8.8) col = [85, 85, 85].map((z) => z * v);
+            else if (!c) col = [110, 110, 110].map((z) => z * v);
+            else if (
+              ((Math.min(Math.abs(ang - a), ang, 360 - ang) * Math.PI) / 180) *
+                r <
+              1.3
+            )
+              col = [25, 25, 25];
+            else
+              col = (ang < a ? [62, 165, 62] : [178, 46, 38]).map((z) => z * v);
+            d.data.set([col[0], col[1], col[2], 255], k);
+          }
+        x.putImageData(d, 0, 0);
+      }
+      function labels(c) {
+        const w = $("wheel");
+        w.querySelectorAll(".lbl").forEach((e) => e.remove());
+        if (!c) return;
+        const a = c * 3.6,
+          W = w.clientWidth;
+        [
+          [a / 2, c],
+          [a + (360 - a) / 2, 100 - c],
+        ].forEach(([g, t]) => {
+          const l = document.createElement("div");
+          l.className = "lbl";
+          l.textContent = t + "%";
+          l.style.transform = `rotate(${g - 90}deg) translateX(${W * 0.27}px) rotate(${90 - g}deg) translate(-50%,-50%)`;
+          w.appendChild(l);
+        });
+      }
+      function setInfo(t, c) {
+        const e = $("info");
+        e.textContent = t;
+        e.className = "info " + (c || "");
+      }
+      function render() {
+        if (!(inv[bet] > 0)) bet = null;
+        slot($("bet"), bet, bet ? inv[bet] : 0);
+        slot($("tgt"), tgt, 0);
+        $("bet").disabled = $("tgt").disabled = spinning;
+        const box = $("inv");
+        box.innerHTML = "";
+        const have = ITEMS.filter((i) => inv[i.id] > 0);
+        for (let k = 0; k < 27; k++) {
+          const i = have[k];
+          let b;
+          if (i) {
+            b = document.createElement("button");
+            b.className = "slot" + (bet === i.id ? " sel" : "");
+            slot(b, i.id, inv[i.id]);
+            b.disabled = spinning;
+            b.onclick = () => {
+              snd(500, 0.05, "square");
+              bet = bet === i.id ? null : i.id;
+              if (bet === tgt) tgt = null;
+              hold = false;
+              render();
+            };
+          } else {
+            b = document.createElement("div");
+            b.className = "slot";
+          }
+          box.appendChild(b);
+        }
+        const c = chance();
+        paint(c);
+        labels(c);
+        const g = $("go");
+        g.disabled = spinning || !bet || !tgt;
+        g.classList.toggle("spin", spinning);
+        g.textContent = spinning ? "Крутится..." : "Крутить!";
+        if (!spinning && !hold)
+          setInfo(
+            bet && tgt
+              ? `${by(bet).n} → ${by(tgt).n}. Шанс успеха: ${c}%`
+              : "Положи предмет в левый слот и выбери цель справа.",
+          );
+        if (!spinning) save();
+      }
+      $("bet").onclick = () => {
+        if (bet) {
+          bet = null;
+          hold = false;
+          render();
+        }
+      };
+      $("tgt").onclick = () => {
+        if (spinning) return;
+        snd(500, 0.05, "square");
+        const g = $("grid");
+        g.innerHTML = "";
+        ITEMS.forEach((i) => {
+          const b = document.createElement("button");
+          b.className = "slot" + (i.id === bet ? " dim" : "");
+          slot(b, i.id, 0);
+          b.disabled = i.id === bet;
+          b.onclick = () => {
+            tgt = i.id;
+            hold = false;
+            $("ov").classList.remove("on");
+            $("tip").style.display = "none";
+            render();
+          };
+          g.appendChild(b);
+        });
+        $("ov").classList.add("on");
+      };
+      $("ov").onclick = (e) => {
+        if (e.target === $("ov")) $("ov").classList.remove("on");
+      };
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") $("ov").classList.remove("on");
+      });
+      document.addEventListener("mousemove", (e) => {
+        const t = e.target.closest && e.target.closest("[data-tip]"),
+          tp = $("tip");
+        if (!t) {
+          tp.style.display = "none";
+          return;
+        }
+        tp.innerHTML = t.dataset.tip + "<small>" + t.dataset.sub + "</small>";
+        tp.style.display = "block";
+        tp.style.left =
+          Math.min(e.clientX + 14, innerWidth - tp.offsetWidth - 6) + "px";
+        tp.style.top = e.clientY - 8 + "px";
+      });
+      $("go").onclick = () => {
+        if (spinning || !bet || !tgt || !(inv[bet] > 0)) return;
+        const c = chance(),
+          a = c * 3.6,
+          win = Math.random() * 100 < c,
+          pad = Math.min(6, (win ? a : 360 - a) / 4);
+        const lo = win ? pad : a + pad,
+          hi = win ? a - pad : 360 - pad,
+          ang = lo + Math.random() * (hi - lo);
+        rot = Math.ceil(rot / 360) * 360 + 360 * 6 + (360 - ang);
+        const b = bet,
+          t = tgt;
+        spinning = true;
+        hold = true;
+        render();
+        {
+          const after = { ...inv };
+          if (win) {
+            after[t] = (after[t] || 0) + 1;
+          } else {
+            after[b]--;
+            if (after[b] <= 0) delete after[b];
+          }
+          save(Object.values(after).some((v) => v > 0) ? after : { dirt: 1 });
+        }
+        setInfo("Колесо вращается...");
+        snd(300, 0.2, "square", 600);
+        $("wheel").style.transform = `rotate(${rot}deg)`;
+        setTimeout(() => {
+          spinning = false;
+          let m, cl;
+          if (win) {
+            inv[t] = (inv[t] || 0) + 1;
+            m = "Успех! Получено: " + by(t).n;
+            cl = "win";
+            snd(660, 0.12, "square");
+            setTimeout(() => snd(990, 0.25, "square"), 120);
+            $("ti").src = by(t).img;
+            $("tn").textContent = by(t).n;
+            $("toast").classList.add("on");
+            setTimeout(() => $("toast").classList.remove("on"), 3200);
+          } else {
+            inv[b]--;
+            if (inv[b] <= 0) delete inv[b];
+            m = "Провал... Потерян предмет: " + by(b).n;
+            cl = "lose";
+            snd(220, 0.4, "sawtooth", 90);
+            const g = $("gui");
+            g.classList.remove("shake");
+            void g.offsetWidth;
+            g.classList.add("shake");
+          }
+          if (!Object.values(inv).some((v) => v > 0)) {
+            inv = { dirt: 1 };
+            m += " Инвентарь пуст — выдана 1 земля.";
+          }
+          render();
+          setInfo(m, cl);
+        }, 4700);
+      };
+      addEventListener("resize", () => labels(chance()));
+      let rc = 0;
+      $("rs").onclick = () => {
+        if (spinning) return;
+        const b = $("rs");
+        if (!rc) {
+          b.textContent = "Нажми ещё раз для сброса";
+          rc = setTimeout(() => {
+            rc = 0;
+            b.textContent = "Сбросить прогресс";
+          }, 3000);
+          return;
+        }
+        clearTimeout(rc);
+        rc = 0;
+        b.textContent = "Сбросить прогресс";
+        inv = { dirt: 5 };
+        bet = tgt = null;
+        hold = false;
+        render();
+      };
+      render();
+    </script>
+  </body>
+</html>
