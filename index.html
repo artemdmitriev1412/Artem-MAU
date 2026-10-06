@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
+<html lang="ru"><head><meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mineupgrade</title>
 
@@ -17,1353 +15,315 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Колесо фортуны — Minecraft</title>
-
 <style>
-/* ============================================================
-   ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ
-   ============================================================ */
-:root {
-  box-sizing: border-box;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  --gui: #c6c6c6;   /* фон окна */
-  --slot: #8b8b8b;  /* фон слота */
-  --ink: #404040;   /* цвет текста */
-  --dk: #373737;    /* тёмная грань */
-  --lt: #fff;       /* светлая грань */
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --gui: #b4b4b4; }
-}
-:root[data-theme="dark"] { --gui: #b4b4b4; }
-
-*, *:before, *:after { box-sizing: inherit; }
-
-html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: #4a3322;
-  font-family: "Courier New", ui-monospace, monospace;
-  font-weight: bold;
-  image-rendering: pixelated;
-  color: var(--ink);
-}
-
-.wrap {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 14px;
-}
-
-/* ============================================================
-   ОКНО В СТИЛЕ MINECRAFT GUI
-   ============================================================ */
-.gui {
-  background: var(--gui);
-  padding: 12px;
-  border: 4px solid #000;
-  box-shadow: inset 4px 4px 0 var(--lt), inset -4px -4px 0 var(--dk);
-  position: relative;
-}
-
-/* тряска окна при проигрыше */
-.gui.shake { animation: sh .45s; }
-@keyframes sh {
-  20% { transform: translateX(-8px); }
-  40% { transform: translateX(8px); }
-  60% { transform: translateX(-5px); }
-  80% { transform: translateX(5px); }
-}
-
-h1 {
-  margin: 0 0 8px;
-  font-size: clamp(17px, 4.5vw, 24px);
-  text-shadow: 2px 2px #fff8;
-  letter-spacing: 1px;
-}
-
-h2 {
-  margin: 14px 0 4px;
-  font-size: 14px;
-}
-
-/* ============================================================
-   СЦЕНА: СЛОТ СТАВКИ — КОЛЕСО — СЛОТ ЦЕЛИ
-   ============================================================ */
-.stage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(8px, 3vw, 22px);
-  flex-wrap: wrap;
-  margin: 10px 0;
-}
-
-.sb {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-}
-
-/* ============================================================
-   СЛОТЫ
-   ============================================================ */
-.slot {
-  width: clamp(48px, 12vw, 60px);
-  aspect-ratio: 1;
-  background: var(--slot);
-  border: 0;
-  border-top: 3px solid var(--dk);
-  border-left: 3px solid var(--dk);
-  border-right: 3px solid var(--lt);
-  border-bottom: 3px solid var(--lt);
-  padding: 0;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font: inherit;
-  color: inherit;
-}
-
-.slot.big { width: clamp(70px, 18vw, 92px); }
-
-button.slot { cursor: pointer; }
-
-/* подсветка слота при наведении */
-button.slot:hover:not(:disabled):after,
-button.slot:focus-visible:after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: #fff8;
-}
-
-button.slot:disabled { cursor: default; }
-
-/* выбранный слот (текущая ставка) */
-.slot.sel {
-  outline: 3px solid #ffd84a;
-  outline-offset: -3px;
-}
-
-.slot.dim .ic { opacity: .35; }
-
-/* иконка предмета */
-.ic {
-  width: 78%;
-  height: 78%;
-  image-rendering: pixelated;
-  pointer-events: none;
-}
-
-/* число предметов в стопке */
-.n {
-  position: absolute;
-  right: 2px;
-  bottom: -2px;
-  color: #fff;
-  font-size: 16px;
-  text-shadow: 2px 2px #3f3f3f;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* знак вопроса в пустом слоте */
-.q {
-  opacity: .35;
-  font-size: 28px;
-  pointer-events: none;
-}
-
-/* ============================================================
-   КОЛЕСО
-   ============================================================ */
-.ww {
-  position: relative;
-  width: clamp(190px, 50vw, 270px);
-  aspect-ratio: 1;
-}
-
-.wheel {position: absolute;
-  inset: 0;
-  transition: transform 4.6s cubic-bezier(.12, .65, .08, 1);
-}
-
-.wheel canvas {
-  width: 100%;
-  height: 100%;
-  image-rendering: pixelated;
-  border-radius: 50%;
-  display: block;
-}
-
-/* подписи процентов на секторах */
-.lbl {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  color: #fff;
-  font-size: clamp(14px, 3.8vw, 20px);
-  text-shadow: 2px 2px #000;
-  white-space: nowrap;
-}
-
-/* жёлтая стрелка-указатель сверху */
-.ptr {
-  position: absolute;
-  left: 50%;
-  top: -12px;
-  transform: translateX(-50%);
-  border: 13px solid transparent;
-  border-top: 28px solid #f5c518;
-  border-bottom: 0;
-  filter: drop-shadow(0 0 0 #000) drop-shadow(2px 2px 0 #000);
-  z-index: 3;
-}
-
-/* ============================================================
-   ИНФО-СТРОКА
-   ============================================================ */
-.info {
-  text-align: center;
-  min-height: 2.8em;
-  margin: 12px 0 8px;
-  font-size: 15px;
-}
-.info.win  { color: #117a11; }
-.info.lose { color: #a00; }
-
-/* ============================================================
-   КНОПКИ
-   ============================================================ */
-.btn {
-  display: block;
-  width: min(320px, 100%);
-  margin: 0 auto;
-  padding: 10px 8px;
-  font: inherit;
-  font-size: 17px;
-  color: #fff;
-  text-shadow: 2px 2px #3f3f3f;
-  background: #7a7a7a;
-  border: 3px solid #000;
-  box-shadow: inset 3px 3px 0 #b8b8b8, inset -3px -3px 0 #4a4a4a;
-  cursor: pointer;
-}
-
-.btn:hover:not(:disabled) {
-  background: #6f7cb0;
-  color: #ffffa0;
-  box-shadow: inset 3px 3px 0 #a9b4e0, inset -3px -3px 0 #3d4672;
-}
-
-.btn:active:not(:disabled) { transform: translateY(2px); }
-
-.btn:disabled {
-  background: #474747;
-  color: #9a9a9a;
-  text-shadow: none;
-  box-shadow: inset 3px 3px 0 #5e5e5e, inset -3px -3px 0 #2c2c2c;
-  cursor: not-allowed;
-}
-
-/* мигание кнопки во время вращения */
-.btn.spin { animation: pl .8s infinite alternate; }
-@keyframes pl { to { color: #ffffa0; } }
-
-.btn.sm { margin-top: 8px; }
-
-/* ============================================================
-   ИНВЕНТАРЬ (9 x 3 = 27 клеток)
-   ============================================================ */
-.inv {
-  display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  gap: 0;
-}
-.inv .slot { width: 100%; }
-
-.hint {
-  font-size: 12px;
-  margin: 8px 0 0;
-  text-align: center;
-  opacity: .8;
-}
-
-/* ============================================================
-   ОКНА-ОВЕРЛЕИ (выбор цели, админ-панель)
-   ============================================================ */
-.ov {
-  position: fixed;
-  inset: 0;
-  background: #000b;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 14px;
-  z-index: 10;
-}
-.ov.on { display: flex; }
-
-.menu {
-  max-width: 400px;
-  width: 100%;
-  max-height: 92vh;
-  overflow: auto;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-}
-.grid .slot { width: 100%; }
-
-/* ============================================================
-   АДМИН-ПАНЕЛЬ
-   ============================================================ */
-.sec {
-  border: 3px solid var(--dk);
-  padding: 8px;
-  margin: 12px 0;
-  background: #0001;
-}
-.sec h2 { margin-top: 0; }
-.sec small { font-weight: normal; }
-
-.row {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  align-items: center;
-  margin: 6px 0;
-}
-.row label {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  font-size: 13px;
-  flex: 1 1 100%;
-}
-.row label input,
-.row label select { flex: 1; }
-
-.row input,
-.row select,
-.row textarea {
-  font: inherit;
-  font-size: 13px;
-  padding: 5px;
-  background: #fff;
-  border: 2px solid var(--dk);
-  color: #000;
-  min-width: 0;
-  flex: 1 1 120px;
-}
-
-/* форма события «удачи»: компактная сетка из 2 колонок */
-.evf {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 6px 0;
-}
-.evf label {
-  display: flex;
-  flex-direction: column;   /* подпись сверху, поле снизу */
-  gap: 3px;
-  font-size: 12px;
-  min-width: 0;
-}
-.evf .full { grid-column: 1 / -1; }  /* поле на всю ширину */.evf input,
-.evf select {
-  width: 100%;
-  min-width: 0;
-  height: 32px;
-  font: inherit;
-  font-size: 13px;
-  padding: 4px 6px;
-  background: #fff;
-  border: 2px solid var(--dk);
-  color: #000;
-}
-
-/* карточка события «удачи» */
-.ev {
-  background: var(--slot);
-  border: 3px solid var(--dk);
-  padding: 6px 8px;
-  margin: 6px 0;
-  font-size: 13px;
-  color: #fff;
-  text-shadow: 1px 1px #3f3f3f;
-}
-.ev small   { display: block; font-weight: normal; opacity: .9; }
-.ev.on      { border-color: #2fd35a; }  /* событие идёт сейчас */
-.ev.done    { opacity: .6; }            /* событие закончилось */
-.ev button  { font: inherit; font-size: 12px; margin-top: 4px; cursor: pointer; }
-
-/* ============================================================
-   ПОДСКАЗКА (tooltip) И ДОСТИЖЕНИЕ (toast)
-   ============================================================ */
-#tip {
-  position: fixed;
-  pointer-events: none;
-  z-index: 30;
-  display: none;
-  background: #100010f0;
-  border: 2px solid #2a0a6a;
-  box-shadow: inset 0 0 0 2px #5a1fb0;
-  color: #fff;
-  padding: 5px 9px;
-  font-size: 14px;
-  text-shadow: 2px 2px #3f3f3f;
-}
-#tip small { display: block; color: #aaa; font-weight: normal; }
-
-#toast {
-  position: fixed;
-  left: 50%;
-  top: 12px;
-  transform: translate(-50%, -140%);
-  transition: transform .5s;
-  background: #222;
-  border: 3px solid #000;
-  box-shadow: inset 0 0 0 3px #555;
-  color: #fff;
-  padding: 8px 14px 8px 8px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  z-index: 40;
-  font-size: 13px;
-  min-width: 230px;
-}
-#toast.on { transform: translate(-50%, calc(env(safe-area-inset-top, 0px) + 4px)); }
-#toast b  { color: #ffff55; display: block; }
-#toast img {
-  width: 38px;
-  height: 38px;
-  image-rendering: pixelated;
-  background: #555;
-  padding: 4px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- ============================================================
-     ОСНОВНОЕ ОКНО ИГРЫ
-     ============================================================ -->
-<div class="wrap">
-  <div class="gui" id="gui">
-    <h1>Колесо фортуны</h1>
-
-    <div class="stage">
-      <!-- слот ставки -->
-      <div class="sb">
-        Ставка
-        <button class="slot big" id="bet" aria-label="Слот ставки"></button>
-      </div>
-
-      <!-- колесо -->
-      <div class="ww">
-        <div class="ptr"></div>
-        <div class="wheel" id="wheel">
-          <canvas id="wc" width="96" height="96"></canvas>
-        </div>
-      </div>
-
-      <!-- слот цели -->
-      <div class="sb">
-        Цель
-        <button class="slot big" id="tgt" aria-label="Выбрать желаемый предмет"></button>
-      </div>
-    </div>
-
-    <div class="info" id="info"></div>
-    <button class="btn" id="go" disabled>Крутить!</button>
-
-    <h2>Инвентарь</h2>
-    <div class="inv" id="inv"></div>
-
-    <p class="hint">Клик по предмету — в слот ставки. Клик по слоту цели — выбор предмета.</p>
-    <p class="hint" id="sv"></p>
-
-    <button class="btn sm" id="rs">Сбросить прогресс</button>
-    <button class="btn sm" id="adm" hidden>Админ панель</button>
-  </div>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--gui:#c6c6c6;--slot:#8b8b8b;--ink:#404040;--dk:#373737;--lt:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gui:#b4b4b4}}
+:root[data-theme="dark"]{--gui:#b4b4b4}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:#4a3322;font-family:"Courier New",ui-monospace,monospace;font-weight:bold;image-rendering:pixelated;color:var(--ink)}
+.wrap{max-width:640px;margin:0 auto;padding:14px}
+.gui{background:var(--gui);padding:12px;border:4px solid #000;box-shadow:inset 4px 4px 0 var(--lt),inset -4px -4px 0 var(--dk);position:relative}
+.gui.shake{animation:sh .45s}
+@keyframes sh{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+h1{margin:0 0 8px;font-size:clamp(17px,4.5vw,24px);text-shadow:2px 2px #fff8;letter-spacing:1px}
+h2{margin:14px 0 4px;font-size:14px}
+.stage{display:flex;align-items:center;justify-content:center;gap:clamp(8px,3vw,22px);flex-wrap:wrap;margin:10px 0}
+.sb{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px}
+.slot{width:clamp(48px,12vw,60px);aspect-ratio:1;background:var(--slot);border:0;border-top:3px solid var(--dk);border-left:3px solid var(--dk);border-right:3px solid var(--lt);border-bottom:3px solid var(--lt);padding:0;position:relative;display:flex;align-items:center;justify-content:center;font:inherit;color:inherit}
+.slot.big{width:clamp(70px,18vw,92px)}
+button.slot{cursor:pointer}
+button.slot:hover:not(:disabled):after,button.slot:focus-visible:after{content:"";position:absolute;inset:0;background:#fff8}
+button.slot:disabled{cursor:default}
+.slot.sel{outline:3px solid #ffd84a;outline-offset:-3px}
+.slot.dim .ic{opacity:.35}
+.ic{width:78%;height:78%;image-rendering:pixelated;pointer-events:none}
+.n{position:absolute;right:2px;bottom:-2px;color:#fff;font-size:16px;text-shadow:2px 2px #3f3f3f;pointer-events:none;z-index:1}
+.q{opacity:.35;font-size:28px;pointer-events:none}
+.ww{position:relative;width:clamp(190px,50vw,270px);aspect-ratio:1}
+.wheel{position:absolute;inset:0;transition:transform 4.6s cubic-bezier(.12,.65,.08,1)}
+.wheel canvas{width:100%;height:100%;image-rendering:pixelated;border-radius:50%;display:block}
+.lbl{position:absolute;left:50%;top:50%;color:#fff;font-size:clamp(14px,3.8vw,20px);text-shadow:2px 2px #000;white-space:nowrap}
+.ptr{position:absolute;left:50%;top:-12px;transform:translateX(-50%);border:13px solid transparent;border-top:28px solid #f5c518;border-bottom:0;filter:drop-shadow(0 0 0 #000) drop-shadow(2px 2px 0 #000);z-index:3}
+.info{text-align:center;min-height:2.8em;margin:12px 0 8px;font-size:15px}
+.info.win{color:#117a11}.info.lose{color:#a00}
+.btn{display:block;width:min(320px,100%);margin:0 auto;padding:10px 8px;font:inherit;font-size:17px;color:#fff;text-shadow:2px 2px #3f3f3f;background:#7a7a7a;border:3px solid #000;box-shadow:inset 3px 3px 0 #b8b8b8,inset -3px -3px 0 #4a4a4a;cursor:pointer}
+.btn:hover:not(:disabled){background:#6f7cb0;color:#ffffa0;box-shadow:inset 3px 3px 0 #a9b4e0,inset -3px -3px 0 #3d4672}
+.btn:active:not(:disabled){transform:translateY(2px)}
+.btn:disabled{background:#474747;color:#9a9a9a;text-shadow:none;box-shadow:inset 3px 3px 0 #5e5e5e,inset -3px -3px 0 #2c2c2c;cursor:not-allowed}
+.btn.spin{animation:pl .8s infinite alternate}
+@keyframes pl{to{color:#ffffa0}}
+.btn.sm{margin-top:8px}
+.inv{display:grid;grid-template-columns:repeat(9,1fr);gap:0}
+.inv .slot{width:100%}
+.hint{font-size:12px;margin:8px 0 0;text-align:center;opacity:.8}.ov{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:14px;z-index:10}
+.ov.on{display:flex}
+.menu{max-width:400px;width:100%;max-height:92vh;overflow:auto}
+.grid{display:grid;grid-template-columns:repeat(5,1fr)}
+.grid .slot{width:100%}
+.sec{border:3px solid var(--dk);padding:8px;margin:12px 0;background:#0001}
+.sec h2{margin-top:0}.sec small{font-weight:normal}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.row label{display:flex;gap:6px;align-items:center;font-size:13px;flex:1 1 100%}
+.row label input,.row label select{flex:1}
+.row input,.row select,.row textarea{font:inherit;font-size:13px;padding:5px;background:#fff;border:2px solid var(--dk);color:#000;min-width:0;flex:1 1 120px}
+.evf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}
+.evf label{display:flex;flex-direction:column;gap:3px;font-size:12px;min-width:0}
+.evf .full{grid-column:1/-1}
+.evf input,.evf select{width:100%;min-width:0;height:32px;font:inherit;font-size:13px;padding:4px 6px;background:#fff;border:2px solid var(--dk);color:#000}
+.ev{background:var(--slot);border:3px solid var(--dk);padding:6px 8px;margin:6px 0;font-size:13px;color:#fff;text-shadow:1px 1px #3f3f3f}
+.ev small{display:block;font-weight:normal;opacity:.9}
+.ev.on{border-color:#2fd35a}.ev.done{opacity:.6}
+.ev button{font:inherit;font-size:12px;margin-top:4px;cursor:pointer}
+#pm{min-height:1.4em;color:#a00}
+#tip{position:fixed;pointer-events:none;z-index:30;display:none;background:#100010f0;border:2px solid #2a0a6a;box-shadow:inset 0 0 0 2px #5a1fb0;color:#fff;padding:5px 9px;font-size:14px;text-shadow:2px 2px #3f3f3f}
+#tip small{display:block;color:#aaa;font-weight:normal}
+#toast{position:fixed;left:50%;top:12px;transform:translate(-50%,-140%);transition:transform .5s;background:#222;border:3px solid #000;box-shadow:inset 0 0 0 3px #555;color:#fff;padding:8px 14px 8px 8px;display:flex;gap:10px;align-items:center;z-index:40;font-size:13px;min-width:230px}
+#toast.on{transform:translate(-50%,calc(env(safe-area-inset-top,0px) + 4px))}
+#toast b{color:#ffff55;display:block}
+#toast img{width:38px;height:38px;image-rendering:pixelated;background:#555;padding:4px}
+</style></head><body>
+<div class="wrap"><div class="gui" id="gui">
+<h1>Колесо фортуны</h1>
+<div class="stage">
+ <div class="sb">Ставка<button class="slot big" id="bet" aria-label="Слот ставки"></button></div>
+ <div class="ww"><div class="ptr"></div><div class="wheel" id="wheel"><canvas id="wc" width="96" height="96"></canvas></div></div>
+ <div class="sb">Цель<button class="slot big" id="tgt" aria-label="Выбрать желаемый предмет"></button></div>
 </div>
+<div class="info" id="info"></div>
+<button class="btn" id="go" disabled>Крутить!</button>
+<h2>Инвентарь</h2>
+<div class="inv" id="inv"></div>
+<p class="hint">Клик по предмету — в слот ставки. Клик по слоту цели — выбор предмета.</p>
+<p class="hint" id="sv"></p>
+<button class="btn sm" id="rs">Сбросить прогресс</button>
+<button class="btn sm" id="adm">Админ панель</button>
+</div></div>
 
-<!-- ============================================================
-     АДМИН-ПАНЕЛЬ (видна только владельцу артефакта)
-     ============================================================ -->
-<div class="ov" id="aov">
-  <div class="gui menu">
-    <h2 style="margin-top:0">Админ панель</h2>
+<!-- Вход по паролю -->
+<div class="ov" id="pov"><div class="gui menu">
+<h2 style="margin-top:0">Вход в админ панель</h2>
+<div class="row"><input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="Пароль"></div>
+<p class="hint" id="pm"></p>
+<button class="btn sm" id="pok">Войти</button>
+<button class="btn sm" data-close>Отмена</button>
+</div></div>
 
-    <div class="sec">
-      <h2>Выдача предметов <small>(только мне)</small></h2>
-      <div class="row">
-        <label>Количество
-          <input id="acnt" type="number" min="1" max="1728" value="1">
-        </label>
-      </div>
-      <div class="grid" id="agrid"></div>
-    </div>
-
-    <div class="sec">
-      <h2>Удача для всех игроков</h2>
-      <div class="evf">
-        <label class="full">Предмет <select id="ei"></select></label>
-        <label>Шанс, % <input id="el" type="number" min="1" max="90" value="20"></label>
-        <label>Длит., мин <input id="ed" type="number" min="1" value="60"></label><label class="full">Начало <input id="ea" type="datetime-local"></label>
-      </div>
-      <button class="btn sm" id="eadd">Включить удачу</button>
-      <div id="alist"></div>
-    </div>
-
-    <button class="btn sm" data-close>Закрыть</button>
-  </div>
+<!-- Админ панель (открывается только после ввода пароля) -->
+<div class="ov" id="aov"><div class="gui menu">
+<h2 style="margin-top:0">Админ панель</h2>
+<div class="sec"><h2>Выдача предметов <small>(только мне)</small></h2>
+<div class="row"><label>Количество <input id="acnt" type="number" min="1" max="1728" value="1"></label></div>
+<div class="grid" id="agrid"></div></div>
+<div class="sec"><h2>Удача</h2>
+<div class="evf">
+<label class="full">Предмет <select id="ei"></select></label><label>Шанс, % <input id="el" type="number" min="1" max="90" value="20"></label>
+<label>Длит., мин <input id="ed" type="number" min="1" value="60"></label>
+<label class="full">Начало <input id="ea" type="datetime-local"></label>
 </div>
+<button class="btn sm" id="eadd">Включить удачу</button>
+<div id="alist"></div></div>
+<button class="btn sm" data-close>Закрыть</button>
+</div></div>
 
-<!-- ============================================================
-     ОКНО ВЫБОРА ЦЕЛИ
-     ============================================================ -->
-<div class="ov" id="ov">
-  <div class="gui menu">
-    <h2 style="margin-top:0">Выбери желаемый предмет</h2>
-    <div class="grid" id="grid"></div>
-    <p class="hint">Esc — закрыть</p>
-  </div>
-</div>
-
+<div class="ov" id="ov"><div class="gui menu"><h2 style="margin-top:0">Выбери желаемый предмет</h2><div class="grid" id="grid"></div><p class="hint">Esc — закрыть</p></div></div>
 <div id="tip"></div>
-
-<!-- всплывающее «Достижение получено!» -->
-<div id="toast">
-  <img id="ti">
-  <div>
-    <b>Достижение получено!</b>
-    <span id="tn"></span>
-  </div>
-</div>
-
+<div id="toast"><img id="ti"><div><b>Достижение получено!</b><span id="tn"></span></div></div>
 
 <script>
-/* ============================================================
-   УТИЛИТЫ
-   ============================================================ */
-const $ = id => document.getElementById(id);
+const $=id=>document.getElementById(id);
+function R(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const pk=(a,r)=>a[Math.floor(r()*a.length)];
+function mk(seed,fn){const c=document.createElement('canvas');c.width=c.height=16;const x=c.getContext('2d'),r=R(seed);
+ fn((i,j,col)=>{x.fillStyle=col;x.fillRect(i,j,1,1)},r);return c.toDataURL()}
+const noise=pal=>(p,r)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++)p(i,j,pk(pal,r))};
+const ingot=q=>(p,r)=>{for(let y=5;y<=11;y++)for(let x=2;x<=13;x++)
+ p(x,y,y==5||y==11||x==2||x==13?q[0]:y==6?q[1]:y==10?q[3]:r()<.25?q[1]:q[2])};
+const gem=(q,sx)=>(p)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const dx=i-7.5,dy=j-7.5,m=Math.abs(dx)*sx+Math.abs(dy);
+ if(m<=7)p(i,j,m>6?q[0]:dx+dy<-2?q[1]:dx+dy>2?q[3]:q[2])}};
+const ITEMS=[
+{id:'dirt',n:'Земля',v:1,f:noise(['#866043','#79553a','#6b4a30','#94694a','#5a3e28'])},
+{id:'wood',n:'Дубовые доски',v:2,f:(p,r)=>{for(let y=0;y<16;y++)for(let x=0;x<16;x++)p(x,y,y%4==3||x==((y>>2)%2?3:11)?'#7d5f35':pk(['#b8945f','#ae8a56','#c29c66'],r))}},
+{id:'stone',n:'Камень',v:3,f:noise(['#7f7f7f','#8b8b8b','#737373','#959595'])},
+{id:'coal',n:'Уголь',v:5,f:(p,r)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const d=Math.hypot(i-7.5,j-7.5)+(r()-.5)*2.6;if(d<6)p(i,j,i+j<12&&r()<.4?'#4d4d4d':pk(['#1c1c1c','#2b2b2b','#111'],r))}}},
+{id:'iron',n:'Железный слиток',v:8,f:ingot(['#3a3a3a','#f0f0f0','#d4d4d4','#9a9a9a'])},
+{id:'gold',n:'Золотой слиток',v:13,f:ingot(['#6b4a00','#fff3a0','#fbd635','#c9981a'])},
+{id:'red',n:'Редстоун',v:18,f:(p,r)=>{for(let k=0;k<70;k++){const a=r()*6.28,d=r()*6.5;p(Math.round(7.5+Math.cos(a)*d),Math.round(7.5+Math.sin(a)*d),pk(['#ff2a2a','#cc0000','#8a0000','#ff6a5a'],r))}}},
+{id:'dia',n:'Алмаз',v:30,f:gem(['#0a4a55','#c8fff8','#3fe6d6','#1b9aa6'],1)},
+{id:'em',n:'Изумруд',v:45,f:gem(['#0a3a14','#b8ffc8','#2fd35a','#17893a'],1.4)},
+{id:'neth',n:'Незеритовый слиток',v:80,f:ingot(['#120c0c','#7a6868','#4a3f3f','#2f2626'])}];
+ITEMS.forEach((i,k)=>i.img=mk(k+7,i.f));
+const dirtTile=mk(3,ITEMS[0].f);
+document.body.style.backgroundImage=`linear-gradient(#000a,#000a),url(${dirtTile})`;
+document.body.style.backgroundSize='auto,96px';
+const by=id=>ITEMS.find(i=>i.id===id);
 
-// Детерминированный генератор случайных чисел (mulberry32).
-// Нужен, чтобы пиксельные текстуры предметов выглядели одинаково при каждом запуске.
-function R(a) {
-  return () => {
-    a |= 0;
-    a = a + 0x6D2B79F5 | 0;
-    let t = Math.imul(a ^ a >>> 15, 1 | a);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
-}
+let betK=-1;const SL=27,ST=64;
+const slotsOf=o=>Object.values(o).reduce((a,n)=>a+Math.ceil(n/ST),0);
+function fit(o){let f=0;const r={};for(const k in o){const n=Math.min(o[k],(SL-f)*ST);if(n>0){r[k]=n;f+=Math.ceil(n/ST)}}return r}
+const noRoom=t=>(inv[t]||0)%ST===0&&slotsOf(inv)>=SL;
+const room=id=>{const p=(inv[id]||0)%ST;return(SL-slotsOf(inv))*ST+(p?ST-p:0)};
+let got={},inv={dirt:5},bet=null,tgt=null,spinning=false,rot=0,hold=false,ac;
+let storeOk=true;
 
-// случайный элемент массива
-const pk = (a, r) => a[Math.floor(r() * a.length)];
-
-
-/* ============================================================
-   ГЕНЕРАЦИЯ ПИКСЕЛЬНЫХ ТЕКСТУР 16x16
-   ============================================================ */
-// mk(seed, fn) -> data-URL картинки 16x16.
-// fn получает функцию p(x, y, цвет) и генератор случайных чисел r.
-function mk(seed, fn) {
-  const c = document.createElement('canvas');
-  c.width = c.height = 16;
-  const x = c.getContext('2d'), r = R(seed);
-  fn((i, j, col) => { x.fillStyle = col; x.fillRect(i, j, 1, 1); }, r);
-  return c.toDataURL();
-}
-
-// заливка всей текстуры «шумом» из палитры (земля, камень)
-const noise = pal => (p, r) => {
-  for (let i = 0; i < 16; i++)
-    for (let j = 0; j < 16; j++)
-      p(i, j, pk(pal, r));
-};
-
-// слиток: q = [контур, блик, основной цвет, тень]
-const ingot = q => (p, r) => {
-  for (let y = 5; y <= 11; y++)
-    for (let x = 2; x <= 13; x++)
-      p(x, y,
-        y == 5 || y == 11 || x == 2 || x == 13 ? q[0] :
-        y == 6  ? q[1] :
-        y == 10 ? q[3] :
-        r() < .25 ? q[1] : q[2]);
-};
-
-// драгоценный камень (ромб): q = [контур, блик, основной, тень], sx — растяжение по X
-const gem = (q, sx) => (p) => {
-  for (let i = 0; i < 16; i++)
-    for (let j = 0; j < 16; j++) {
-      const dx = i - 7.5, dy = j - 7.5, m = Math.abs(dx) * sx + Math.abs(dy);
-      if (m <= 7)
-        p(i, j, m > 6 ? q[0] : dx + dy < -2 ? q[1] : dx + dy > 2 ? q[3] : q[2]);
-    }
-};
-
-
-/* ============================================================
-   ПРЕДМЕТЫ
-   id — ключ, n — название, v — «ценность» (влияет на шанс), f — функция текстуры
-   ============================================================ */
-const ITEMS = [
-  { id: 'dirt',  n: 'Земля',               v: 1,
-    f: noise(['#866043', '#79553a', '#6b4a30', '#94694a', '#5a3e28']) },
-
-  { id: 'wood',  n: 'Дубовые доски',       v: 2,
-    f: (p, r) => {
-      for (let y = 0; y < 16; y++)
-        for (let x = 0; x < 16; x++)
-          p(x, y,
-            y % 4 == 3 || x == ((y >> 2) % 2 ? 3 : 11)
-              ? '#7d5f35'
-              : pk(['#b8945f', '#ae8a56', '#c29c66'], r));
-    } },
-
-  { id: 'stone', n: 'Камень',              v: 3,
-    f: noise(['#7f7f7f', '#8b8b8b', '#737373', '#959595']) },
-
-  { id: 'coal',  n: 'Уголь',               v: 5,
-    f: (p, r) => {
-      for (let i = 0; i < 16; i++)
-        for (let j = 0; j < 16; j++) {
-          const d = Math.hypot(i - 7.5, j - 7.5) + (r() - .5) * 2.6;
-          if (d < 6)
-            p(i, j, i + j < 12 && r() < .4 ? '#4d4d4d' : pk(['#1c1c1c', '#2b2b2b', '#111'], r));
-        }
-    } },{ id: 'iron',  n: 'Железный слиток',     v: 8,
-    f: ingot(['#3a3a3a', '#f0f0f0', '#d4d4d4', '#9a9a9a']) },
-
-  { id: 'gold',  n: 'Золотой слиток',      v: 13,
-    f: ingot(['#6b4a00', '#fff3a0', '#fbd635', '#c9981a']) },
-
-  { id: 'red',   n: 'Редстоун',            v: 18,
-    f: (p, r) => {
-      for (let k = 0; k < 70; k++) {
-        const a = r() * 6.28, d = r() * 6.5;
-        p(Math.round(7.5 + Math.cos(a) * d),
-          Math.round(7.5 + Math.sin(a) * d),
-          pk(['#ff2a2a', '#cc0000', '#8a0000', '#ff6a5a'], r));
-      }
-    } },
-
-  { id: 'dia',   n: 'Алмаз',               v: 30,
-    f: gem(['#0a4a55', '#c8fff8', '#3fe6d6', '#1b9aa6'], 1) },
-
-  { id: 'em',    n: 'Изумруд',             v: 45,
-    f: gem(['#0a3a14', '#b8ffc8', '#2fd35a', '#17893a'], 1.4) },
-
-  { id: 'neth',  n: 'Незеритовый слиток',  v: 80,
-    f: ingot(['#120c0c', '#7a6868', '#4a3f3f', '#2f2626']) }
-];
-
-// рисуем иконку каждого предмета
-ITEMS.forEach((i, k) => i.img = mk(k + 7, i.f));
-
-// фон страницы — тайлы земли
-const dirtTile = mk(3, ITEMS[0].f);
-document.body.style.backgroundImage = `linear-gradient(#000a,#000a),url(${dirtTile})`;
-document.body.style.backgroundSize = 'auto,96px';
-
-// поиск предмета по id
-const by = id => ITEMS.find(i => i.id === id);
-
-
-/* ============================================================
-   СОСТОЯНИЕ ИГРЫ И ИНВЕНТАРЬ
-   ============================================================ */
-let betK = -1;        // индекс выбранной стопки в инвентаре
-const SL = 27;        // количество клеток инвентаря
-const ST = 64;        // размер стопки
-
-// сколько клеток занимает набор предметов o
-const slotsOf = o => Object.values(o).reduce((a, n) => a + Math.ceil(n / ST), 0);
-
-// обрезает набор предметов так, чтобы он влез в 27 клеток
-function fit(o) {
-  let f = 0;
-  const r = {};
-  for (const k in o) {
-    const n = Math.min(o[k], (SL - f) * ST);
-    if (n > 0) {
-      r[k] = n;
-      f += Math.ceil(n / ST);
-    }
-  }
-  return r;
-}
-
-// true, если для предмета t нет места в инвентаре
-const noRoom = t => (inv[t] || 0) % ST === 0 && slotsOf(inv) >= SL;
-
-// сколько штук предмета id ещё поместится
-const room = id => {
-  const p = (inv[id] || 0) % ST;
-  return (SL - slotsOf(inv)) * ST + (p ? ST - p : 0);
-};
-
-let got = {},          // какие предметы уже получал (для достижений)
-    inv = { dirt: 5 }, // инвентарь
-    bet = null,        // предмет в слоте ставки
-    tgt = null,        // желаемый предмет
-    spinning = false,  // идёт ли вращение
-    rot = 0,           // текущий угол колеса
-    hold = false,      // не перезаписывать информационное сообщение
-    ac;                // AudioContext
-
-let storeOk = true;    // доступен ли localStorage
-
-
-/* ============================================================
-   СОХРАНЕНИЕ / ЗАГРУЗКА (localStorage)
-   ============================================================ */
-function load() {
-  try {
-    const s = JSON.parse(localStorage.getItem('mcw2') || 'null');
-    if (!s) return;
-
-    if (s.inv) {
-      const o = {};
-      for (const k in s.inv) {
-        const n = Math.floor(+s.inv[k]);
-        if (by(k) && n > 0) o[k] = n;
-      }
-      if (Object.keys(o).length) inv = fit(o);
-    }
-
-    if (by(s.bet) && inv[s.bet] > 0) bet = s.bet;
-    if (by(s.tgt) && s.tgt !== bet) tgt = s.tgt;
-    if (s.got) for (const k in s.got) if (by(k)) got[k] = 1;
-  } catch (e) {
-    storeOk = false;
-  }
-}
-
-function save(d) {
-  try {
-    localStorage.setItem('mcw2', JSON.stringify({ inv: d || inv, bet, tgt, got }));
-  } catch (e) {
-    storeOk = false;
-  }
-
-  const s = $('sv');
-  if (s) s.textContent = storeOk
-    ? 'Прогресс сохраняется автоматически'
-    : 'Сохранение недоступно в этом браузере';
-
-  // облачное сохранение (работает только внутри артефакта Claude)
-  if (typeof dbSave === 'function') dbSave();
-}
-
+function load(){try{const s=JSON.parse(localStorage.getItem('mcw2')||'null');if(!s)return;
+ if(s.inv){const o={};for(const k in s.inv){const n=Math.floor(+s.inv[k]);if(by(k)&&n>0)o[k]=n}if(Object.keys(o).length)inv=fit(o)}
+ if(by(s.bet)&&inv[s.bet]>0)bet=s.bet;if(by(s.tgt)&&s.tgt!==bet)tgt=s.tgt;
+ if(s.got)for(const k in s.got)if(by(k))got[k]=1}catch(e){storeOk=false}}
+function save(d){try{localStorage.setItem('mcw2',JSON.stringify({inv:d||inv,bet,tgt,got}))}catch(e){storeOk=false}const s=$('sv');if(s)s.textContent=storeOk?'Прогресс сохраняется автоматически':'Сохранение недоступно в этом браузере';
+ if(typeof dbSave==='function')dbSave()}
 load();
-if (!Object.values(inv).some(v => v > 0)) inv = { dirt: 5 };
-for (const k in inv) got[k] = 1;
-
-
-/* ============================================================
-   ЗВУКИ (Web Audio API)f — частота, d — длительность, t — тип волны, f2 — конечная частота
-   ============================================================ */
-function snd(f, d, t, f2) {
-  try {
-    ac = ac || new AudioContext();
-    const o = ac.createOscillator(), g = ac.createGain();
-    o.type = t;
-    o.frequency.value = f;
-    if (f2) o.frequency.linearRampToValueAtTime(f2, ac.currentTime + d);
-    g.gain.setValueAtTime(.12, ac.currentTime);
-    g.gain.linearRampToValueAtTime(0, ac.currentTime + d);
-    o.connect(g);
-    g.connect(ac.destination);
-    o.start();
-    o.stop(ac.currentTime + d);
-  } catch (e) {}
-}
-
-
-/* ============================================================
-   ШАНС УСПЕХА
-   Шанс = ценность ставки / ценность цели * 45 + бонус удачи.
-   Ограничен диапазоном 3–95%.
-   ============================================================ */
-function chance() {
-  return bet && tgt
-    ? Math.max(3, Math.min(95, Math.round(by(bet).v / by(tgt).v * 45) + luck()))
-    : 0;
-}
-
-
-/* ============================================================
-   ОТРИСОВКА ПРЕДМЕТА В СЛОТЕ
-   ============================================================ */
-function slot(el, id, n) {
-  el.innerHTML = id
-    ? `<img class="ic" src="${by(id).img}" alt="">` + (n > 1 ? `<span class="n">${n}</span>` : '')
-    : '<span class="q">?</span>';
-
-  if (id) {
-    el.dataset.tip = by(id).n;
-    el.dataset.sub = 'Ценность: ' + by(id).v;
-  } else {
-    delete el.dataset.tip;
-  }
-}
-
-
-/* ============================================================
-   ОТРИСОВКА КОЛЕСА (пиксельный canvas 96x96)
-   c — шанс успеха в процентах: зелёный сектор = успех, красный = провал
-   ============================================================ */
-function paint(c) {
-  const cv = $('wc'),
-        x = cv.getContext('2d'),
-        N = 96,
-        d = x.createImageData(N, N),
-        a = c * 3.6;   // угол зелёного сектора в градусах
-
-  for (let j = 0; j < N; j++)
-    for (let i = 0; i < N; i++) {
-      const dx = i - N / 2 + .5,
-            dy = j - N / 2 + .5,
-            r = Math.hypot(dx, dy);
-
-      if (r > N / 2) continue; // за пределами круга
-
-      // лёгкий «шум» яркости для пиксельной текстуры
-      const h = Math.abs(Math.sin(i * 12.9898 + j * 78.233) * 43758.5453) % 1,
-            v = .82 + .36 * h,
-            k = (j * N + i) * 4;
-
-      const ang = (Math.atan2(dx, -dy) * 57.2958 + 360) % 360;
-      let col;
-
-      if (r > 46.3 || (r <= 45 && r > 43.6) || (r <= 10.5 && r > 8.8))
-        col = [25, 25, 25];                              // тёмные обводки
-      else if (r > 45)
-        col = [125, 125, 125].map(z => z * v);           // внешний каменный ободок
-      else if (r < 8.8)
-        col = [85, 85, 85].map(z => z * v);              // центральная втулка
-      else if (!c)
-        col = [110, 110, 110].map(z => z * v);           // колесо без выбора — серое
-      else if (Math.min(Math.abs(ang - a), ang, 360 - ang) * Math.PI / 180 * r < 1.3)
-        col = [25, 25, 25];                              // разделительные линии секторов
-      else
-        col = (ang < a ? [62, 165, 62] : [178, 46, 38]).map(z => z * v); // зелёный / красный
-
-      d.data.set([col[0], col[1], col[2], 255], k);
-    }
-
-  x.putImageData(d, 0, 0);
-}
-
-// подписи процентов на секторах колеса
-function labels(c) {
-  const w = $('wheel');
-  w.querySelectorAll('.lbl').forEach(e => e.remove());
-  if (!c) return;
-
-  const a = c * 3.6, W = w.clientWidth;
-
-  [[a / 2, c], [a + (360 - a) / 2, 100 - c]].forEach(([g, t]) => {
-    const l = document.createElement('div');
-    l.className = 'lbl';
-    l.textContent = t + '%';
-    l.style.transform =
-      `rotate(${g - 90}deg) translateX(${W * .27}px) rotate(${90 - g}deg) translate(-50%,-50%)`;
-    w.appendChild(l);
-  });
-}
-
-// вывод сообщения в инфо-строку (cl: 'win' | 'lose' | '')
-function setInfo(t, cl) {
-  const e = $('info');
-  e.textContent = t;
-  e.className = 'info ' + (cl || '');
-}
-
-
-/* ============================================================ГЛАВНАЯ ПЕРЕРИСОВКА ИНТЕРФЕЙСА
-   ============================================================ */
-function render() {
-  if (!(inv[bet] > 0)) bet = null;
-
-  slot($('bet'), bet, bet ? 1 : 0);
-  slot($('tgt'), tgt, 0);
-  $('bet').disabled = $('tgt').disabled = spinning;
-
-  // --- инвентарь: разбиваем предметы на стопки по 64 ---
-  const box = $('inv');
-  box.innerHTML = '';
-
-  const st = [];
-  ITEMS.filter(i => inv[i.id] > 0).forEach(i => {
-    let n = inv[i.id];
-    while (n > 0) {
-      st.push([i, Math.min(n, ST)]);
-      n -= ST;
-    }
-  });
-
-  // какая стопка выделена как ставка
-  let sk = st.findIndex(e => e[0].id === bet);
-  if (bet && st[betK] && st[betK][0].id === bet) sk = betK;
-
-  for (let k = 0; k < SL; k++) {
-    const e = st[k], i = e && e[0];
-    let b;
-
-    if (i) {
-      b = document.createElement('button');
-      b.className = 'slot' + (k === sk ? ' sel' : '');
-      slot(b, i.id, e[1]);
-      b.disabled = spinning;
-      b.onclick = () => {
-        snd(500, .05, 'square');
-        if (k === sk) { bet = null; betK = -1; }       // повторный клик — снять ставку
-        else { bet = i.id; betK = k; }
-        if (bet === tgt) tgt = null;                   // ставка и цель не могут совпадать
-        hold = false;
-        render();
-      };
-    } else {
-      b = document.createElement('div');
-      b.className = 'slot';                            // пустая клетка
-    }
-    box.appendChild(b);
-  }
-
-  // --- колесо и кнопка ---
-  const c = chance();
-  paint(c);
-  labels(c);
-
-  const g = $('go');
-  const full = !!tgt && noRoom(tgt);
-  g.disabled = spinning || !bet || !tgt || full;
-  g.classList.toggle('spin', spinning);
-  g.textContent = spinning ? 'Крутится...' : 'Крутить!';
-
-  // --- подсказка в инфо-строке ---
-  if (!spinning && !hold)
-    setInfo(
-      full
-        ? 'Инвентарь полон (27 клеток). Освободи место или выбери другую цель.'
-        : bet && tgt
-          ? `${by(bet).n} → ${by(tgt).n}. Шанс успеха: ${c}%`
-          : 'Положи предмет в левый слот и выбери цель справа.'
-    );
-
-  if (!spinning) save();
-}
-
-
-/* ============================================================
-   ОБРАБОТЧИКИ: СЛОТЫ, ВЫБОР ЦЕЛИ, ПОДСКАЗКИ
-   ============================================================ */
-// клик по слоту ставки — вернуть предмет в инвентарь
-$('bet').onclick = () => {
-  if (bet) { bet = null; hold = false; render(); }
-};
-
-// клик по слоту цели — открыть окно выбора
-$('tgt').onclick = () => {
-  if (spinning) return;
-  snd(500, .05, 'square');
-
-  const g = $('grid');
-  g.innerHTML = '';
-
-  ITEMS.forEach(i => {
-    const b = document.createElement('button');
-    b.className = 'slot' + (i.id === bet ? ' dim' : '');
-    slot(b, i.id, 0);
-    b.disabled = i.id === bet;     // нельзя выбрать цель = ставке
-    b.onclick = () => {
-      tgt = i.id;
-      hold = false;
-      $('ov').classList.remove('on');
-      $('tip').style.display = 'none';
-      render();
-    };
-    g.appendChild(b);
-  });
-
-  $('ov').classList.add('on');
-};
-
-// закрытие окна выбора: клик по фону или Esc
-$('ov').onclick = e => {
-  if (e.target === $('ov')) $('ov').classList.remove('on');
-};
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') $('ov').classList.remove('on');
-});
-
-// всплывающая подсказка у курсора
-document.addEventListener('mousemove', e => {
-  const t = e.target.closest && e.target.closest('[data-tip]'),
-        tp = $('tip');
-
-  if (!t) { tp.style.display = 'none'; return; }
-
-  tp.innerHTML = t.dataset.tip + '<small>' + t.dataset.sub + '</small>';
-  tp.style.display = 'block';
-  tp.style.left = Math.min(e.clientX + 14, innerWidth - tp.offsetWidth - 6) + 'px';
-  tp.style.top = (e.clientY - 8) + 'px';
-});
-
-
-/* ============================================================
-   ВРАЩЕНИЕ КОЛЕСА
-   ============================================================ */
-$('go').onclick = () => {
-  if (spinning || !bet || !tgt || !(inv[bet] > 0) || noRoom(tgt)) return;
-
-  const c = chance(),
-        a = c * 3.6,win = Math.random() * 100 < c,                 // исход определяется заранее
-        pad = Math.min(6, (win ? a : 360 - a) / 4);    // отступ от границы сектора
-
-  // выбираем угол остановки внутри нужного сектора
-  const lo = win ? pad : a + pad,
-        hi = win ? a - pad : 360 - pad,
-        ang = lo + Math.random() * (hi - lo);
-
-  // 6 полных оборотов + остановка на нужном угле
-  rot = Math.ceil(rot / 360) * 360 + 360 * 6 + (360 - ang);
-
-  const b = bet, t = tgt;
-  spinning = true;
-  hold = true;
-  render();
-
-  // результат сохраняем сразу — чтобы перезагрузка страницы не помогла обмануть колесо
-  {
-    const after = { ...inv };
-    if (win) {
-      after[t] = (after[t] || 0) + 1;
-    } else {
-      after[b]--;
-      if (after[b] <= 0) delete after[b];
-    }
-    save(Object.values(after).some(v => v > 0) ? after : { dirt: 1 });
-  }
-
-  setInfo('Колесо вращается...');
-  snd(300, .2, 'square', 600);
-  $('wheel').style.transform = `rotate(${rot}deg)`;
-
-  // применяем результат после окончания анимации
-  setTimeout(() => {
-    spinning = false;
-    let m, cl;
-
-    if (win) {
-      inv[t] = (inv[t] || 0) + 1;
-      m = 'Успех! Получено: ' + by(t).n;
-      cl = 'win';
-      snd(660, .12, 'square');
-      setTimeout(() => snd(990, .25, 'square'), 120);
-
-      // достижение за первый такой предмет
-      if (!got[t]) {
-        got[t] = 1;
-        $('ti').src = by(t).img;
-        $('tn').textContent = by(t).n;
-        $('toast').classList.add('on');
-        setTimeout(() => $('toast').classList.remove('on'), 3200);
-      }
-    } else {
-      inv[b]--;
-      if (inv[b] <= 0) delete inv[b];
-      m = 'Провал... Потерян предмет: ' + by(b).n;
-      cl = 'lose';
-      snd(220, .4, 'sawtooth', 90);
-
-      // тряска окна
-      const g = $('gui');
-      g.classList.remove('shake');
-      void g.offsetWidth;
-      g.classList.add('shake');
-    }
-
-    // если инвентарь опустел — выдаём 1 землю
-    if (!Object.values(inv).some(v => v > 0)) {
-      inv = { dirt: 1 };
-      m += ' Инвентарь пуст — выдана 1 земля.';
-    }
-
-    render();
-    setInfo(m, cl);
-  }, 4700);
-};
-
-addEventListener('resize', () => labels(chance()));
-
-
-/* ============================================================
-   СБРОС ПРОГРЕССА (двойное нажатие для подтверждения)
-   ============================================================ */
-let rc = 0;
-$('rs').onclick = () => {
-  if (spinning) return;
-  const b = $('rs');
-
-  if (!rc) {
-    b.textContent = 'Нажми ещё раз для сброса';
-    rc = setTimeout(() => { rc = 0; b.textContent = 'Сбросить прогресс'; }, 3000);
-    return;
-  }
-
-  clearTimeout(rc);
-  rc = 0;
-  b.textContent = 'Сбросить прогресс';
-  inv = { dirt: 5 };
-  got = { dirt: 1 };
-  bet = tgt = null;
-  hold = false;
-  render();
-};
-
-
-/* ============================================================
-   АДМИН-ПАНЕЛЬ И СОБЫТИЯ «УДАЧИ»
-   (облачная часть работает только внутри артефакта Claude,
-    вне его события хранятся в localStorage)
-   ============================================================ */
-let EV = [],        // список событий удачи
-    evCol = null,   // коллекция событий в БД артефакта
-    udoc = null,    // документ сохранения текущего пользователя
-    dt = 0,         // таймер отложенного сохранения в БД
-    ll = 0;         // последнее известное значение удачи
-
-// форматирование даты
-const fmt = t => new Date(t).toLocaleString('ru-RU', {
-  day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
-});
-
-// событие сейчас активно?
-const act = e => e.fx !== 'none' && Date.now() >= e.at && Date.now() < e.at + e.dur * 6e4;
-
-// суммарный бонус удачи для текущей цели
-function luck() {
-  return EV
-    .filter(e => act(e) && (!e.it || e.it === tgt))
-    .reduce((a, e) => a + (e.lk || 20), 0);
-}
-
-// список событий в админ-панели
-function evList() {
-  const box = $('alist'), n = Date.now();
-  box.innerHTML = '';
-
-  const L = [...EV].sort((a, b) => a.at - b.at);
-  if (!L.length) box.textContent = 'Событий нет.';
-
-  L.forEach(e => {const d = document.createElement('div'),
-          on = act(e),
-          done = n >= e.at + e.dur * 6e4;
-
-    d.className = 'ev' + (on ? ' on' : '') + (done ? ' done' : '');
-    d.innerHTML = '<b></b><small></small>';
-
-    d.children[0].textContent =
-      (e.it && by(e.it) ? by(e.it).n : 'Любая цель') + ': +' + (e.lk || 20) + '%';
-
-    d.children[1].textContent =
-      (on ? 'Идёт сейчас, до ' : done ? 'Закончилось: ' : 'Начало: ') +
-      fmt(on ? e.at + e.dur * 6e4 : done ? e.at + e.dur * 6e4 : e.at) +
-      (!on && !done ? ', длит. ' + e.dur + ' мин' : '');
-
-    const b = document.createElement('button');
-    b.textContent = 'Удалить';
-    b.onclick = () => evDel(e.id);
-    d.appendChild(b);
-
-    box.appendChild(d);
-  });
-}
-
-// обновить список и перерисовать колесо, если удача изменилась
-function evRender() {
-  evList();
-  const l = luck();
-  if (l !== ll) {
-    ll = l;
-    if (!spinning && !hold) render();
-  }
-}
-
-// локальное сохранение событий
-function evLs() {
-  try { localStorage.setItem('mcw_ev', JSON.stringify(EV)); } catch (e) {}
-}
-
-// добавить событие
-function evPut(e) {
-  if (evCol) evCol.doc(e.id).set(e).catch(() => {});
-  else { EV.push(e); evLs(); }
-  evRender();
-}
-
-// удалить событие
-function evDel(id) {
-  if (evCol) evCol.doc(id).delete().catch(() => {});
-  else { EV = EV.filter(e => e.id !== id); evLs(); }
-  evRender();
-}
-
-// кнопки «Закрыть» в оверлеях
-document.querySelectorAll('[data-close]').forEach(b =>
-  b.onclick = () => b.closest('.ov').classList.remove('on'));
-
-$('aov').onclick = e => {
-  if (e.target === e.currentTarget) e.currentTarget.classList.remove('on');
-};
-
-// открыть админ-панель
-$('adm').onclick = () => {
-  if (!$('ea').value)
-    $('ea').value = new Date(Date.now() - new Date().getTimezoneOffset() * 6e4)
-      .toISOString().slice(0, 16);
-  evRender();
-  $('aov').classList.add('on');
-};
-
-// создать событие «удача»
-$('eadd').onclick = () => {
-  const a = new Date($('ea').value).getTime();
-  if (isNaN(a) || !$('ei').value) return;
-
-  evPut({
-    id: 'e' + Date.now(),
-    at: a,                                                         // время начала
-    fx: 'luck',
-    lk: Math.max(1, Math.min(90, Math.floor(+$('el').value || 20))), // бонус к шансу, %
-    it: $('ei').value,                                             // для какой цели
-    dur: Math.max(1, Math.floor(+$('ed').value || 60))             // длительность, мин
-  });
-};
-
-// список предметов в выпадающем меню админки
-ITEMS.forEach(i => {
-  const o = document.createElement('option');
-  o.value = i.id;
-  o.textContent = i.n;
-  $('ei').appendChild(o);
-});
-
-// сетка выдачи предметов администратору
-ITEMS.forEach(i => {
-  const b = document.createElement('button');
-  b.className = 'slot';
-  slot(b, i.id, 0);
-  b.onclick = () => {
-    const n = Math.min(Math.max(1, Math.floor(+$('acnt').value || 1)), room(i.id));
-    if (n < 1) { snd(220, .2, 'sawtooth'); return; }
-    inv[i.id] = (inv[i.id] || 0) + n;
-    got[i.id] = 1;
-    snd(660, .08, 'square');
-    render();
-  };
-  $('agrid').appendChild(b);
-});
-
-
-/* ============================================================
-   ОБЛАЧНОЕ СОХРАНЕНИЕ (работает только в артефакте Claude)
-   ============================================================ */
-function dbSave(now) {
-  if (!udoc) return Promise.resolve();
-  clearTimeout(dt);
-
-  const w = () => udoc
-    .set({ inv, bet: bet || '', tgt: tgt || '', got })
-    .catch(() => {});
-
-  if (now) return w();
-  dt = setTimeout(w, 2000);   // откладываем запись на 2 секунды
-}
-
-// вне Claude читаем события из localStorage
-if (typeof claude === 'undefined' || !claude)
-  try { EV = JSON.parse(localStorage.getItem('mcw_ev') || '[]'); } catch (e) {}
-
-// подключение к API артефакта: пользователь, БД, синхронизация
-(async () => {
-  // кнопка админ-панели — только владельцу
-  try {
-    const u = await claude.use('user');
-    if (u && await u.isOwner()) $('adm').hidden = false;
-  } catch (e) {}
-
-  // общая коллекция событий удачи
-  try {const db = await claude.use('db');
-    if (db) {
-      evCol = db.collection('events');
-      evCol.onSnapshot(s => {
-        EV = s.docs.map(d => d.data()).filter(e => e && e.id);
-        evRender();
-      });
-    }
-  } catch (e) {}
-
-  // личное сохранение игрока в БД
-  try {
-    const u = await claude.use('user'),
-          db = await claude.use('db');
-    if (!u || !db) return;
-
-    udoc = db.collection('data/users/' + await u.id()).doc('save');
-    const sn = await udoc.get();
-
-    if (sn.exists && !spinning) {
-      const d = sn.data() || {}, o = {};
-
-      for (const k in d.inv || {}) {
-        const n = Math.floor(+d.inv[k]);
-        if (by(k) && n > 0) o[k] = n;
-      }
-
-      if (Object.keys(o).length) {
-        inv = fit(o);
-        for (const k in d.got || {}) if (by(k)) got[k] = 1;
-        for (const k in inv) got[k] = 1;
-        bet = by(d.bet) && inv[d.bet] > 0 ? d.bet : null;
-        tgt = by(d.tgt) && d.tgt !== bet ? d.tgt : null;
-        render();
-      }
-    } else {
-      dbSave(true);
-    }
-  } catch (e) {}
+if(!Object.values(inv).some(v=>v>0))inv={dirt:5};
+for(const k in inv)got[k]=1;
+
+function snd(f,d,t,f2){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;
+ if(f2)o.frequency.linearRampToValueAtTime(f2,ac.currentTime+d);g.gain.setValueAtTime(.12,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+d);
+ o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+function chance(){return bet&&tgt?Math.max(3,Math.min(95,Math.round(by(bet).v/by(tgt).v*45)+luck())):0}
+function slot(el,id,n){el.innerHTML=id?`<img class="ic" src="${by(id).img}" alt="">`+(n>1?`<span class="n">${n}</span>`:''):'<span class="q">?</span>';
+ if(id){el.dataset.tip=by(id).n;el.dataset.sub='Ценность: '+by(id).v}else{delete el.dataset.tip}}
+function paint(c){const cv=$('wc'),x=cv.getContext('2d'),N=96,d=x.createImageData(N,N),a=c*3.6;
+ for(let j=0;j<N;j++)for(let i=0;i<N;i++){const dx=i-N/2+.5,dy=j-N/2+.5,r=Math.hypot(dx,dy);if(r>N/2)continue;
+  const h=Math.abs(Math.sin(i*12.9898+j*78.233)*43758.5453)%1,v=.82+.36*h,k=(j*N+i)*4;
+  const ang=(Math.atan2(dx,-dy)*57.2958+360)%360;let col;
+  if(r>46.3||(r<=45&&r>43.6)||(r<=10.5&&r>8.8))col=[25,25,25];
+  else if(r>45)col=[125,125,125].map(z=>z*v);
+  else if(r<8.8)col=[85,85,85].map(z=>z*v);
+  else if(!c)col=[110,110,110].map(z=>z*v);
+  else if(Math.min(Math.abs(ang-a),ang,360-ang)*Math.PI/180*r<1.3)col=[25,25,25];
+  else col=(ang<a?[62,165,62]:[178,46,38]).map(z=>z*v);
+  d.data.set([col[0],col[1],col[2],255],k)}
+ x.putImageData(d,0,0)}
+function labels(c){const w=$('wheel');w.querySelectorAll('.lbl').forEach(e=>e.remove());if(!c)return;
+ const a=c*3.6,W=w.clientWidth;
+ [[a/2,c],[a+(360-a)/2,100-c]].forEach(([g,t])=>{const l=document.createElement('div');l.className='lbl';l.textContent=t+'%';
+  l.style.transform=`rotate(${g-90}deg) translateX(${W*.27}px) rotate(${90-g}deg) translate(-50%,-50%)`;w.appendChild(l)})}
+function setInfo(t,cl){const e=$('info');e.textContent=t;e.className='info '+(cl||'')}
+
+function render(){
+ if(!(inv[bet]>0))bet=null;
+ slot($('bet'),bet,bet?1:0);slot($('tgt'),tgt,0);
+ $('bet').disabled=$('tgt').disabled=spinning;
+ const box=$('inv');box.innerHTML='';
+ const st=[];ITEMS.filter(i=>inv[i.id]>0).forEach(i=>{let n=inv[i.id];while(n>0){st.push([i,Math.min(n,ST)]);n-=ST}});
+ let sk=st.findIndex(e=>e[0].id===bet);if(bet&&st[betK]&&st[betK][0].id===bet)sk=betK;
+ for(let k=0;k<SL;k++){const e=st[k],i=e&&e[0];let b;
+  if(i){b=document.createElement('button');b.className='slot'+(k===sk?' sel':'');slot(b,i.id,e[1]);b.disabled=spinning;
+   b.onclick=()=>{snd(500,.05,'square');if(k===sk){bet=null;betK=-1}else{bet=i.id;betK=k}if(bet===tgt)tgt=null;hold=false;render()}}
+  else{b=document.createElement('div');b.className='slot'}
+  box.appendChild(b)}
+ const c=chance();paint(c);labels(c);
+ const g=$('go'),full=!!tgt&&noRoom(tgt);
+ g.disabled=spinning||!bet||!tgt||full;g.classList.toggle('spin',spinning);g.textContent=spinning?'Крутится...':'Крутить!';
+ if(!spinning&&!hold)setInfo(full?'Инвентарь полон (27 клеток). Освободи место или выбери другую цель.':bet&&tgt?`${by(bet).n} → ${by(tgt).n}. Шанс успеха: ${c}%`:'Положи предмет в левый слот и выбери цель справа.');
+ if(!spinning)save()}
+
+$('bet').onclick=()=>{if(bet){bet=null;hold=false;render()}};
+$('tgt').onclick=()=>{if(spinning)return;snd(500,.05,'square');
+ const g=$('grid');g.innerHTML='';
+ ITEMS.forEach(i=>{const b=document.createElement('button');b.className='slot'+(i.id===bet?' dim':'');slot(b,i.id,0);b.disabled=i.id===bet;
+  b.onclick=()=>{tgt=i.id;hold=false;$('ov').classList.remove('on');$('tip').style.display='none';render()};g.appendChild(b)});
+ $('ov').classList.add('on')};
+$('ov').onclick=e=>{if(e.target===$('ov'))$('ov').classList.remove('on')};document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'))});
+document.addEventListener('mousemove',e=>{const t=e.target.closest&&e.target.closest('[data-tip]'),tp=$('tip');
+ if(!t){tp.style.display='none';return}
+ tp.innerHTML=t.dataset.tip+'<small>'+t.dataset.sub+'</small>';tp.style.display='block';
+ tp.style.left=Math.min(e.clientX+14,innerWidth-tp.offsetWidth-6)+'px';tp.style.top=(e.clientY-8)+'px'});
+
+$('go').onclick=()=>{
+ if(spinning||!bet||!tgt||!(inv[bet]>0)||noRoom(tgt))return;
+ const c=chance(),a=c*3.6,win=Math.random()*100<c,pad=Math.min(6,(win?a:360-a)/4);
+ const lo=win?pad:a+pad,hi=win?a-pad:360-pad,ang=lo+Math.random()*(hi-lo);
+ rot=Math.ceil(rot/360)*360+360*6+(360-ang);
+ const b=bet,t=tgt;spinning=true;hold=true;render();
+ {const after={...inv};if(win){after[t]=(after[t]||0)+1}else{after[b]--;if(after[b]<=0)delete after[b]}save(Object.values(after).some(v=>v>0)?after:{dirt:1})}
+ setInfo('Колесо вращается...');snd(300,.2,'square',600);
+ $('wheel').style.transform=`rotate(${rot}deg)`;
+ setTimeout(()=>{spinning=false;let m,cl;
+  if(win){inv[t]=(inv[t]||0)+1;m='Успех! Получено: '+by(t).n;cl='win';snd(660,.12,'square');setTimeout(()=>snd(990,.25,'square'),120);
+   if(!got[t]){got[t]=1;$('ti').src=by(t).img;$('tn').textContent=by(t).n;$('toast').classList.add('on');setTimeout(()=>$('toast').classList.remove('on'),3200)}}
+  else{inv[b]--;if(inv[b]<=0)delete inv[b];m='Провал... Потерян предмет: '+by(b).n;cl='lose';snd(220,.4,'sawtooth',90);
+   const g=$('gui');g.classList.remove('shake');void g.offsetWidth;g.classList.add('shake')}
+  if(!Object.values(inv).some(v=>v>0)){inv={dirt:1};m+=' Инвентарь пуст — выдана 1 земля.'}
+  render();setInfo(m,cl)},4700)};
+addEventListener('resize',()=>labels(chance()));
+
+let rc=0;$('rs').onclick=()=>{if(spinning)return;const b=$('rs');
+ if(!rc){b.textContent='Нажми ещё раз для сброса';rc=setTimeout(()=>{rc=0;b.textContent='Сбросить прогресс'},3000);return}
+ clearTimeout(rc);rc=0;b.textContent='Сбросить прогресс';inv={dirt:5};got={dirt:1};bet=tgt=null;hold=false;render()};
+
+/* ===== Вход в админ панель по паролю ===== */
+// Хранится только хэш SHA-256 от строки "mcw-admin:" + пароль
+const PW_HASH='2009e6378ae8b01d88b191ab684470642246544f2de844fff128fe69c9a7ef45';
+let unlocked=false,bad=0; // unlocked сбрасывается при перезагрузке страницы
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+ return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function lockLeft(){try{return Math.max(0,(+localStorage.getItem('mcw_lock')||0)-Date.now())}catch(e){return 0}}
+function openAdm(){
+ if(!$('ea').value)$('ea').value=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
+ evRender();$('aov').classList.add('on')}
+function openPw(){$('pw').value='';$('pm').textContent='';$('pov').classList.add('on');setTimeout(()=>$('pw').focus(),50)}
+async function tryPw(){
+ const w=lockLeft();if(w>0){$('pm').textContent='Слишком много попыток. Подожди '+Math.ceil(w/1000)+' с.';return}
+ if(!window.crypto||!crypto.subtle){$('pm').textContent='Вход работает только на https-странице.';return}
+ const ok=(await sha('mcw-admin:'+$('pw').value.trim()))===PW_HASH;
+ if(ok){unlocked=true;bad=0;$('pov').classList.remove('on');snd(660,.1,'square');openAdm();return}
+ bad++;snd(220,.3,'sawtooth');
+ if(bad>=5){bad=0;try{localStorage.setItem('mcw_lock',String(Date.now()+30000))}catch(e){}$('pm').textContent='Слишком много попыток. Подожди 30 с.'}
+ else $('pm').textContent='Неверный пароль. Осталось попыток: '+(5-bad);
+ $('pw').value=''}
+$('adm').onclick=()=>{if(unlocked)openAdm();else openPw()};
+$('pok').onclick=tryPw;
+$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryPw()});
+
+/* ===== События «удачи» и выдача предметов (только после входа) ===== */
+let EV=[],evCol=null,udoc=null,dt=0,ll=0;const fmt=t=>new Date(t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+const act=e=>e.fx!=='none'&&Date.now()>=e.at&&Date.now()<e.at+e.dur*6e4;
+function luck(){return EV.filter(e=>act(e)&&(!e.it||e.it===tgt)).reduce((a,e)=>a+(e.lk||20),0)}
+function evList(){const box=$('alist'),n=Date.now();box.innerHTML='';
+ const L=[...EV].sort((a,b)=>a.at-b.at);if(!L.length)box.textContent='Событий нет.';
+ L.forEach(e=>{const d=document.createElement('div'),on=act(e),done=n>=e.at+e.dur*6e4;
+  d.className='ev'+(on?' on':'')+(done?' done':'');d.innerHTML='<b></b><small></small>';
+  d.children[0].textContent=(e.it&&by(e.it)?by(e.it).n:'Любая цель')+': +'+(e.lk||20)+'%';
+  d.children[1].textContent=(on?'Идёт сейчас, до ':done?'Закончилось: ':'Начало: ')+fmt(on||done?e.at+e.dur*6e4:e.at)+(!on&&!done?', длит. '+e.dur+' мин':'');
+  const b=document.createElement('button');b.textContent='Удалить';b.onclick=()=>evDel(e.id);d.appendChild(b);box.appendChild(d)})}
+function evRender(){evList();const l=luck();if(l!==ll){ll=l;if(!spinning&&!hold)render()}}
+function evLs(){try{localStorage.setItem('mcw_ev',JSON.stringify(EV))}catch(e){}}
+function evPut(e){if(!unlocked)return;if(evCol)evCol.doc(e.id).set(e).catch(()=>{});else{EV.push(e);evLs()}evRender()}
+function evDel(id){if(!unlocked)return;if(evCol)evCol.doc(id).delete().catch(()=>{});else{EV=EV.filter(e=>e.id!==id);evLs()}evRender()}
+
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.ov').classList.remove('on'));
+$('aov').onclick=e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('on')};
+$('pov').onclick=e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('on')};
+$('eadd').onclick=()=>{if(!unlocked)return;const a=new Date($('ea').value).getTime();if(isNaN(a)||!$('ei').value)return;
+ evPut({id:'e'+Date.now(),at:a,fx:'luck',lk:Math.max(1,Math.min(90,Math.floor(+$('el').value||20))),it:$('ei').value,dur:Math.max(1,Math.floor(+$('ed').value||60))})};
+ITEMS.forEach(i=>{const o=document.createElement('option');o.value=i.id;o.textContent=i.n;$('ei').appendChild(o)});
+ITEMS.forEach(i=>{const b=document.createElement('button');b.className='slot';slot(b,i.id,0);
+ b.onclick=()=>{if(!unlocked)return;const n=Math.min(Math.max(1,Math.floor(+$('acnt').value||1)),room(i.id));
+  if(n<1){snd(220,.2,'sawtooth');return}
+  inv[i.id]=(inv[i.id]||0)+n;got[i.id]=1;snd(660,.08,'square');render()};$('agrid').appendChild(b)});
+
+/* ===== Облачное сохранение (работает только внутри артефакта Claude) ===== */
+function dbSave(now){if(!udoc)return Promise.resolve();clearTimeout(dt);
+ const w=()=>udoc.set({inv,bet:bet||'',tgt:tgt||'',got}).catch(()=>{});
+ if(now)return w();dt=setTimeout(w,2000)}
+if(typeof claude==='undefined'||!claude)try{EV=JSON.parse(localStorage.getItem('mcw_ev')||'[]')}catch(e){}
+(async()=>{
+ try{const db=await claude.use('db');
+  if(db){evCol=db.collection('events');evCol.onSnapshot(s=>{EV=s.docs.map(d=>d.data()).filter(e=>e&&e.id);evRender()})}}catch(e){}
+ try{const u=await claude.use('user'),db=await claude.use('db');if(!u||!db)return;
+  udoc=db.collection('data/users/'+await u.id()).doc('save');
+  const sn=await udoc.get();
+  if(sn.exists&&!spinning){const d=sn.data()||{},o={};
+   for(const k in d.inv||{}){const n=Math.floor(+d.inv[k]);if(by(k)&&n>0)o[k]=n}
+   if(Object.keys(o).length){inv=fit(o);for(const k in d.got||{})if(by(k))got[k]=1;for(const k in inv)got[k]=1;
+    bet=by(d.bet)&&inv[d.bet]>0?d.bet:null;tgt=by(d.tgt)&&d.tgt!==bet?d.tgt:null;render()}}
+  else dbSave(true)}catch(e){}
 })();
 
-// проверка начала/конца событий каждые 5 секунд
-setInterval(() => { evRender(); }, 5000);
-
-// первая отрисовка
+setInterval(()=>{evRender()},5000);
 render();
-</script>
-</body>
-  <script>
+</script></body><script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js');
-  }
-</html>
+  }</html>
