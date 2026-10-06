@@ -190,9 +190,7 @@ button.slot:disabled { cursor: default; }
   aspect-ratio: 1;
 }
 
-.wheel {
-19:44
-position: absolute;
+.wheel {position: absolute;
   inset: 0;
   transition: transform 4.6s cubic-bezier(.12, .65, .08, 1);
 }
@@ -382,9 +380,7 @@ position: absolute;
   font-size: 12px;
   min-width: 0;
 }
-.evf .full { grid-column: 1 / -1; }  /* поле на всю ширину */
-19:44
-.evf input,
+.evf .full { grid-column: 1 / -1; }  /* поле на всю ширину */.evf input,
 .evf select {
   width: 100%;
   min-width: 0;
@@ -527,9 +523,7 @@ position: absolute;
       <div class="evf">
         <label class="full">Предмет <select id="ei"></select></label>
         <label>Шанс, % <input id="el" type="number" min="1" max="90" value="20"></label>
-        <label>Длит., мин <input id="ed" type="number" min="1" value="60"></label>
-19:44
-<label class="full">Начало <input id="ea" type="datetime-local"></label>
+        <label>Длит., мин <input id="ed" type="number" min="1" value="60"></label><label class="full">Начало <input id="ea" type="datetime-local"></label>
       </div>
       <button class="btn sm" id="eadd">Включить удачу</button>
       <div id="alist"></div>
@@ -655,9 +649,7 @@ const ITEMS = [
           if (d < 6)
             p(i, j, i + j < 12 && r() < .4 ? '#4d4d4d' : pk(['#1c1c1c', '#2b2b2b', '#111'], r));
         }
-    } },
-19:44
-{ id: 'iron',  n: 'Железный слиток',     v: 8,
+    } },{ id: 'iron',  n: 'Железный слиток',     v: 8,
     f: ingot(['#3a3a3a', '#f0f0f0', '#d4d4d4', '#9a9a9a']) },
 
   { id: 'gold',  n: 'Золотой слиток',      v: 13,
@@ -787,9 +779,7 @@ for (const k in inv) got[k] = 1;
 
 
 /* ============================================================
-   ЗВУКИ (Web Audio API)
-19:44
-f — частота, d — длительность, t — тип волны, f2 — конечная частота
+   ЗВУКИ (Web Audio API)f — частота, d — длительность, t — тип волны, f2 — конечная частота
    ============================================================ */
 function snd(f, d, t, f2) {
   try {
@@ -909,9 +899,7 @@ function setInfo(t, cl) {
 }
 
 
-/* ============================================================
-19:44
-ГЛАВНАЯ ПЕРЕРИСОВКА ИНТЕРФЕЙСА
+/* ============================================================ГЛАВНАЯ ПЕРЕРИСОВКА ИНТЕРФЕЙСА
    ============================================================ */
 function render() {
   if (!(inv[bet] > 0)) bet = null;
@@ -1049,9 +1037,7 @@ $('go').onclick = () => {
   if (spinning || !bet || !tgt || !(inv[bet] > 0) || noRoom(tgt)) return;
 
   const c = chance(),
-        a = c * 3.6,
-19:44
-win = Math.random() * 100 < c,                 // исход определяется заранее
+        a = c * 3.6,win = Math.random() * 100 < c,                 // исход определяется заранее
         pad = Math.min(6, (win ? a : 360 - a) / 4);    // отступ от границы сектора
 
   // выбираем угол остановки внутри нужного сектора
@@ -1190,9 +1176,7 @@ function evList() {
   const L = [...EV].sort((a, b) => a.at - b.at);
   if (!L.length) box.textContent = 'Событий нет.';
 
-  L.forEach(e => {
-19:44
-const d = document.createElement('div'),
+  L.forEach(e => {const d = document.createElement('div'),
           on = act(e),
           done = n >= e.at + e.dur * 6e4;
 
@@ -1330,9 +1314,7 @@ if (typeof claude === 'undefined' || !claude)
   } catch (e) {}
 
   // общая коллекция событий удачи
-  try {
-19:44
-const db = await claude.use('db');
+  try {const db = await claude.use('db');
     if (db) {
       evCol = db.collection('events');
       evCol.onSnapshot(s => {
