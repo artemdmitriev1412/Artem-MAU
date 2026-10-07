@@ -12,9 +12,6 @@
         navigator.serviceWorker.register('/sw.js');
       }
     </script>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Колесо фортуны — Minecraft</title>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--gui:#c6c6c6;--slot:#8b8b8b;--ink:#404040;--dk:#373737;--lt:#fff}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gui:#b4b4b4}}
@@ -30,15 +27,16 @@ h1{margin:0 0 8px;font-size:clamp(17px,4.5vw,24px);text-shadow:2px 2px #fff8;let
 h2{margin:14px 0 4px;font-size:14px}
 .stage{display:flex;align-items:center;justify-content:center;gap:clamp(8px,3vw,22px);flex-wrap:wrap;margin:10px 0}
 .sb{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px}
-.slot{width:clamp(48px,12vw,60px);aspect-ratio:1;background:var(--slot);border:0;border-top:3px solid var(--dk);border-left:3px solid var(--dk);border-right:3px solid var(--lt);border-bottom:3px solid var(--lt);padding:0;position:relative;display:flex;align-items:center;justify-content:center;font:inherit;color:inherit}
+.slot{width:clamp(44px,11vw,60px);aspect-ratio:1;background:var(--slot);border:0;border-top:3px solid var(--dk);border-left:3px solid var(--dk);border-right:3px solid var(--lt);border-bottom:3px solid var(--lt);padding:0;position:relative;display:flex;align-items:center;justify-content:center;font:inherit;color:inherit}
 .slot.big{width:clamp(70px,18vw,92px)}
 button.slot{cursor:pointer}
 button.slot:hover:not(:disabled):after,button.slot:focus-visible:after{content:"";position:absolute;inset:0;background:#fff8}
 button.slot:disabled{cursor:default}
 .slot.sel{outline:3px solid #ffd84a;outline-offset:-3px}
-.slot.dim .ic{opacity:.35}
+.slot.dim .ic{opacity:.3}
 .ic{width:78%;height:78%;image-rendering:pixelated;pointer-events:none}
 .n{position:absolute;right:2px;bottom:-2px;color:#fff;font-size:16px;text-shadow:2px 2px #3f3f3f;pointer-events:none;z-index:1}
+.inv .n{font-size:clamp(10px,2.6vw,15px)}
 .q{opacity:.35;font-size:28px;pointer-events:none}
 .ww{position:relative;width:clamp(190px,50vw,270px);aspect-ratio:1}
 .wheel{position:absolute;inset:0;transition:transform 4.6s cubic-bezier(.12,.65,.08,1)}
@@ -54,12 +52,12 @@ button.slot:disabled{cursor:default}
 .btn.spin{animation:pl .8s infinite alternate}
 @keyframes pl{to{color:#ffffa0}}
 .btn.sm{margin-top:8px}
-.inv{display:grid;grid-template-columns:repeat(9,1fr);gap:0}
+.inv{display:grid;grid-template-columns:repeat(10,1fr);gap:0}
 .inv .slot{width:100%}
 .hint{font-size:12px;margin:8px 0 0;text-align:center;opacity:.8}.ov{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:14px;z-index:10}
 .ov.on{display:flex}
-.menu{max-width:400px;width:100%;max-height:92vh;overflow:auto}
-.grid{display:grid;grid-template-columns:repeat(5,1fr)}
+.menu{max-width:420px;width:100%;max-height:92vh;overflow:auto}
+.grid{display:grid;grid-template-columns:repeat(6,1fr)}
 .grid .slot{width:100%}
 .sec{border:3px solid var(--dk);padding:8px;margin:12px 0;background:#0001}
 .sec h2{margin-top:0}.sec small{font-weight:normal}
@@ -100,7 +98,6 @@ button.slot:disabled{cursor:default}
 <button class="btn sm" id="adm">Админ панель</button>
 </div></div>
 
-<!-- Вход по паролю -->
 <div class="ov" id="pov"><div class="gui menu">
 <h2 style="margin-top:0">Вход в админ панель</h2>
 <div class="row"><input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="Пароль"></div>
@@ -109,24 +106,24 @@ button.slot:disabled{cursor:default}
 <button class="btn sm" data-close>Отмена</button>
 </div></div>
 
-<!-- Админ панель (открывается только после ввода пароля) -->
 <div class="ov" id="aov"><div class="gui menu">
 <h2 style="margin-top:0">Админ панель</h2>
 <div class="sec"><h2>Выдача предметов <small>(только мне)</small></h2>
-<div class="row"><label>Количество <input id="acnt" type="number" min="1" max="1728" value="1"></label></div>
+<div class="row"><label>Количество <input id="acnt" type="number" min="1" max="1920" value="1"></label></div>
 <div class="grid" id="agrid"></div></div>
 <div class="sec"><h2>Удача</h2>
 <div class="evf">
-<label class="full">Предмет <select id="ei"></select></label><label>Шанс, % <input id="el" type="number" min="1" max="90" value="20"></label>
-<label>Длит., мин <input id="ed" type="number" min="1" value="60"></label>
-<label class="full">Начало <input id="ea" type="datetime-local"></label>
+<label class="full">Предмет <select id="ei"></select></label>
+<label>Шанс, % <input id="el" type="number" min="1" max="90" value="20"></label>
+<label>Длит., мин <input id="ed" type="number" min="1" value="60"></label><label class="full">Начало <input id="ea" type="datetime-local"></label>
 </div>
 <button class="btn sm" id="eadd">Включить удачу</button>
 <div id="alist"></div></div>
 <button class="btn sm" data-close>Закрыть</button>
 </div></div>
 
-<div class="ov" id="ov"><div class="gui menu"><h2 style="margin-top:0">Выбери желаемый предмет</h2><div class="grid" id="grid"></div><p class="hint">Esc — закрыть</p></div></div>
+<div class="ov" id="ov"><div class="gui menu"><h2 style="margin-top:0">Выбери желаемый предмет</h2><div class="grid" id="grid"></div>
+<p class="hint">Нельзя получить предмет, ценнее ставки более чем в 6 раз (затемнённые недоступны). Esc — закрыть.</p></div></div>
 <div id="tip"></div>
 <div id="toast"><img id="ti"><div><b>Достижение получено!</b><span id="tn"></span></div></div>
 
@@ -136,41 +133,78 @@ function R(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t
 const pk=(a,r)=>a[Math.floor(r()*a.length)];
 function mk(seed,fn){const c=document.createElement('canvas');c.width=c.height=16;const x=c.getContext('2d'),r=R(seed);
  fn((i,j,col)=>{x.fillStyle=col;x.fillRect(i,j,1,1)},r);return c.toDataURL()}
+
+/* --- генераторы пиксельных текстур 16x16 --- */
 const noise=pal=>(p,r)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++)p(i,j,pk(pal,r))};
 const ingot=q=>(p,r)=>{for(let y=5;y<=11;y++)for(let x=2;x<=13;x++)
  p(x,y,y==5||y==11||x==2||x==13?q[0]:y==6?q[1]:y==10?q[3]:r()<.25?q[1]:q[2])};
 const gem=(q,sx)=>(p)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const dx=i-7.5,dy=j-7.5,m=Math.abs(dx)*sx+Math.abs(dy);
  if(m<=7)p(i,j,m>6?q[0]:dx+dy<-2?q[1]:dx+dy>2?q[3]:q[2])}};
+const blob=q=>(p)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const d=Math.hypot(i-7.5,j-7.5);
+ if(d<6.2)p(i,j,d>5.2?q[0]:i+j<11&&d<4.6?q[1]:i+j>17?q[3]:q[2])}};
+const dust=q=>(p,r)=>{for(let k=0;k<70;k++){const a=r()*6.28,d=r()*6.5;p(Math.round(7.5+Math.cos(a)*d),Math.round(7.5+Math.sin(a)*d),pk(q,r))}};
+const rod=q=>(p)=>{for(let i=2;i<=13;i++){p(i,15-i,q[0]);p(i+1,15-i,q[1]);p(i,14-i,q[2])}};
+const lump=(q,fl)=>(p,r)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const d=Math.hypot(i-7.5,j-7.5)+(r()-.5)*2.4;if(d<6)p(i,j,d>5?q[0]:r()<.14?fl:i+j<12?q[1]:i+j>17?q[3]:q[2])}};
+const mound=q=>(p,r)=>{for(let j=4;j<=13;j++){const hw=Math.round((j-3)*.75);for(let i=8-hw;i<=7+hw;i++)p(i,j,j==13||i==8-hw||i==7+hw?q[0]:i<10-hw?q[1]:i>5+hw?q[3]:r()<.2?q[1]:q[2])}};
+const brick=(m,c)=>(p,r)=>{for(let y=0;y<16;y++)for(let x=0;x<16;x++){const off=(y>>2)%2?4:0;p(x,y,y%4==3||(x+off)%8==7?m:pk(c,r))}};
+
 const ITEMS=[
 {id:'dirt',n:'Земля',v:1,f:noise(['#866043','#79553a','#6b4a30','#94694a','#5a3e28'])},
+{id:'leaves',n:'Листва',v:2,f:noise(['#3f8a2a','#2f7a1f','#4f9a35','#256a18','#5aa840'])},
+{id:'sand',n:'Песок',v:2,f:noise(['#dbd3a0','#d2c98f','#e4dcaa','#c9bf85'])},
 {id:'wood',n:'Дубовые доски',v:2,f:(p,r)=>{for(let y=0;y<16;y++)for(let x=0;x<16;x++)p(x,y,y%4==3||x==((y>>2)%2?3:11)?'#7d5f35':pk(['#b8945f','#ae8a56','#c29c66'],r))}},
-{id:'stone',n:'Камень',v:3,f:noise(['#7f7f7f','#8b8b8b','#737373','#959595'])},
+{id:'stick',n:'Палка',v:2,f:rod(['#8a6a3a','#5e4524','#a98450'])},
+{id:'ice',n:'Лёд',v:3,f:noise(['#a8d0f0','#bcdcf8','#90c0e8','#cfe8ff'])},
+{id:'brick',n:'Кирпич',v:3,f:brick('#c8c0b0',['#9a4a3a','#a8503e','#8a4032'])},
+{id:'glass',n:'Стекло',v:4,f:(p)=>{for(let i=1;i<=14;i++)for(let j=1;j<=14;j++){const e=i==1||i==14||j==1||j==14;
+ p(i,j,e?'#cfeaf2':(i==j&&i<8)||(i==j-1&&i<7)?'#ffffff':'#bfe6f033')}}},
 {id:'coal',n:'Уголь',v:5,f:(p,r)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const d=Math.hypot(i-7.5,j-7.5)+(r()-.5)*2.6;if(d<6)p(i,j,i+j<12&&r()<.4?'#4d4d4d':pk(['#1c1c1c','#2b2b2b','#111'],r))}}},
+{id:'apple',n:'Яблоко',v:5,f:blob(['#6a0d0d','#ff8a7a','#d12a2a','#9a1a1a'])},
+{id:'copper',n:'Медный слиток',v:6,f:ingot(['#4a2010','#ffbf94','#e0803f','#a8501f'])},
+{id:'slime',n:'Шарик слизи',v:7,f:blob(['#2a6a2a','#c8f6b0','#6bc24f','#3f8f35'])},
 {id:'iron',n:'Железный слиток',v:8,f:ingot(['#3a3a3a','#f0f0f0','#d4d4d4','#9a9a9a'])},
+{id:'gunp',n:'Порох',v:9,f:mound(['#2e2e2e','#9a9a9a','#6a6a6a','#454545'])},
+{id:'lapis',n:'Лазурит',v:10,f:lump(['#0a1850','#4a6cf0','#2a4fd0','#1a2f9a'],'#e8f0ff')},{id:'blaze',n:'Огненный стержень',v:12,f:rod(['#f2a21a','#c26a0a','#ffd24a'])},
 {id:'gold',n:'Золотой слиток',v:13,f:ingot(['#6b4a00','#fff3a0','#fbd635','#c9981a'])},
-{id:'red',n:'Редстоун',v:18,f:(p,r)=>{for(let k=0;k<70;k++){const a=r()*6.28,d=r()*6.5;p(Math.round(7.5+Math.cos(a)*d),Math.round(7.5+Math.sin(a)*d),pk(['#ff2a2a','#cc0000','#8a0000','#ff6a5a'],r))}}},
+{id:'quartz',n:'Кварц',v:14,f:gem(['#8f8a82','#ffffff','#ebe6dc','#c7c0b2'],1)},
+{id:'glow',n:'Светокамень',v:16,f:noise(['#e8b64a','#f6d37a','#c98f2a','#ffe9a0'])},
+{id:'red',n:'Редстоун',v:18,f:dust(['#ff2a2a','#cc0000','#8a0000','#ff6a5a'])},
+{id:'amet',n:'Аметист',v:20,f:gem(['#2a1050','#ecd0ff','#a060e8','#6a30b0'],1.2)},
+{id:'obs',n:'Обсидиан',v:22,f:noise(['#150f22','#1f1633','#2a1c46','#0d0816'])},
+{id:'gapple',n:'Золотое яблоко',v:26,f:blob(['#6b4a00','#fff3a0','#fbd635','#c9981a'])},
+{id:'pearl',n:'Жемчуг Края',v:28,f:blob(['#0a2a24','#9af8de','#1f8a72','#0f4a3e'])},
 {id:'dia',n:'Алмаз',v:30,f:gem(['#0a4a55','#c8fff8','#3fe6d6','#1b9aa6'],1)},
 {id:'em',n:'Изумруд',v:45,f:gem(['#0a3a14','#b8ffc8','#2fd35a','#17893a'],1.4)},
-{id:'neth',n:'Незеритовый слиток',v:80,f:ingot(['#120c0c','#7a6868','#4a3f3f','#2f2626'])}];
+{id:'neth',n:'Незеритовый слиток',v:80,f:ingot(['#120c0c','#7a6868','#4a3f3f','#2f2626'])},
+{id:'egg',n:'Яйцо дракона',v:100,f:(p,r)=>{for(let i=0;i<16;i++)for(let j=0;j<16;j++){const dx=(i-7.5)/4.6,dy=(j-8)/6.8;
+ if(dx*dx+dy*dy<1)p(i,j,r()<.18?'#8a3ae8':pk(['#0d0716','#150b22','#1c1030'],r))}}},
+{id:'crystal',n:'Кристалл Края',v:120,f:gem(['#4a0a40','#ffd0f8','#e050d0','#9a2a90'],1.2)},
+{id:'heart',n:'Сердце моря',v:150,f:blob(['#06304a','#9af0ff','#1f8ab8','#0f4a70'])}];
 ITEMS.forEach((i,k)=>i.img=mk(k+7,i.f));
 const dirtTile=mk(3,ITEMS[0].f);
 document.body.style.backgroundImage=`linear-gradient(#000a,#000a),url(${dirtTile})`;
 document.body.style.backgroundSize='auto,96px';
 const by=id=>ITEMS.find(i=>i.id===id);
 
-let betK=-1;const SL=27,ST=64;
+/* --- инвентарь: 30 клеток (3 строки по 10), стопка 64 --- */
+let betK=-1;const SL=30,ST=64;
+/* --- ограничение: цель не может быть ценнее ставки больше чем в MAXR раз --- */
+const MAXR=6;
+const MIG={gravel:'leaves',stone:'ice',cobble:'brick'},mg=k=>MIG[k]||k;
+const ok=t=>!bet||by(t).v<=by(bet).v*MAXR;
 const slotsOf=o=>Object.values(o).reduce((a,n)=>a+Math.ceil(n/ST),0);
 function fit(o){let f=0;const r={};for(const k in o){const n=Math.min(o[k],(SL-f)*ST);if(n>0){r[k]=n;f+=Math.ceil(n/ST)}}return r}
 const noRoom=t=>(inv[t]||0)%ST===0&&slotsOf(inv)>=SL;
 const room=id=>{const p=(inv[id]||0)%ST;return(SL-slotsOf(inv))*ST+(p?ST-p:0)};
-let got={},inv={dirt:5},bet=null,tgt=null,spinning=false,rot=0,hold=false,ac;
+let got={},inv={dirt:5},bet=null,tgt=null,spinning=false,rot=0,hold=false,ac,note='';
 let storeOk=true;
 
 function load(){try{const s=JSON.parse(localStorage.getItem('mcw2')||'null');if(!s)return;
- if(s.inv){const o={};for(const k in s.inv){const n=Math.floor(+s.inv[k]);if(by(k)&&n>0)o[k]=n}if(Object.keys(o).length)inv=fit(o)}
- if(by(s.bet)&&inv[s.bet]>0)bet=s.bet;if(by(s.tgt)&&s.tgt!==bet)tgt=s.tgt;
+ if(s.inv){const o={};for(const k in s.inv){const n=Math.floor(+s.inv[k]),m=mg(k);if(by(m)&&n>0)o[m]=(o[m]||0)+n}if(Object.keys(o).length)inv=fit(o)}
+ {const sb=mg(s.bet),sg=mg(s.tgt);if(by(sb)&&inv[sb]>0)bet=sb;if(by(sg)&&sg!==bet&&ok(sg))tgt=sg}
  if(s.got)for(const k in s.got)if(by(k))got[k]=1}catch(e){storeOk=false}}
-function save(d){try{localStorage.setItem('mcw2',JSON.stringify({inv:d||inv,bet,tgt,got}))}catch(e){storeOk=false}const s=$('sv');if(s)s.textContent=storeOk?'Прогресс сохраняется автоматически':'Сохранение недоступно в этом браузере';
+function save(d){try{localStorage.setItem('mcw2',JSON.stringify({inv:d||inv,bet,tgt,got}))}catch(e){storeOk=false}
+ const s=$('sv');if(s)s.textContent=storeOk?'Прогресс сохраняется автоматически':'Сохранение недоступно в этом браузере';
  if(typeof dbSave==='function')dbSave()}
 load();
 if(!Object.values(inv).some(v=>v>0))inv={dirt:5};
@@ -182,61 +216,7 @@ function snd(f,d,t,f2){try{ac=ac||new AudioContext();const o=ac.createOscillator
 function chance(){return bet&&tgt?Math.max(3,Math.min(95,Math.round(by(bet).v/by(tgt).v*45)+luck())):0}
 function slot(el,id,n){el.innerHTML=id?`<img class="ic" src="${by(id).img}" alt="">`+(n>1?`<span class="n">${n}</span>`:''):'<span class="q">?</span>';
  if(id){el.dataset.tip=by(id).n;el.dataset.sub='Ценность: '+by(id).v}else{delete el.dataset.tip}}
-function paint(c){const cv=$('wc'),x=cv.getContext('2d'),N=96,d=x.createImageData(N,N),a=c*3.6;
- for(let j=0;j<N;j++)for(let i=0;i<N;i++){const dx=i-N/2+.5,dy=j-N/2+.5,r=Math.hypot(dx,dy);if(r>N/2)continue;
-  const h=Math.abs(Math.sin(i*12.9898+j*78.233)*43758.5453)%1,v=.82+.36*h,k=(j*N+i)*4;
-  const ang=(Math.atan2(dx,-dy)*57.2958+360)%360;let col;
-  if(r>46.3||(r<=45&&r>43.6)||(r<=10.5&&r>8.8))col=[25,25,25];
-  else if(r>45)col=[125,125,125].map(z=>z*v);
-  else if(r<8.8)col=[85,85,85].map(z=>z*v);
-  else if(!c)col=[110,110,110].map(z=>z*v);
-  else if(Math.min(Math.abs(ang-a),ang,360-ang)*Math.PI/180*r<1.3)col=[25,25,25];
-  else col=(ang<a?[62,165,62]:[178,46,38]).map(z=>z*v);
-  d.data.set([col[0],col[1],col[2],255],k)}
- x.putImageData(d,0,0)}
-function labels(c){const w=$('wheel');w.querySelectorAll('.lbl').forEach(e=>e.remove());if(!c)return;
- const a=c*3.6,W=w.clientWidth;
- [[a/2,c],[a+(360-a)/2,100-c]].forEach(([g,t])=>{const l=document.createElement('div');l.className='lbl';l.textContent=t+'%';
-  l.style.transform=`rotate(${g-90}deg) translateX(${W*.27}px) rotate(${90-g}deg) translate(-50%,-50%)`;w.appendChild(l)})}
-function setInfo(t,cl){const e=$('info');e.textContent=t;e.className='info '+(cl||'')}
-
-function render(){
- if(!(inv[bet]>0))bet=null;
- slot($('bet'),bet,bet?1:0);slot($('tgt'),tgt,0);
- $('bet').disabled=$('tgt').disabled=spinning;
- const box=$('inv');box.innerHTML='';
- const st=[];ITEMS.filter(i=>inv[i.id]>0).forEach(i=>{let n=inv[i.id];while(n>0){st.push([i,Math.min(n,ST)]);n-=ST}});
- let sk=st.findIndex(e=>e[0].id===bet);if(bet&&st[betK]&&st[betK][0].id===bet)sk=betK;
- for(let k=0;k<SL;k++){const e=st[k],i=e&&e[0];let b;
-  if(i){b=document.createElement('button');b.className='slot'+(k===sk?' sel':'');slot(b,i.id,e[1]);b.disabled=spinning;
-   b.onclick=()=>{snd(500,.05,'square');if(k===sk){bet=null;betK=-1}else{bet=i.id;betK=k}if(bet===tgt)tgt=null;hold=false;render()}}
-  else{b=document.createElement('div');b.className='slot'}
-  box.appendChild(b)}
- const c=chance();paint(c);labels(c);
- const g=$('go'),full=!!tgt&&noRoom(tgt);
- g.disabled=spinning||!bet||!tgt||full;g.classList.toggle('spin',spinning);g.textContent=spinning?'Крутится...':'Крутить!';
- if(!spinning&&!hold)setInfo(full?'Инвентарь полон (27 клеток). Освободи место или выбери другую цель.':bet&&tgt?`${by(bet).n} → ${by(tgt).n}. Шанс успеха: ${c}%`:'Положи предмет в левый слот и выбери цель справа.');
- if(!spinning)save()}
-
-$('bet').onclick=()=>{if(bet){bet=null;hold=false;render()}};
-$('tgt').onclick=()=>{if(spinning)return;snd(500,.05,'square');
- const g=$('grid');g.innerHTML='';
- ITEMS.forEach(i=>{const b=document.createElement('button');b.className='slot'+(i.id===bet?' dim':'');slot(b,i.id,0);b.disabled=i.id===bet;
-  b.onclick=()=>{tgt=i.id;hold=false;$('ov').classList.remove('on');$('tip').style.display='none';render()};g.appendChild(b)});
- $('ov').classList.add('on')};
-$('ov').onclick=e=>{if(e.target===$('ov'))$('ov').classList.remove('on')};document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'))});
-document.addEventListener('mousemove',e=>{const t=e.target.closest&&e.target.closest('[data-tip]'),tp=$('tip');
- if(!t){tp.style.display='none';return}
- tp.innerHTML=t.dataset.tip+'<small>'+t.dataset.sub+'</small>';tp.style.display='block';
- tp.style.left=Math.min(e.clientX+14,innerWidth-tp.offsetWidth-6)+'px';tp.style.top=(e.clientY-8)+'px'});
-
-$('go').onclick=()=>{
- if(spinning||!bet||!tgt||!(inv[bet]>0)||noRoom(tgt))return;
- const c=chance(),a=c*3.6,win=Math.random()*100<c,pad=Math.min(6,(win?a:360-a)/4);
- const lo=win?pad:a+pad,hi=win?a-pad:360-pad,ang=lo+Math.random()*(hi-lo);
- rot=Math.ceil(rot/360)*360+360*6+(360-ang);
- const b=bet,t=tgt;spinning=true;hold=true;render();
- {const after={...inv};if(win){after[t]=(after[t]||0)+1}else{after[b]--;if(after[b]<=0)delete after[b]}save(Object.values(after).some(v=>v>0)?after:{dirt:1})}
+function paint(c){const cv=$('wc'),x=cv.getContext('2d'),N=96,d=x.createImageData(N,N),a=c*3.6;{const after={...inv};if(win){after[t]=(after[t]||0)+1}else{after[b]--;if(after[b]<=0)delete after[b]}save(Object.values(after).some(v=>v>0)?after:{dirt:1})}
  setInfo('Колесо вращается...');snd(300,.2,'square',600);
  $('wheel').style.transform=`rotate(${rot}deg)`;
  setTimeout(()=>{spinning=false;let m,cl;
@@ -252,10 +232,9 @@ let rc=0;$('rs').onclick=()=>{if(spinning)return;const b=$('rs');
  if(!rc){b.textContent='Нажми ещё раз для сброса';rc=setTimeout(()=>{rc=0;b.textContent='Сбросить прогресс'},3000);return}
  clearTimeout(rc);rc=0;b.textContent='Сбросить прогресс';inv={dirt:5};got={dirt:1};bet=tgt=null;hold=false;render()};
 
-/* ===== Вход в админ панель по паролю ===== */
-// Хранится только хэш SHA-256 от строки "mcw-admin:" + пароль
+/* ===== Вход в админ панель по паролю (хранится только хэш SHA-256 от "mcw-admin:"+пароль) ===== */
 const PW_HASH='2009e6378ae8b01d88b191ab684470642246544f2de844fff128fe69c9a7ef45';
-let unlocked=false,bad=0; // unlocked сбрасывается при перезагрузке страницы
+let unlocked=false,bad=0;
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
  return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 function lockLeft(){try{return Math.max(0,(+localStorage.getItem('mcw_lock')||0)-Date.now())}catch(e){return 0}}
@@ -266,8 +245,8 @@ function openPw(){$('pw').value='';$('pm').textContent='';$('pov').classList.add
 async function tryPw(){
  const w=lockLeft();if(w>0){$('pm').textContent='Слишком много попыток. Подожди '+Math.ceil(w/1000)+' с.';return}
  if(!window.crypto||!crypto.subtle){$('pm').textContent='Вход работает только на https-странице.';return}
- const ok=(await sha('mcw-admin:'+$('pw').value.trim()))===PW_HASH;
- if(ok){unlocked=true;bad=0;$('pov').classList.remove('on');snd(660,.1,'square');openAdm();return}
+ const good=(await sha('mcw-admin:'+$('pw').value.trim()))===PW_HASH;
+ if(good){unlocked=true;bad=0;$('pov').classList.remove('on');snd(660,.1,'square');openAdm();return}
  bad++;snd(220,.3,'sawtooth');
  if(bad>=5){bad=0;try{localStorage.setItem('mcw_lock',String(Date.now()+30000))}catch(e){}$('pm').textContent='Слишком много попыток. Подожди 30 с.'}
  else $('pm').textContent='Неверный пароль. Осталось попыток: '+(5-bad);
@@ -277,7 +256,8 @@ $('pok').onclick=tryPw;
 $('pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryPw()});
 
 /* ===== События «удачи» и выдача предметов (только после входа) ===== */
-let EV=[],evCol=null,udoc=null,dt=0,ll=0;const fmt=t=>new Date(t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+let EV=[],evCol=null,udoc=null,dt=0,ll=0;
+const fmt=t=>new Date(t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 const act=e=>e.fx!=='none'&&Date.now()>=e.at&&Date.now()<e.at+e.dur*6e4;
 function luck(){return EV.filter(e=>act(e)&&(!e.it||e.it===tgt)).reduce((a,e)=>a+(e.lk||20),0)}
 function evList(){const box=$('alist'),n=Date.now();box.innerHTML='';
@@ -285,8 +265,7 @@ function evList(){const box=$('alist'),n=Date.now();box.innerHTML='';
  L.forEach(e=>{const d=document.createElement('div'),on=act(e),done=n>=e.at+e.dur*6e4;
   d.className='ev'+(on?' on':'')+(done?' done':'');d.innerHTML='<b></b><small></small>';
   d.children[0].textContent=(e.it&&by(e.it)?by(e.it).n:'Любая цель')+': +'+(e.lk||20)+'%';
-  d.children[1].textContent=(on?'Идёт сейчас, до ':done?'Закончилось: ':'Начало: ')+fmt(on||done?e.at+e.dur*6e4:e.at)+(!on&&!done?', длит. '+e.dur+' мин':'');
-  const b=document.createElement('button');b.textContent='Удалить';b.onclick=()=>evDel(e.id);d.appendChild(b);box.appendChild(d)})}
+  d.children[1].textContent=(on?'Идёт сейчас, до ':done?'Закончилось: ':'Начало: ')+fmt(on||done?e.at+e.dur*6e4:e.at)+(!on&&!done?', длит. '+e.dur+' мин':'');const b=document.createElement('button');b.textContent='Удалить';b.onclick=()=>evDel(e.id);d.appendChild(b);box.appendChild(d)})}
 function evRender(){evList();const l=luck();if(l!==ll){ll=l;if(!spinning&&!hold)render()}}
 function evLs(){try{localStorage.setItem('mcw_ev',JSON.stringify(EV))}catch(e){}}
 function evPut(e){if(!unlocked)return;if(evCol)evCol.doc(e.id).set(e).catch(()=>{});else{EV.push(e);evLs()}evRender()}
@@ -315,7 +294,7 @@ if(typeof claude==='undefined'||!claude)try{EV=JSON.parse(localStorage.getItem('
   udoc=db.collection('data/users/'+await u.id()).doc('save');
   const sn=await udoc.get();
   if(sn.exists&&!spinning){const d=sn.data()||{},o={};
-   for(const k in d.inv||{}){const n=Math.floor(+d.inv[k]);if(by(k)&&n>0)o[k]=n}
+   for(const k in d.inv||{}){const n=Math.floor(+d.inv[k]),m=mg(k);if(by(m)&&n>0)o[m]=(o[m]||0)+n}
    if(Object.keys(o).length){inv=fit(o);for(const k in d.got||{})if(by(k))got[k]=1;for(const k in inv)got[k]=1;
     bet=by(d.bet)&&inv[d.bet]>0?d.bet:null;tgt=by(d.tgt)&&d.tgt!==bet?d.tgt:null;render()}}
   else dbSave(true)}catch(e){}
