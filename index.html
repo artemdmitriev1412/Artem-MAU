@@ -6,11 +6,9 @@
     <meta http-equiv="Cache-Control" content="no-store">
     <meta http-equiv="Pragma" content="no-cache">
     <title>mineupgrade</title>
-
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png">
     <link rel="apple-touch-icon" href="/icon-192.png">
-
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js');
@@ -758,7 +756,762 @@
                 margin: 10px 0 6px;
                 font-size: clamp(22px, 6vw, 32px);
                 text-shadow: 2px 2px #fff8;
-            }            const furnaceTex = (p, r) => {
+            }
+            .ico {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin: 10px 0 14px;
+            }
+            .ico img {
+                width: 40px;
+                height: 40px;
+                image-rendering: pixelated;
+                background: #8b8b8b;
+                border: 3px solid #373737;
+                border-right-color: #fff;
+                border-bottom-color: #fff;
+                padding: 3px;
+            }
+            .paper ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                text-align: left;
+            }
+            .paper li {
+                margin: 10px 0;
+                padding: 8px 10px;
+                background: #fff6;
+                border-left: 5px solid #b8935a;
+                font-size: 14px;
+                line-height: 1.45;
+            }
+            .tag {
+                display: inline-block;
+                padding: 1px 7px;
+                margin-right: 8px;
+                font-size: 11px;
+                color: #fff;
+                border: 2px solid #000;
+                vertical-align: 1px;
+            }
+            .tag.new {
+                background: #3a9a2a;
+            }
+            .tag.chg {
+                background: #c87a1a;
+            }
+            .tag.fix {
+                background: #2a6ab0;
+            }
+            .paper .btn {
+                margin-top: 16px;
+            }
+            .paper {
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                max-height: min(96vh, 780px);
+                padding: 0;
+            }
+            .pbody {
+                overflow: auto;
+                flex: 1;
+                min-height: 0;
+                padding: 24px 20px 6px;
+                text-align: center;
+            }
+            .paper > .btn {
+                margin: 10px auto 16px;
+                flex: none;
+            }
+            .bg {
+                flex-wrap: nowrap;
+                gap: clamp(6px, 2.5vw, 26px);
+            }
+            .cg .slot {
+                width: clamp(44px, 12.5vw, 84px);
+            }
+            .bench .slot.big {
+                width: clamp(56px, 16vw, 104px);
+            }
+            .arr {
+                border-top-width: clamp(10px, 3vw, 18px);
+                border-bottom-width: clamp(10px, 3vw, 18px);
+                border-left-width: clamp(14px, 4vw, 30px);
+            }
+            .rr {
+                padding: 4px 6px;
+            }
+            .rr.no {
+                opacity: 0.6;
+            }
+            .rr.can {
+                border-color: #2fd35a;
+                background: #2fd35a22;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="gui" id="gui">
+                <h1>Колесо фортуны</h1>
+                <div class="tabs">
+                    <button class="tab menu-btn" id="tmenu" aria-label="Меню"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="2.6" rx="1.3"></rect><rect x="2.5" y="10.7" width="19" height="2.6" rx="1.3"></rect><rect x="2.5" y="16.4" width="19" height="2.6" rx="1.3"></rect></svg></button>
+                </div>
+                <div id="pg1">
+                    <div class="stage">
+                        <div class="sb">Ставка<button class="slot big" id="bet" aria-label="Слот ставки"></button></div>
+                        <div class="ww">
+                            <div class="ptr"></div>
+                            <div class="wheel" id="wheel"><canvas id="wc" width="96" height="96"></canvas></div>
+                        </div>
+                        <div class="sb">
+                            Цель<button class="slot big" id="tgt" aria-label="Выбрать желаемый предмет"></button>
+                        </div>
+                    </div>
+                    <div class="info" id="info"></div>
+                    <button class="btn" id="go" disabled>Крутить!</button>
+                </div>
+                <div id="pg2" hidden>
+                    <div class="bench">
+                        <h3>ВЕРСТАК</h3>
+                        <div class="bg">
+                            <div class="cg" id="cg"></div>
+                            <div class="arr"></div>
+                            <button class="slot big" id="co" disabled aria-label="Результат"></button>
+                        </div>
+                    </div>
+                    <div id="cinfo"></div>
+                    <button class="btn sm" id="cx">Очистить стол</button>
+                </div>
+                <div id="pg4" hidden>
+                    <h2>Сундук</h2>
+                    <div class="inv" id="chst"></div>
+                    <p class="hint" id="chh">Выбери предмет в инвентаре и нажми «Убрать в сундук». Клик по предмету в сундуке вернёт его в инвентарь.</p>
+                    <div class="sec">
+                        <h2 style="margin-top: 0">Улучшение сундука</h2>
+                        <button class="btn sm up" id="up1" title="Добавить 1 клетку сундука за 1 Жемчуг Края" aria-label="Добавить 1 клетку сундука за 1 Жемчуг Края">
+                            <span>+1</span
+                            ><img class="uic" data-item="chest" alt="" aria-hidden="true" /><span>—</span><span>1</span
+                            ><img class="uic" data-item="pearl" alt="" aria-hidden="true" />
+                        </button>
+                        <button class="btn sm up" id="up10" title="Добавить 10 клеток сундука за 1 Алмазный блок" aria-label="Добавить 10 клеток сундука за 1 Алмазный блок">
+                            <span>+10</span
+                            ><img class="uic" data-item="chest" alt="" aria-hidden="true" /><span>—</span><span>1</span
+                            ><img class="uic" data-item="dblock" alt="" aria-hidden="true" />
+                        </button>
+                    </div>
+                </div>
+                <h2>Инвентарь</h2>
+                <div class="inv" id="inv"></div>
+                <p class="hint" id="ih">Клик по предмету — в слот ставки. Клик по слоту цели — выбор предмета.</p>
+                <button class="btn sm" id="put" hidden>Убрать в сундук</button>
+                <div id="pg3" hidden>
+                    <h2>
+                        Рецепты <small style="font-weight: normal">(нажми на рецепт — материалы лягут на стол)</small>
+                    </h2>
+                    <div class="rb" id="rb"></div>
+                </div>
+                <p class="hint" id="sv"></p>
+                <button class="btn sm" id="rs">Очистить инвентарь</button>
+            </div>
+        </div>
+        <div class="mnu-sc" id="mnusc">
+            <div class="mnu">
+                <h2>Меню</h2>
+                <button class="tab on" id="t1">Рулетка</button>
+                <button class="tab" id="t2">Верстак</button>
+                <button class="tab" id="t3">Сундук</button>
+                <button class="btn sm" id="mcx">Закрыть</button>
+            </div>
+        </div>
+        <div class="ov" id="pov">
+            <div class="gui menu">
+                <h2 style="margin-top: 0">Вход в админ панель</h2>
+                <div class="row">
+                    <input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="Пароль" />
+                </div>
+                <p class="hint" id="pm"></p>
+                <button class="btn sm" id="pok">Войти</button>
+                <button class="btn sm" data-close>Отмена</button>
+            </div>
+        </div>
+        <div class="ov" id="aov">
+            <div class="gui menu">
+                <h2 style="margin-top: 0">Админ панель</h2>
+                <div class="sec">
+                    <h2>Выдача предметов <small>(только мне)</small></h2>
+                    <div class="row">
+                        <label>Количество <input id="acnt" type="number" min="1" max="1920" value="1" /></label>
+                    </div>
+                    <div class="grid" id="agrid"></div>
+                </div>
+                <div class="sec">
+                    <h2>Удача</h2>
+                    <div class="evf">
+                        <label class="full"
+                            >Предмет
+                            <select id="ei"></select
+                        ></label>
+                        <label>Шанс, % <input id="el" type="number" min="1" max="90" value="20" /></label>
+                        <label>Длит., мин <input id="ed" type="number" min="1" value="60" /></label>
+                        <label class="full">Начало <input id="ea" type="datetime-local" /></label>
+                    </div>
+                    <button class="btn sm" id="eadd">Включить удачу</button>
+                    <div id="alist"></div>
+                </div>
+                <button class="btn sm" data-close>Закрыть</button>
+            </div>
+        </div>
+        <div class="ov" id="ov">
+            <div class="gui menu">
+                <h2 style="margin-top: 0">Выбери желаемый предмет</h2>
+                <div class="grid" id="grid"></div>
+                <p class="hint">
+                    Нельзя получить предмет, ценнее ставки более чем в 6 раз (затемнённые недоступны). Esc — закрыть.
+                </p>
+            </div>
+        </div>
+        <div id="upd">
+            <div class="paper">
+                <div class="pbody">
+                    <div class="ribbon" id="uv"></div>
+                    <div class="ud" id="ud"></div>
+                    <h2 id="ut"></h2>
+                    <div class="ico" id="ui"></div>
+                    <ul id="ul"></ul>
+                </div>
+                <button class="btn" id="up">Играть!</button>
+            </div>
+        </div>
+        <div id="tip"></div>
+        <div id="toast">
+            <img id="ti" />
+            <div><b>Достижение получено!</b><span id="tn"></span></div>
+        </div>
+        <script>
+            const $ = (id) => document.getElementById(id);
+            function R(a) {
+                return () => {
+                    a |= 0;
+                    a = (a + 0x6d2b79f5) | 0;
+                    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                };
+            }
+            const pk = (a, r) => a[Math.floor(r() * a.length)];
+            function mk(seed, fn) {
+                const c = document.createElement("canvas");
+                c.width = c.height = 16;
+                const x = c.getContext("2d"),
+                    r = R(seed);
+                fn((i, j, col) => {
+                    x.fillStyle = col;
+                    x.fillRect(i, j, 1, 1);
+                }, r);
+                return c.toDataURL();
+            }
+            /* --- оригинальные 2D-спрайты 16x16 (нарисованы с нуля) --- */
+            const hash = (x, y) => Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
+            const hex = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+            const noise = (pal) => (p, r) => {
+                for (let i = 0; i < 16; i++) for (let j = 0; j < 16; j++) p(i, j, pk(pal, r));
+            };
+            // слиток: скошенный брусок с гранями
+            const ingot = (q) => (p, r) => {
+                for (let y = 4; y <= 11; y++) {
+                    const o = (11 - y) >> 1;
+                    for (let x = 2 + o; x <= 12 + o; x++) {
+                        const e = y == 4 || y == 11 || x == 2 + o || x == 12 + o;
+                        p(x, y, e ? q[0] : y == 5 ? q[1] : y == 10 || x >= 10 + o ? q[3] : r() < 0.2 ? q[1] : q[2]);
+                    }
+                }
+            };
+            const gem = (q, sx) => (p) => {
+                for (let i = 0; i < 16; i++)
+                    for (let j = 0; j < 16; j++) {
+                        const dx = i - 7.5,
+                            dy = j - 7.5,
+                            m = Math.abs(dx) * sx + Math.abs(dy);
+                        if (m <= 7) p(i, j, m > 6 ? q[0] : dx + dy < -2 ? q[1] : dx + dy > 2 ? q[3] : q[2]);
+                    }
+            };
+            const blob = (q) => (p) => {
+                for (let i = 0; i < 16; i++)
+                    for (let j = 0; j < 16; j++) {
+                        const d = Math.hypot(i - 7.5, j - 7.5);
+                        if (d < 6.2) p(i, j, d > 5.2 ? q[0] : i + j < 11 && d < 4.6 ? q[1] : i + j > 17 ? q[3] : q[2]);
+                    }
+            };
+            const rod = (q) => (p) => {
+                for (let i = 2; i <= 13; i++) {
+                    p(i, 15 - i, i % 4 < 2 ? q[0] : q[2]);
+                    p(i + 1, 15 - i, q[1]);
+                    p(i, 14 - i, q[2]);
+                }
+            };
+            const lump = (q, fl) => (p, r) => {
+                for (let i = 0; i < 16; i++)
+                    for (let j = 0; j < 16; j++) {
+                        const d = Math.hypot(i - 7.5, j - 7.5) + (r() - 0.5) * 2.4;
+                        if (d < 6)
+                            p(i, j, d > 5 ? q[0] : r() < 0.14 ? fl : i + j < 12 ? q[1] : i + j > 17 ? q[3] : q[2]);
+                    }
+            };
+            const mound = (q) => (p, r) => {
+                for (let j = 4; j <= 13; j++) {
+                    const hw = Math.round((j - 3) * 0.75);
+                    for (let i = 8 - hw; i <= 7 + hw; i++)
+                        p(
+                            i,
+                            j,
+                            j == 13 || i == 8 - hw || i == 7 + hw
+                                ? q[0]
+                                : i < 10 - hw
+                                  ? q[1]
+                                  : i > 5 + hw
+                                    ? q[3]
+                                    : r() < 0.2
+                                      ? q[1]
+                                      : q[2]
+                        );
+                }
+            };
+            const art = (rows, m) => (p) => {
+                rows.forEach((s, j) =>
+                    [...s.padEnd(16, ".").slice(0, 16)].forEach((c, i) => {
+                        if (m[c]) p(i, j, m[c]);
+                    })
+                );
+            };
+            // плоская плитка блока: тёмная рамка, светлая кромка сверху-слева, тень снизу-справа
+            const tile = (f) => (p, r) => {
+                const T = [];
+                f((i, j, c) => {
+                    T[j * 16 + i] = c.slice(0, 7);
+                }, r);
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        const c = T[y * 16 + x];
+                        if (!c) continue;
+                        const k =
+                            x == 0 || y == 0 || x == 15 || y == 15
+                                ? 0.4
+                                : x == 1 || y == 1
+                                  ? 1.18
+                                  : x == 14 || y == 14
+                                    ? 0.8
+                                    : 1;
+                        p(x, y, "rgb(" + hex(c).map((z) => Math.min(255, Math.round(z * k))) + ")");
+                    }
+            };
+            // «камешки» (ячейки Вороного): булыжник, светокамень, обсидиан
+            const voro = (pal, joint, hi, n) => (p, r) => {
+                const S = [];
+                for (let k = 0; k < n; k++) S.push([r() * 16, r() * 16]);
+                const M = [];
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        let b = 0,
+                            bd = 1e9;
+                        S.forEach(([sx, sy], k) => {
+                            const d = (x - sx) ** 2 + (y - sy) ** 2;
+                            if (d < bd) {
+                                bd = d;
+                                b = k;
+                            }
+                        });
+                        M[y * 16 + x] = b;
+                    }
+                const J = (x, y) =>
+                    (x < 15 && M[y * 16 + x + 1] != M[y * 16 + x]) || (y < 15 && M[(y + 1) * 16 + x] != M[y * 16 + x]);
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++)
+                        p(
+                            x,
+                            y,
+                            J(x, y)
+                                ? joint
+                                : (x > 0 && J(x - 1, y)) || (y > 0 && J(x, y - 1))
+                                  ? hi
+                                  : pal[(M[y * 16 + x] * 3) % pal.length]
+                        );
+            };
+            const grassDirt = (p, r) => {
+                for (let x = 0; x < 16; x++) {
+                    const gh = 3 + (r() < 0.5 ? 0 : 1);
+                    for (let y = 0; y < 16; y++) {
+                        let c;
+                        if (y < gh) c = pk(["#5cb83a", "#4ea62f", "#6cc84a"], r);
+                        else if (y == gh && r() < 0.5) c = pk(["#4ea62f", "#3f8f27"], r);
+                        else c = r() < 0.12 ? pk(["#a0764f", "#5a3e28"], r) : pk(["#866043", "#79553a", "#6b4a30"], r);
+                        p(x, y, c);
+                    }
+                }
+            };
+            const sandTex = (p, r) => {
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++)
+                        p(
+                            x,
+                            y,
+                            Math.sin(x * 0.7 + y * 1.3) > 0.7
+                                ? "#e9e0b0"
+                                : r() < 0.1
+                                  ? "#bdb277"
+                                  : pk(["#dbd3a0", "#d2c98f", "#e4dcaa"], r)
+                        );
+            };
+            const pearlF = (q) => (p, r) => {
+                blob(q)(p, r);
+                [
+                    [6, 5],
+                    [7, 5],
+                    [8, 5],
+                    [9, 6],
+                    [9, 7],
+                    [8, 8],
+                    [7, 8],
+                    [6, 7],
+                    [6, 6],
+                ].forEach(([x, y]) => p(x, y, "#d8fff2"));
+                p(7, 6, "#ffffff");
+            };
+            const blazeF = (q) => (p, r) => {
+                rod(q)(p, r);
+                [
+                    [14, 1],
+                    [15, 2],
+                    [13, 1],
+                    [14, 0],
+                    [15, 1],
+                ].forEach(([x, y], i) => p(x, y, i % 2 ? "#ff7a1a" : "#ffe060"));
+            };
+            const APPLE = [
+                "................",
+                "........s.g.....",
+                ".......s.gggg...",
+                "....kkk..kkk....",
+                "...kRRRkkRRRk...",
+                "..kRhhRRRRRRRk..",
+                "..kRhRRRRRRRrk..",
+                "..kRRRRRRRRRrk..",
+                "..kRRRRRRRRRrk..",
+                "..kRRRRRRRRrrk..",
+                "...kRRRRRRRrk...",
+                "...kRRRRRrrrk...",
+                "....kRRRRrrk....",
+                ".....kkkkkk.....",
+            ];
+            const COAL = [
+                "................",
+                "......kkkk......",
+                "....kkGGGGkk....",
+                "...kGGGBBGGGk...",
+                "..kGGBBBBGGGGk..",
+                "..kGBBBGGGGGGk..",
+                ".kGGBBGGGGGGDDk.",
+                ".kGGGGGGGGGDDDk.",
+                ".kGGGGGGGGDDDDk.",
+                ".kGGGGGGGDDDDkk.",
+                "..kGGGGGDDDDk...",
+                "..kkGGGDDDDkk...",
+                "....kkkkkkk.....",
+            ];
+            const DIA = [
+                "................",
+                "................",
+                "....kkkkkkkk....",
+                "...kWWCCCCCCk...",
+                "..kWWCCCCCCCCk..",
+                ".kWCCCCCCCCCCDk.",
+                ".kkkkkkkkkkkkkk.",
+                ".kCCCCCCCCCCDDk.",
+                "..kCCCCCCCCDDk..",
+                "...kCCCCCCDDk...",
+                "....kCCCCDDk....",
+                ".....kCCCDk.....",
+                "......kCDk......",
+                ".......kk.......",
+            ];
+            const QUARTZ = [
+                ".........eee....",
+                "........ecce....",
+                ".eee...edcbg....",
+                ".eccg.eccbag....",
+                ".eccbgebbaag....",
+                ".ebbcaeaaafgee..",
+                "..gccfeaaagcbe..",
+                "...gaeaaafgacg..",
+                ".eegfeaaafhah...",
+                ".eaegeaaafhaeee.",
+                ".gbageaafhfecce.",
+                ".gcbagaafhgcbag.",
+                ".hccchaffhfcfh..",
+                "..hcfhhffhffh...",
+                "...hh..hh.hh....",
+                "................",
+            ];
+            const CLUS = [
+                "................",
+                "...........kk...",
+                "..........kWWk..",
+                "....kk....kWBBk.",
+                "...kWWk...kWBBk.",
+                "...kWBBk..kBBDk.",
+                "...kWBBBkkkBBDk.",
+                "..kkWBBBBkBBBDk.",
+                "..kWBBBBBBBBBDk.",
+                "..kBBBBBBBBBDDk.",
+                "..kBBBBBBBBDDDk.",
+                "..kkBBBBBBBDDkk.",
+                "...kkkkkkkkkkk..",
+            ];
+            // аметист: гроздь кристаллов с гранями, бликами и тенями
+            const amethyst = (p) => {
+                const shard = (cx, ty, by, hw) => {
+                    for (let y = ty; y <= by; y++) {
+                        const w = Math.min(hw, y - ty);
+                        for (let x = cx - w; x <= cx + w; x++) {
+                            if (x < 0 || x > 15 || y < 0 || y > 15) continue;
+                            let c;
+                            if (y === ty) c = "#f0d8ff";
+                            else if (y === ty + 1) c = "#e6c8ff";
+                            else if (x === cx - w) c = "#d9b8ff";
+                            else if (x === cx + w) c = "#4a1d86";
+                            else if (x <= cx - 2) c = "#c99cf5";
+                            else if (x >= cx + 2) c = "#7a38c8";
+                            else if (x === cx) c = "#a060e8";
+                            else c = x < cx ? "#b478f0" : "#8f4fe0";
+                            p(x, y, c);
+                        }
+                    }
+                };
+                shard(3, 5, 12, 3);
+                shard(12, 6, 12, 2);
+                shard(8, 1, 12, 4);
+                for (let x = 2; x <= 13; x++) p(x, 13, "#2a1050");
+            };
+            const EM2 = [
+                "................",
+                ".....kkkkkk.....",
+                "....kWWLLLGk....",
+                "...kWLLLLLLGk...",
+                "..kWLLGGGGGGDk..",
+                "..kLLGGGGGGGDk..",
+                "..kLGGGLLGGGDk..",
+                "..kLGGLLLLGGDk..",
+                "..kGGGLLLLGDDk..",
+                "..kGGGGLLGGDDk..",
+                "..kGGGGGGGDDdk..",
+                "...kGGGGGDDdk...",
+                "....kDDDDddk....",
+                ".....kkkkkk.....",
+            ];
+            // древние обломки: пластины с заклёпками
+            const debris = (p, r) => {
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        const sx = x % 8,
+                            sy = y % 8;
+                        p(
+                            x,
+                            y,
+                            sx == 0 || sx == 7 || sy == 0 || sy == 7
+                                ? "#241510"
+                                : sx == 1 && sy == 1
+                                  ? "#d8a050"
+                                  : sx == 1 || sy == 1
+                                    ? "#8a5a42"
+                                    : pk(["#5a3a2e", "#503228", "#64402f"], r)
+                        );
+                    }
+            };
+            const planks = (p, r) => {
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        const row = y >> 2,
+                            ry = y % 4;
+                        p(
+                            x,
+                            y,
+                            ry == 3
+                                ? "#6a4e28"
+                                : x == (row % 2 ? 3 : 11)
+                                  ? "#7d5f35"
+                                  : ry == 0
+                                    ? "#caa56e"
+                                    : ry == 1 && hash(x, row) < 0.25
+                                      ? "#9a7a48"
+                                      : pk(["#b8945f", "#ae8a56", "#c29c66"], r)
+                        );
+                    }
+            };
+            const glassTex = (p) => {
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        const d = Math.min(x, y, 15 - x, 15 - y);
+                        if (d == 0) p(x, y, "#eaf6fa");
+                        else if (d == 1) p(x, y, "#9cbcc8");
+                        else if (
+                            (x == y && x > 3 && x < 9) ||
+                            (x == y - 1 && x > 3 && x < 8) ||
+                            (x + y == 21 && x > 9 && x < 13) ||
+                            (x + y == 20 && x > 9 && x < 12)
+                        )
+                            p(x, y, "rgba(255,255,255,.85)");
+                        else if ((x + y) % 7 == 0 && d > 2) p(x, y, "rgba(200,230,240,.25)");
+                    }
+            };
+            const logTex = (p, r) => {
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        const w = x % 5;
+                        p(
+                            x,
+                            y,
+                            w == 0
+                                ? "#3e2a14"
+                                : w == 1
+                                  ? "#8a6a3c"
+                                  : x >= 6 && x <= 8 && y >= 6 && y <= 8
+                                    ? "#3a2610"
+                                    : pk(["#6a4a28", "#5e4224", "#76542c"], r)
+                        );
+                    }
+            };
+            const brickItem = (p, r) => {
+                for (let y = 4; y <= 11; y++)
+                    for (let x = 2; x <= 13; x++) {
+                        const e = y == 4 || y == 11 || x == 2 || x == 13;
+                        p(
+                            x,
+                            y,
+                            e
+                                ? "#4a1e14"
+                                : y == 5
+                                  ? "#e08a72"
+                                  : y >= 10
+                                    ? "#8a3a2a"
+                                    : x >= 11
+                                      ? "#9a4230"
+                                      : r() < 0.15
+                                        ? "#c86a52"
+                                        : "#b5523a"
+                        );
+                    }
+            };
+            const eappleF = (p, r) => {
+                art(APPLE, { k: "#6b4a00", R: "#fbd635", r: "#c9981a", h: "#fff8b0", s: "#6a4420", g: "#3fa030" })(
+                    p,
+                    r
+                );
+                [
+                    [2, 4],
+                    [13, 3],
+                    [14, 9],
+                    [1, 10],
+                    [7, 0],
+                    [12, 12],
+                ].forEach(([x, y], i) => p(x, y, i % 2 ? "#c8a0ff" : "#ffffff"));
+            };
+            const BUCKET = [
+                "................",
+                "................",
+                "....kkkkkkkk....",
+                "...k........k...",
+                "..kLLLLLLLLLLk..",
+                "..kWwwWWWWWWWk..",
+                "..kGGGGGGGGGGk..",
+                "..kGLgggggggdk..",
+                "..kGLgggggggdk..",
+                "...kGLgggggdk...",
+                "...kGLgggggdk...",
+                "....kGLgggdk....",
+                "....kGLgggdk....",
+                "....kkkkkkkk....",
+            ];
+            const TABLE = [
+                "gggggggggggggggg",
+                "gttttgttttgttttg",
+                "gttttgttttgttttg",
+                "gttttgttttgttttg",
+                "gggggggggggggggg",
+                "pPPPPPPPPPPPPPPp",
+                "pPPsssPPPPPmmmPp",
+                "pPPssPPPPPPPhPPp",
+                "pPPsPPPPPPPPhPPp",
+                "pPPPPPPPPPPPhPPp",
+                "pPPPPPPPPPPPPPPp",
+                "pPPPPPPPPPPPPPPp",
+                "pPPPPPPPPPPPPPPp",
+                "pPPPPPPPPPPPPPPp",
+                "pppppppppppppppp",
+                "pppppppppppppppp",
+            ];
+            const TORCH = [
+                "................",
+                ".......ff.......",
+                "......fOOf......",
+                "......fOOf......",
+                ".......OO.......",
+                "......kkkk......",
+                ".......sS.......",
+                ".......sS.......",
+                ".......sS.......",
+                ".......sS.......",
+                ".......sS.......",
+                ".......sS.......",
+                ".......sS.......",
+                ".......sS.......",
+            ];
+            const chestTex = (p, r) => {
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        let c = pk(["#b07a3a", "#a66f30", "#bb843f"], r);
+                        if (y == 4) c = "#4a2f12";
+                        else if (y == 0 || y > 13) c = "#7a4e20";
+                        if (x < 2 || x > 13) c = y == 4 ? "#4a2f12" : "#8a5a26";
+                        if ((x == 7 || x == 8) && y >= 3 && y <= 7) c = y == 3 || y == 7 ? "#8a8a8a" : "#d8d8d8";
+                        p(x, y, c);
+                    }
+            };
+            const tntTex = (p, r) => {
+                const L = { T: ["###", ".#.", ".#.", ".#.", ".#."], N: ["#.#", "###", "###", "#.#", "#.#"] },
+                    W = "TNT";
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        let c;
+                        if (y == 4 || y == 12) c = "#5a1010";
+                        else if (y > 4 && y < 12) {
+                            c = y == 5 ? "#f7f2e8" : y == 11 ? "#d6cebd" : "#efe9dc";
+                            if (y >= 6 && y <= 10) {
+                                const i = Math.floor((x - 2) / 4),
+                                    cx = (x - 2) % 4;
+                                if (i >= 0 && i < 3 && cx < 3 && L[W[i]][y - 6][cx] == "#") c = "#2a1010";
+                            }
+                        } else {
+                            const k = x % 4;
+                            c =
+                                r() < 0.08
+                                    ? "#c01e1e"
+                                    : k == 0
+                                      ? "#8f1c1c"
+                                      : k == 1
+                                        ? "#ee4a3a"
+                                        : k == 2
+                                          ? "#d62a2a"
+                                          : "#b82020";
+                            if (y == 2 || y == 14) c = k == 0 ? "#4a2810" : "#7a4a22";
+                        }
+                        p(x, y, c);
+                    }
+            };
+            const furnaceTex = (p, r) => {
                 for (let y = 0; y < 16; y++)
                     for (let x = 0; x < 16; x++) {
                         let c = hash(x, y) < 0.1 ? "#9c9c9c" : pk(["#808080", "#7a7a7a", "#868686"], r);
@@ -846,7 +1599,6 @@
                 ].forEach(([x, y], i) => p(x, y, i % 2 ? "#5e4524" : "#8a6a3a"));
             };
             const DIRT = noise(["#866043", "#79553a", "#6b4a30", "#94694a", "#5a3e28"]);
-
             const ITEMS = [
                 { id: "dirt", n: "Земля", v: 1, f: tile(grassDirt) },
                 { id: "sand", n: "Песок", v: 2, f: tile(sandTex) },
@@ -1050,7 +1802,6 @@
             document.body.style.backgroundImage = `linear-gradient(#000a,#000a),url(${dirtTile})`;
             document.body.style.backgroundSize = "auto,96px";
             const by = (id) => ITEMS.find((i) => i.id === id);
-
             /* --- инвентарь: 50 клеток (5 строк по 10), размер стака у предметов свой --- */
             let betK = -1;
             const SL = 50,
@@ -1131,7 +1882,6 @@
                 ac,
                 note = "";
             let storeOk = true;
-
             function load() {
                 try {
                     const s = JSON.parse(localStorage.getItem("mcw2") || "null");
@@ -1182,7 +1932,6 @@
             load();
             if (!Object.values(inv).some((v) => v > 0)) inv = { dirt: 5 };
             for (const k in inv) got[k] = 1;
-
             function snd(f, d, t, f2) {
                 try {
                     ac = ac || new AudioContext();
@@ -1263,7 +2012,6 @@
                 e.textContent = t;
                 e.className = "info " + (cl || "");
             }
-
             function render() {
                 if (!(inv[bet] > 0)) bet = null;
                 if (tgt && bet) {
@@ -1353,7 +2101,6 @@
                 renderChest();
                 if (!spinning) save();
             }
-
             $("bet").onclick = () => {
                 if (bet) {
                     bet = null;
@@ -1403,7 +2150,6 @@
                 tp.style.left = Math.min(e.clientX + 14, innerWidth - tp.offsetWidth - 6) + "px";
                 tp.style.top = e.clientY - 8 + "px";
             });
-
             $("go").onclick = () => {
                 if (spinning || !bet || !tgt || !(inv[bet] > 0) || noRoom(tgt) || !ok(tgt)) return;
                 const c = chance(),
@@ -1468,7 +2214,6 @@
                 }, 4700);
             };
             addEventListener("resize", () => labels(chance()));
-
             let rc = 0;
             $("rs").onclick = () => {
                 if (spinning) return;
@@ -1490,7 +2235,6 @@
                 hold = false;
                 render();
             };
-
             /* ===== Вход в админ панель по паролю (хранится только хэш SHA-256 от "mcw-admin:"+пароль) ===== */
             const PW_HASH = "2009e6378ae8b01d88b191ab684470642246544f2de844fff128fe69c9a7ef45";
             let unlocked = false,
@@ -1561,7 +2305,6 @@
             $("pw").addEventListener("keydown", (e) => {
                 if (e.key === "Enter") tryPw();
             });
-
             /* ===== События «удачи» и выдача предметов (только после входа) ===== */
             let EV = [],
                 evCol = null,
@@ -1643,7 +2386,6 @@
                 }
                 evRender();
             }
-
             document
                 .querySelectorAll("[data-close]")
                 .forEach((b) => (b.onclick = () => b.closest(".ov").classList.remove("on")));
@@ -1690,7 +2432,6 @@
                 };
                 $("agrid").appendChild(b);
             });
-
             /* ===== Облачное сохранение (работает только внутри артефакта Claude) ===== */
             function dbSave(now) {
                 if (!udoc) return Promise.resolve();
@@ -1749,7 +2490,6 @@
                     } else dbSave(true);
                 } catch (e) {}
             })();
-
             setInterval(() => {
                 evRender();
             }, 5000);
@@ -1870,7 +2610,6 @@
                 return true;
             }
             /* @CRAFT-LOGIC-END */
-
             const used = (id) => grid.filter((x) => x === id).length;
             function pruneGrid() {
                 const c = {};
@@ -2172,7 +2911,6 @@
             $("put").onclick = toChest;
             $("up1").onclick = () => upChest(1, "pearl", 1);
             $("up10").onclick = () => upChest(10, "dblock", 1);
-
             function smelt(id, n = 1) {
                 if (spinning) return false;
                 const out = SMELT[id];
@@ -2190,7 +2928,6 @@
                 render();
                 return true;
             }
-
             /* ===== Окно «Обновление» перед входом в игру =====
    КАК ВЫПУСТИТЬ ОБНОВЛЕНИЕ НА GITHUB: добавь новый объект В НАЧАЛО списка UPDATES
    (с новым значением v). Каждый игрок увидит это окно один раз — пока не нажмёт «Играть!».
@@ -2295,7 +3032,6 @@
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape" && $("upd").classList.contains("on")) hideUpd();
             });
-
             window.MCW = { SMELT, FUEL, RECIPES, smelt, craft: doCraft, showUpd };
             render();
             showUpd();
