@@ -3,6 +3,8 @@
     <head>
         <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store">
+    <meta http-equiv="Pragma" content="no-cache">
     <title>mineupgrade</title>
 
     <link rel="manifest" href="/manifest.json">
@@ -40,6 +42,8 @@
             }
             html {
                 scroll-padding-top: env(safe-area-inset-top, 0px);
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
             }
             body {
                 margin: 0;
@@ -265,6 +269,21 @@
             .btn.sm {
                 margin-top: 8px;
             }
+            .up {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+            }
+            .up .uic {
+                width: 26px;
+                height: 26px;
+                image-rendering: pixelated;
+                pointer-events: none;
+            }
+            .up:disabled .uic {
+                opacity: 0.45;
+            }
             .inv {
                 display: grid;
                 grid-template-columns: repeat(10, 1fr);
@@ -487,6 +506,115 @@
                     inset 3px 3px 0 #a9b4e0,
                     inset -3px -3px 0 #3d4672;
             }
+            .tabs {
+                position: relative;
+            }
+            .tabs .menu-btn {
+                flex: none;
+                width: 78px;
+                height: 54px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .tabs .menu-btn svg {
+                width: 30px;
+                height: 30px;
+                display: block;
+                fill: currentColor;
+            }
+            /* Выдвижное меню: узкое окно от левого края на всю высоту */
+            .mnu-sc {
+                position: fixed;
+                inset: 0;
+                background: #0008;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.18s ease;
+                z-index: 20;
+            }
+            .mnu-sc.on {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .mnu {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: min(170px, 62vw);
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                padding: 11px 9px;
+                padding-top: calc(11px + env(safe-area-inset-top, 0px));
+                padding-bottom: calc(11px + env(safe-area-inset-bottom, 0px));
+                padding-left: calc(9px + env(safe-area-inset-left, 0px));
+                overflow-y: auto;
+                background: #8b8b8b;
+                border-right: 4px solid #000;
+                box-shadow:
+                    inset 3px 3px 0 #b8b8b8,
+                    inset -3px -3px 0 #4a4a4a,
+                    8px 0 0 #00000033;
+            }
+            .mnu h2 {
+                margin: 0 -9px 6px;
+                padding: 8px 12px;
+                text-align: center;
+                color: #fff;
+                font-family: "Arial Black", "Segoe UI", Arial, sans-serif;
+                font-weight: 900;
+                font-size: 16px;
+                text-shadow: 2px 2px #3f3f3f;
+                border-bottom: 2px solid #6f6f6f;
+            }
+            .mnu .tab,
+            .mnu .btn {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                width: auto;
+                flex: none;
+                align-self: stretch;
+                margin: 0 -4px;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            .mnu .tab img {
+                width: 18px;
+                height: 18px;
+                flex: none;
+                display: block;
+                image-rendering: pixelated;
+            }
+            .mnu .btn {
+                justify-content: center;
+                margin-top: auto;
+            }
+            @media (max-width: 520px) {
+                .mnu {
+                    width: min(164px, 62vw);
+                }
+                .tabs .menu-btn {
+                    width: 40px;
+                    height: 36px;
+                }
+                .tabs .menu-btn svg {
+                    width: 20px;
+                    height: 20px;
+                }
+                .mnu .tab {
+                    padding: 8px 10px;
+                    font-size: 13px;
+                }
+                .mnu .btn {
+                    padding: 8px 10px;
+                    font-size: 12px;
+                }
+            }
             .bench {
                 margin: 6px 0 10px;
                 padding: 12px 8px 14px;
@@ -630,715 +758,7 @@
                 margin: 10px 0 6px;
                 font-size: clamp(22px, 6vw, 32px);
                 text-shadow: 2px 2px #fff8;
-            }
-            .ico {
-                display: flex;
-                gap: 6px;
-                flex-wrap: wrap;
-                justify-content: center;
-                margin: 10px 0 14px;
-            }
-            .ico img {
-                width: 40px;
-                height: 40px;
-                image-rendering: pixelated;
-                background: #8b8b8b;
-                border: 3px solid #373737;
-                border-right-color: #fff;
-                border-bottom-color: #fff;
-                padding: 3px;
-            }
-            .paper ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                text-align: left;
-            }
-            .paper li {
-                margin: 10px 0;
-                padding: 8px 10px;
-                background: #fff6;
-                border-left: 5px solid #b8935a;
-                font-size: 14px;
-                line-height: 1.45;
-            }
-            .tag {
-                display: inline-block;
-                padding: 1px 7px;
-                margin-right: 8px;
-                font-size: 11px;
-                color: #fff;
-                border: 2px solid #000;
-                vertical-align: 1px;
-            }
-            .tag.new {
-                background: #3a9a2a;
-            }
-            .tag.chg {
-                background: #c87a1a;
-            }
-            .tag.fix {
-                background: #2a6ab0;
-            }
-            .paper .btn {
-                margin-top: 16px;
-            }
-            .paper {
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-                max-height: min(96vh, 780px);
-                padding: 0;
-            }
-            .pbody {
-                overflow: auto;
-                flex: 1;
-                min-height: 0;
-                padding: 24px 20px 6px;
-                text-align: center;
-            }
-            .paper > .btn {
-                margin: 10px auto 16px;
-                flex: none;
-            }
-            .bg {
-                flex-wrap: nowrap;
-                gap: clamp(6px, 2.5vw, 26px);
-            }
-            .cg .slot {
-                width: clamp(44px, 12.5vw, 84px);
-            }
-            .bench .slot.big {
-                width: clamp(56px, 16vw, 104px);
-            }
-            .arr {
-                border-top-width: clamp(10px, 3vw, 18px);
-                border-bottom-width: clamp(10px, 3vw, 18px);
-                border-left-width: clamp(14px, 4vw, 30px);
-            }
-            .rr {
-                padding: 4px 6px;
-            }
-            .rr.no {
-                opacity: 0.6;
-            }
-            .rr.can {
-                border-color: #2fd35a;
-                background: #2fd35a22;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="wrap">
-            <div class="gui" id="gui">
-                <h1>Колесо фортуны</h1>
-                <div class="tabs">
-                    <button class="tab on" id="t1">Рулетка</button><button class="tab" id="t2">Верстак</button>
-                </div>
-                <div id="pg1">
-                    <div class="stage">
-                        <div class="sb">Ставка<button class="slot big" id="bet" aria-label="Слот ставки"></button></div>
-                        <div class="ww">
-                            <div class="ptr"></div>
-                            <div class="wheel" id="wheel"><canvas id="wc" width="96" height="96"></canvas></div>
-                        </div>
-                        <div class="sb">
-                            Цель<button class="slot big" id="tgt" aria-label="Выбрать желаемый предмет"></button>
-                        </div>
-                    </div>
-                    <div class="info" id="info"></div>
-                    <button class="btn" id="go" disabled>Крутить!</button>
-                </div>
-                <div id="pg2" hidden>
-                    <div class="bench">
-                        <h3>ВЕРСТАК</h3>
-                        <div class="bg">
-                            <div class="cg" id="cg"></div>
-                            <div class="arr"></div>
-                            <button class="slot big" id="co" disabled aria-label="Результат"></button>
-                        </div>
-                    </div>
-                    <div id="cinfo"></div>
-                    <button class="btn sm" id="cx">Очистить стол</button>
-                </div>
-                <h2>Инвентарь</h2>
-                <div class="inv" id="inv"></div>
-                <p class="hint" id="ih">Клик по предмету — в слот ставки. Клик по слоту цели — выбор предмета.</p>
-                <div id="pg3" hidden>
-                    <h2>
-                        Рецепты <small style="font-weight: normal">(нажми на рецепт — материалы лягут на стол)</small>
-                    </h2>
-                    <div class="rb" id="rb"></div>
-                </div>
-                <p class="hint" id="sv"></p>
-                <button class="btn sm" id="rs">Сбросить прогресс</button>
-                <button class="btn sm" id="adm">Админ панель</button>
-            </div>
-        </div>
-
-        <div class="ov" id="pov">
-            <div class="gui menu">
-                <h2 style="margin-top: 0">Вход в админ панель</h2>
-                <div class="row">
-                    <input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="Пароль" />
-                </div>
-                <p class="hint" id="pm"></p>
-                <button class="btn sm" id="pok">Войти</button>
-                <button class="btn sm" data-close>Отмена</button>
-            </div>
-        </div>
-
-        <div class="ov" id="aov">
-            <div class="gui menu">
-                <h2 style="margin-top: 0">Админ панель</h2>
-                <div class="sec">
-                    <h2>Выдача предметов <small>(только мне)</small></h2>
-                    <div class="row">
-                        <label>Количество <input id="acnt" type="number" min="1" max="1920" value="1" /></label>
-                    </div>
-                    <div class="grid" id="agrid"></div>
-                </div>
-                <div class="sec">
-                    <h2>Удача</h2>
-                    <div class="evf">
-                        <label class="full"
-                            >Предмет
-                            <select id="ei"></select
-                        ></label>
-                        <label>Шанс, % <input id="el" type="number" min="1" max="90" value="20" /></label>
-                        <label>Длит., мин <input id="ed" type="number" min="1" value="60" /></label>
-                        <label class="full">Начало <input id="ea" type="datetime-local" /></label>
-                    </div>
-                    <button class="btn sm" id="eadd">Включить удачу</button>
-                    <div id="alist"></div>
-                </div>
-                <button class="btn sm" data-close>Закрыть</button>
-            </div>
-        </div>
-
-        <div class="ov" id="ov">
-            <div class="gui menu">
-                <h2 style="margin-top: 0">Выбери желаемый предмет</h2>
-                <div class="grid" id="grid"></div>
-                <p class="hint">
-                    Нельзя получить предмет, ценнее ставки более чем в 6 раз (затемнённые недоступны). Esc — закрыть.
-                </p>
-            </div>
-        </div>
-        <div id="upd">
-            <div class="paper">
-                <div class="pbody">
-                    <div class="ribbon" id="uv"></div>
-                    <div class="ud" id="ud"></div>
-                    <h2 id="ut"></h2>
-                    <div class="ico" id="ui"></div>
-                    <ul id="ul"></ul>
-                </div>
-                <button class="btn" id="up">Играть!</button>
-            </div>
-        </div>
-        <div id="tip"></div>
-        <div id="toast">
-            <img id="ti" />
-            <div><b>Достижение получено!</b><span id="tn"></span></div>
-        </div>
-
-        <script>
-            const $ = (id) => document.getElementById(id);
-            function R(a) {
-                return () => {
-                    a |= 0;
-                    a = (a + 0x6d2b79f5) | 0;
-                    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-                };
-            }
-            const pk = (a, r) => a[Math.floor(r() * a.length)];
-            function mk(seed, fn) {
-                const c = document.createElement("canvas");
-                c.width = c.height = 16;
-                const x = c.getContext("2d"),
-                    r = R(seed);
-                fn((i, j, col) => {
-                    x.fillStyle = col;
-                    x.fillRect(i, j, 1, 1);
-                }, r);
-                return c.toDataURL();
-            }
-
-            /* --- оригинальные 2D-спрайты 16x16 (нарисованы с нуля) --- */
-            const hash = (x, y) => Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
-            const hex = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
-            const noise = (pal) => (p, r) => {
-                for (let i = 0; i < 16; i++) for (let j = 0; j < 16; j++) p(i, j, pk(pal, r));
-            };
-            // слиток: скошенный брусок с гранями
-            const ingot = (q) => (p, r) => {
-                for (let y = 4; y <= 11; y++) {
-                    const o = (11 - y) >> 1;
-                    for (let x = 2 + o; x <= 12 + o; x++) {
-                        const e = y == 4 || y == 11 || x == 2 + o || x == 12 + o;
-                        p(x, y, e ? q[0] : y == 5 ? q[1] : y == 10 || x >= 10 + o ? q[3] : r() < 0.2 ? q[1] : q[2]);
-                    }
-                }
-            };
-            const gem = (q, sx) => (p) => {
-                for (let i = 0; i < 16; i++)
-                    for (let j = 0; j < 16; j++) {
-                        const dx = i - 7.5,
-                            dy = j - 7.5,
-                            m = Math.abs(dx) * sx + Math.abs(dy);
-                        if (m <= 7) p(i, j, m > 6 ? q[0] : dx + dy < -2 ? q[1] : dx + dy > 2 ? q[3] : q[2]);
-                    }
-            };
-            const blob = (q) => (p) => {
-                for (let i = 0; i < 16; i++)
-                    for (let j = 0; j < 16; j++) {
-                        const d = Math.hypot(i - 7.5, j - 7.5);
-                        if (d < 6.2) p(i, j, d > 5.2 ? q[0] : i + j < 11 && d < 4.6 ? q[1] : i + j > 17 ? q[3] : q[2]);
-                    }
-            };
-            const rod = (q) => (p) => {
-                for (let i = 2; i <= 13; i++) {
-                    p(i, 15 - i, i % 4 < 2 ? q[0] : q[2]);
-                    p(i + 1, 15 - i, q[1]);
-                    p(i, 14 - i, q[2]);
-                }
-            };
-            const lump = (q, fl) => (p, r) => {
-                for (let i = 0; i < 16; i++)
-                    for (let j = 0; j < 16; j++) {
-                        const d = Math.hypot(i - 7.5, j - 7.5) + (r() - 0.5) * 2.4;
-                        if (d < 6)
-                            p(i, j, d > 5 ? q[0] : r() < 0.14 ? fl : i + j < 12 ? q[1] : i + j > 17 ? q[3] : q[2]);
-                    }
-            };
-            const mound = (q) => (p, r) => {
-                for (let j = 4; j <= 13; j++) {
-                    const hw = Math.round((j - 3) * 0.75);
-                    for (let i = 8 - hw; i <= 7 + hw; i++)
-                        p(
-                            i,
-                            j,
-                            j == 13 || i == 8 - hw || i == 7 + hw
-                                ? q[0]
-                                : i < 10 - hw
-                                  ? q[1]
-                                  : i > 5 + hw
-                                    ? q[3]
-                                    : r() < 0.2
-                                      ? q[1]
-                                      : q[2]
-                        );
-                }
-            };
-            const art = (rows, m) => (p) => {
-                rows.forEach((s, j) =>
-                    [...s.padEnd(16, ".").slice(0, 16)].forEach((c, i) => {
-                        if (m[c]) p(i, j, m[c]);
-                    })
-                );
-            };
-            // плоская плитка блока: тёмная рамка, светлая кромка сверху-слева, тень снизу-справа
-            const tile = (f) => (p, r) => {
-                const T = [];
-                f((i, j, c) => {
-                    T[j * 16 + i] = c.slice(0, 7);
-                }, r);
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++) {
-                        const c = T[y * 16 + x];
-                        if (!c) continue;
-                        const k =
-                            x == 0 || y == 0 || x == 15 || y == 15
-                                ? 0.4
-                                : x == 1 || y == 1
-                                  ? 1.18
-                                  : x == 14 || y == 14
-                                    ? 0.8
-                                    : 1;
-                        p(x, y, "rgb(" + hex(c).map((z) => Math.min(255, Math.round(z * k))) + ")");
-                    }
-            };
-            // «камешки» (ячейки Вороного): булыжник, светокамень, обсидиан
-            const voro = (pal, joint, hi, n) => (p, r) => {
-                const S = [];
-                for (let k = 0; k < n; k++) S.push([r() * 16, r() * 16]);
-                const M = [];
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++) {
-                        let b = 0,
-                            bd = 1e9;
-                        S.forEach(([sx, sy], k) => {
-                            const d = (x - sx) ** 2 + (y - sy) ** 2;
-                            if (d < bd) {
-                                bd = d;
-                                b = k;
-                            }
-                        });
-                        M[y * 16 + x] = b;
-                    }
-                const J = (x, y) =>
-                    (x < 15 && M[y * 16 + x + 1] != M[y * 16 + x]) || (y < 15 && M[(y + 1) * 16 + x] != M[y * 16 + x]);
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++)
-                        p(
-                            x,
-                            y,
-                            J(x, y)
-                                ? joint
-                                : (x > 0 && J(x - 1, y)) || (y > 0 && J(x, y - 1))
-                                  ? hi
-                                  : pal[(M[y * 16 + x] * 3) % pal.length]
-                        );
-            };
-            const grassDirt = (p, r) => {
-                for (let x = 0; x < 16; x++) {
-                    const gh = 3 + (r() < 0.5 ? 0 : 1);
-                    for (let y = 0; y < 16; y++) {
-                        let c;
-                        if (y < gh) c = pk(["#5cb83a", "#4ea62f", "#6cc84a"], r);
-                        else if (y == gh && r() < 0.5) c = pk(["#4ea62f", "#3f8f27"], r);
-                        else c = r() < 0.12 ? pk(["#a0764f", "#5a3e28"], r) : pk(["#866043", "#79553a", "#6b4a30"], r);
-                        p(x, y, c);
-                    }
-                }
-            };
-            const sandTex = (p, r) => {
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++)
-                        p(
-                            x,
-                            y,
-                            Math.sin(x * 0.7 + y * 1.3) > 0.7
-                                ? "#e9e0b0"
-                                : r() < 0.1
-                                  ? "#bdb277"
-                                  : pk(["#dbd3a0", "#d2c98f", "#e4dcaa"], r)
-                        );
-            };
-            const pearlF = (q) => (p, r) => {
-                blob(q)(p, r);
-                [
-                    [6, 5],
-                    [7, 5],
-                    [8, 5],
-                    [9, 6],
-                    [9, 7],
-                    [8, 8],
-                    [7, 8],
-                    [6, 7],
-                    [6, 6],
-                ].forEach(([x, y]) => p(x, y, "#d8fff2"));
-                p(7, 6, "#ffffff");
-            };
-            const blazeF = (q) => (p, r) => {
-                rod(q)(p, r);
-                [
-                    [14, 1],
-                    [15, 2],
-                    [13, 1],
-                    [14, 0],
-                    [15, 1],
-                ].forEach(([x, y], i) => p(x, y, i % 2 ? "#ff7a1a" : "#ffe060"));
-            };
-            const APPLE = [
-                "................",
-                "........s.g.....",
-                ".......s.gggg...",
-                "....kkk..kkk....",
-                "...kRRRkkRRRk...",
-                "..kRhhRRRRRRRk..",
-                "..kRhRRRRRRRrk..",
-                "..kRRRRRRRRRrk..",
-                "..kRRRRRRRRRrk..",
-                "..kRRRRRRRRrrk..",
-                "...kRRRRRRRrk...",
-                "...kRRRRRrrrk...",
-                "....kRRRRrrk....",
-                ".....kkkkkk.....",
-            ];
-            const COAL = [
-                "................",
-                "......kkkk......",
-                "....kkGGGGkk....",
-                "...kGGGBBGGGk...",
-                "..kGGBBBBGGGGk..",
-                "..kGBBBGGGGGGk..",
-                ".kGGBBGGGGGGDDk.",
-                ".kGGGGGGGGGDDDk.",
-                ".kGGGGGGGGDDDDk.",
-                ".kGGGGGGGDDDDkk.",
-                "..kGGGGGDDDDk...",
-                "..kkGGGDDDDkk...",
-                "....kkkkkkk.....",
-            ];
-            const DIA = [
-                "................",
-                "................",
-                "....kkkkkkkk....",
-                "...kWWCCCCCCk...",
-                "..kWWCCCCCCCCk..",
-                ".kWCCCCCCCCCCDk.",
-                ".kkkkkkkkkkkkkk.",
-                ".kCCCCCCCCCCDDk.",
-                "..kCCCCCCCCDDk..",
-                "...kCCCCCCDDk...",
-                "....kCCCCDDk....",
-                ".....kCCCDk.....",
-                "......kCDk......",
-                ".......kk.......",
-            ];
-            const QUARTZ = [
-                ".........eee....",
-                "........ecce....",
-                ".eee...edcbg....",
-                ".eccg.eccbag....",
-                ".eccbgebbaag....",
-                ".ebbcaeaaafgee..",
-                "..gccfeaaagcbe..",
-                "...gaeaaafgacg..",
-                ".eegfeaaafhah...",
-                ".eaegeaaafhaeee.",
-                ".gbageaafhfecce.",
-                ".gcbagaafhgcbag.",
-                ".hccchaffhfcfh..",
-                "..hcfhhffhffh...",
-                "...hh..hh.hh....",
-                "................",
-            ];
-            const CLUS = [
-                "................",
-                "...........kk...",
-                "..........kWWk..",
-                "....kk....kWBBk.",
-                "...kWWk...kWBBk.",
-                "...kWBBk..kBBDk.",
-                "...kWBBBkkkBBDk.",
-                "..kkWBBBBkBBBDk.",
-                "..kWBBBBBBBBBDk.",
-                "..kBBBBBBBBBDDk.",
-                "..kBBBBBBBBDDDk.",
-                "..kkBBBBBBBDDkk.",
-                "...kkkkkkkkkkk..",
-            ];
-            const EM2 = [
-                "................",
-                ".....kkkkkk.....",
-                "....kWWLLLGk....",
-                "...kWLLLLLLGk...",
-                "..kWLLGGGGGGDk..",
-                "..kLLGGGGGGGDk..",
-                "..kLGGGLLGGGDk..",
-                "..kLGGLLLLGGDk..",
-                "..kGGGLLLLGDDk..",
-                "..kGGGGLLGGDDk..",
-                "..kGGGGGGGDDdk..",
-                "...kGGGGGDDdk...",
-                "....kDDDDddk....",
-                ".....kkkkkk.....",
-            ];
-            // древние обломки: пластины с заклёпками
-            const debris = (p, r) => {
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++) {
-                        const sx = x % 8,
-                            sy = y % 8;
-                        p(
-                            x,
-                            y,
-                            sx == 0 || sx == 7 || sy == 0 || sy == 7
-                                ? "#241510"
-                                : sx == 1 && sy == 1
-                                  ? "#d8a050"
-                                  : sx == 1 || sy == 1
-                                    ? "#8a5a42"
-                                    : pk(["#5a3a2e", "#503228", "#64402f"], r)
-                        );
-                    }
-            };
-            const planks = (p, r) => {
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++) {
-                        const row = y >> 2,
-                            ry = y % 4;
-                        p(
-                            x,
-                            y,
-                            ry == 3
-                                ? "#6a4e28"
-                                : x == (row % 2 ? 3 : 11)
-                                  ? "#7d5f35"
-                                  : ry == 0
-                                    ? "#caa56e"
-                                    : ry == 1 && hash(x, row) < 0.25
-                                      ? "#9a7a48"
-                                      : pk(["#b8945f", "#ae8a56", "#c29c66"], r)
-                        );
-                    }
-            };
-            const glassTex = (p) => {
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++) {
-                        const d = Math.min(x, y, 15 - x, 15 - y);
-                        if (d == 0) p(x, y, "#eaf6fa");
-                        else if (d == 1) p(x, y, "#9cbcc8");
-                        else if (
-                            (x == y && x > 3 && x < 9) ||
-                            (x == y - 1 && x > 3 && x < 8) ||
-                            (x + y == 21 && x > 9 && x < 13) ||
-                            (x + y == 20 && x > 9 && x < 12)
-                        )
-                            p(x, y, "rgba(255,255,255,.85)");
-                        else if ((x + y) % 7 == 0 && d > 2) p(x, y, "rgba(200,230,240,.25)");
-                    }
-            };
-            const logTex = (p, r) => {
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++) {
-                        const w = x % 5;
-                        p(
-                            x,
-                            y,
-                            w == 0
-                                ? "#3e2a14"
-                                : w == 1
-                                  ? "#8a6a3c"
-                                  : x >= 6 && x <= 8 && y >= 6 && y <= 8
-                                    ? "#3a2610"
-                                    : pk(["#6a4a28", "#5e4224", "#76542c"], r)
-                        );
-                    }
-            };
-            const brickItem = (p, r) => {
-                for (let y = 4; y <= 11; y++)
-                    for (let x = 2; x <= 13; x++) {
-                        const e = y == 4 || y == 11 || x == 2 || x == 13;
-                        p(
-                            x,
-                            y,
-                            e
-                                ? "#4a1e14"
-                                : y == 5
-                                  ? "#e08a72"
-                                  : y >= 10
-                                    ? "#8a3a2a"
-                                    : x >= 11
-                                      ? "#9a4230"
-                                      : r() < 0.15
-                                        ? "#c86a52"
-                                        : "#b5523a"
-                        );
-                    }
-            };
-            const eappleF = (p, r) => {
-                art(APPLE, { k: "#6b4a00", R: "#fbd635", r: "#c9981a", h: "#fff8b0", s: "#6a4420", g: "#3fa030" })(
-                    p,
-                    r
-                );
-                [
-                    [2, 4],
-                    [13, 3],
-                    [14, 9],
-                    [1, 10],
-                    [7, 0],
-                    [12, 12],
-                ].forEach(([x, y], i) => p(x, y, i % 2 ? "#c8a0ff" : "#ffffff"));
-            };
-            const BUCKET = [
-                "................",
-                "................",
-                "....kkkkkkkk....",
-                "...k........k...",
-                "..kLLLLLLLLLLk..",
-                "..kWwwWWWWWWWk..",
-                "..kGGGGGGGGGGk..",
-                "..kGLgggggggdk..",
-                "..kGLgggggggdk..",
-                "...kGLgggggdk...",
-                "...kGLgggggdk...",
-                "....kGLgggdk....",
-                "....kGLgggdk....",
-                "....kkkkkkkk....",
-            ];
-            const TABLE = [
-                "gggggggggggggggg",
-                "gttttgttttgttttg",
-                "gttttgttttgttttg",
-                "gttttgttttgttttg",
-                "gggggggggggggggg",
-                "pPPPPPPPPPPPPPPp",
-                "pPPsssPPPPPmmmPp",
-                "pPPssPPPPPPPhPPp",
-                "pPPsPPPPPPPPhPPp",
-                "pPPPPPPPPPPPhPPp",
-                "pPPPPPPPPPPPPPPp",
-                "pPPPPPPPPPPPPPPp",
-                "pPPPPPPPPPPPPPPp",
-                "pPPPPPPPPPPPPPPp",
-                "pppppppppppppppp",
-                "pppppppppppppppp",
-            ];
-            const TORCH = [
-                "................",
-                ".......ff.......",
-                "......fOOf......",
-                "......fOOf......",
-                ".......OO.......",
-                "......kkkk......",
-                ".......sS.......",
-                ".......sS.......",
-                ".......sS.......",
-                ".......sS.......",
-                ".......sS.......",
-                ".......sS.......",
-                ".......sS.......",
-                ".......sS.......",
-            ];
-            const chestTex = (p, r) => {
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++) {
-                        let c = pk(["#b07a3a", "#a66f30", "#bb843f"], r);
-                        if (y == 4) c = "#4a2f12";
-                        else if (y == 0 || y > 13) c = "#7a4e20";
-                        if (x < 2 || x > 13) c = y == 4 ? "#4a2f12" : "#8a5a26";
-                        if ((x == 7 || x == 8) && y >= 3 && y <= 7) c = y == 3 || y == 7 ? "#8a8a8a" : "#d8d8d8";
-                        p(x, y, c);
-                    }
-            };
-            const tntTex = (p, r) => {
-                const L = { T: ["###", ".#.", ".#.", ".#.", ".#."], N: ["#.#", "###", "###", "#.#", "#.#"] },
-                    W = "TNT";
-                for (let y = 0; y < 16; y++)
-                    for (let x = 0; x < 16; x++) {
-                        let c;
-                        if (y == 4 || y == 12) c = "#5a1010";
-                        else if (y > 4 && y < 12) {
-                            c = y == 5 ? "#f7f2e8" : y == 11 ? "#d6cebd" : "#efe9dc";
-                            if (y >= 6 && y <= 10) {
-                                const i = Math.floor((x - 2) / 4),
-                                    cx = (x - 2) % 4;
-                                if (i >= 0 && i < 3 && cx < 3 && L[W[i]][y - 6][cx] == "#") c = "#2a1010";
-                            }
-                        } else {
-                            const k = x % 4;
-                            c =
-                                r() < 0.08
-                                    ? "#c01e1e"
-                                    : k == 0
-                                      ? "#8f1c1c"
-                                      : k == 1
-                                        ? "#ee4a3a"
-                                        : k == 2
-                                          ? "#d62a2a"
-                                          : "#b82020";
-                            if (y == 2 || y == 14) c = k == 0 ? "#4a2810" : "#7a4a22";
-                        }
-                        p(x, y, c);
-                    }
-            };
-            const furnaceTex = (p, r) => {
+            }            const furnaceTex = (p, r) => {
                 for (let y = 0; y < 16; y++)
                     for (let x = 0; x < 16; x++) {
                         let c = hash(x, y) < 0.1 ? "#9c9c9c" : pk(["#808080", "#7a7a7a", "#868686"], r);
@@ -1460,6 +880,13 @@
                 { id: "gunp", n: "Порох", v: 9, f: mound(["#2e2e2e", "#9a9a9a", "#6a6a6a", "#454545"]) },
                 { id: "lapis", n: "Лазурит", v: 10, f: lump(["#0a1850", "#4a6cf0", "#2a4fd0", "#1a2f9a"], "#e8f0ff") },
                 { id: "blaze", n: "Огненный стержень", v: 12, f: blazeF(["#f2a21a", "#c26a0a", "#ffd24a"]) },
+                {
+                    id: "blazep",
+                    n: "Огненный порошок",
+                    v: 6,
+                    c: 1,
+                    f: mound(["#c98a1a", "#e8b428", "#a06a0a", "#f2c030"]),
+                },
                 { id: "gold", n: "Золотой слиток", v: 13, f: ingot(["#6b4a00", "#fff3a0", "#fbd635", "#c9981a"]) },
                 {
                     id: "quartz",
@@ -1481,7 +908,7 @@
                     id: "amet",
                     n: "Аметист",
                     v: 20,
-                    f: art(CLUS, { k: "#2a1050", W: "#f0d8ff", B: "#a060e8", D: "#6a30b0" }),
+                    f: amethyst,
                 },
                 {
                     id: "obs",
@@ -1489,7 +916,7 @@
                     v: 22,
                     f: tile(voro(["#1a1230", "#241a40", "#2c1f4e", "#150e28"], "#08050f", "#6a3ac0", 7)),
                 },
-                { id: "pearl", n: "Жемчуг Края", v: 28, f: pearlF(["#0a2a24", "#9af8de", "#1f8a72", "#0f4a3e"]) },
+                { id: "pearl", n: "Жемчуг Края", v: 27, f: pearlF(["#0a2a24", "#9af8de", "#1f8a72", "#0f4a3e"]) },
                 {
                     id: "dia",
                     n: "Алмаз",
@@ -1624,10 +1051,14 @@
             document.body.style.backgroundSize = "auto,96px";
             const by = (id) => ITEMS.find((i) => i.id === id);
 
-            /* --- инвентарь: 30 клеток (3 строки по 10), стопка 64 --- */
+            /* --- инвентарь: 50 клеток (5 строк по 10), размер стака у предметов свой --- */
             let betK = -1;
-            const SL = 30,
+            const SL = 50,
                 ST = 64;
+            /* --- размер стака как в Minecraft: 64 / 16 / 1 --- */
+            const S16 = new Set(["pearl", "bucket"]),
+                S1 = new Set(["wpick", "spick", "ipick", "dpick", "wsword", "ssword", "isword", "dsword"]),
+                stk = (id) => (S1.has(id) ? 1 : S16.has(id) ? 16 : ST);
             /* --- ограничение: цель не может быть ценнее ставки больше чем в MAXR раз --- */
             const MAXR = 6;
             const MIG = {
@@ -1656,23 +1087,31 @@
                 },
                 mg = (k) => MIG[k] || k;
             const ok = (t) => !bet || by(t).v <= by(bet).v * MAXR;
-            const slotsOf = (o) => Object.values(o).reduce((a, n) => a + Math.ceil(n / ST), 0);
-            function fit(o) {
+            const slotsOf = (o) => Object.entries(o).reduce((a, [k, n]) => a + Math.ceil(n / stk(k)), 0);
+            function fit(o, lim) {
+                const L = lim || SL;
                 let f = 0;
                 const r = {};
                 for (const k in o) {
-                    const n = Math.min(o[k], (SL - f) * ST);
+                    const s = stk(k),
+                        n = Math.min(o[k], (L - f) * s);
                     if (n > 0) {
                         r[k] = n;
-                        f += Math.ceil(n / ST);
+                        f += Math.ceil(n / s);
                     }
                 }
                 return r;
             }
-            const noRoom = (t) => (inv[t] || 0) % ST === 0 && slotsOf(inv) >= SL;
+            const noRoom = (t) => (inv[t] || 0) % stk(t) === 0 && slotsOf(inv) >= SL;
             const room = (id) => {
-                const p = (inv[id] || 0) % ST;
-                return (SL - slotsOf(inv)) * ST + (p ? ST - p : 0);
+                const s = stk(id),
+                    p = (inv[id] || 0) % s;
+                return (SL - slotsOf(inv)) * s + (p ? s - p : 0);
+            };
+            const chestRoom = (id) => {
+                const s = stk(id),
+                    p = (chest[id] || 0) % s;
+                return (chestSL - slotsOf(chest)) * s + (p ? s - p : 0);
             };
             let tab = "roulette",
                 held = null,
@@ -1681,6 +1120,9 @@
                 cmsg = "";
             let got = {},
                 inv = { dirt: 5 },
+                chest = {},
+                chestSL = 10,
+                chestSel = null,
                 bet = null,
                 tgt = null,
                 spinning = false,
@@ -1710,13 +1152,23 @@
                         if (by(sg) && sg !== bet && ok(sg)) tgt = sg;
                     }
                     if (s.got) for (const k in s.got) if (by(k)) got[k] = 1;
+                    if (s.csl) chestSL = Math.max(10, Math.floor(+s.csl) || 10);
+                    if (s.chest) {
+                        const o = {};
+                        for (const k in s.chest) {
+                            const n = Math.floor(+s.chest[k]),
+                                m = mg(k);
+                            if (by(m) && n > 0) o[m] = (o[m] || 0) + n;
+                        }
+                        if (Object.keys(o).length) chest = fit(o, chestSL);
+                    }
                 } catch (e) {
                     storeOk = false;
                 }
             }
             function save(d) {
                 try {
-                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got }));
+                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL }));
                 } catch (e) {
                     storeOk = false;
                 }
@@ -1748,7 +1200,7 @@
                 } catch (e) {}
             }
             function chance() {
-                return bet && tgt ? Math.max(3, Math.min(95, Math.round((by(bet).v / by(tgt).v) * 45) + luck())) : 0;
+                return bet && tgt ? Math.max(3, Math.min(98, Math.round((by(bet).v / by(tgt).v) * 45) + luck() + 3)) : 0;
             }
             function slot(el, id, n) {
                 el.innerHTML = id
@@ -1830,8 +1282,9 @@
                 ITEMS.forEach((i) => {
                     let n = (inv[i.id] || 0) - (tab === "craft" ? used(i.id) : 0);
                     while (n > 0) {
-                        st.push([i, Math.min(n, ST)]);
-                        n -= ST;
+                        const s = stk(i.id);
+                        st.push([i, Math.min(n, s)]);
+                        n -= s;
                     }
                 });
                 let sk = st.findIndex((e) => e[0].id === bet);
@@ -1842,13 +1295,20 @@
                     let b;
                     if (i) {
                         b = document.createElement("button");
-                        b.className = "slot" + ((tab === "craft" ? i.id === held : k === sk) ? " sel" : "");
+                        b.className =
+                            "slot" +
+                            ((tab === "craft" ? i.id === held : tab === "chest" ? i.id === chestSel : k === sk) ? " sel" : "");
                         slot(b, i.id, e[1]);
                         b.disabled = spinning && tab !== "craft";
                         b.onclick = () => {
                             snd(500, 0.05, "square");
                             if (tab === "craft") {
                                 held = held === i.id ? null : i.id;
+                                render();
+                                return;
+                            }
+                            if (tab === "chest") {
+                                chestSel = chestSel === i.id ? null : i.id;
                                 render();
                                 return;
                             }
@@ -1880,7 +1340,7 @@
                 if (!spinning && !hold) {
                     setInfo(
                         full
-                            ? "Инвентарь полон (30 клеток). Освободи место или выбери другую цель."
+                            ? "Инвентарь полон (50 клеток). Освободи место или выбери другую цель."
                             : note
                               ? note
                               : bet && tgt
@@ -1890,6 +1350,7 @@
                     note = "";
                 }
                 renderCraft();
+                renderChest();
                 if (!spinning) save();
             }
 
@@ -1928,6 +1389,7 @@
             };
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape") document.querySelectorAll(".ov").forEach((o) => o.classList.remove("on"));
+                if (e.key === "Escape") $("mnusc").classList.remove("on");
             });
             document.addEventListener("mousemove", (e) => {
                 const t = e.target.closest && e.target.closest("[data-tip]"),
@@ -2012,16 +1474,16 @@
                 if (spinning) return;
                 const b = $("rs");
                 if (!rc) {
-                    b.textContent = "Нажми ещё раз для сброса";
+                    b.textContent = "Нажми ещё раз для очистки";
                     rc = setTimeout(() => {
                         rc = 0;
-                        b.textContent = "Сбросить прогресс";
+                        b.textContent = "Очистить инвентарь";
                     }, 3000);
                     return;
                 }
                 clearTimeout(rc);
                 rc = 0;
-                b.textContent = "Сбросить прогресс";
+                b.textContent = "Очистить инвентарь";
                 inv = { dirt: 5 };
                 got = { dirt: 1 };
                 bet = tgt = null;
@@ -2088,10 +1550,13 @@
                 } else $("pm").textContent = "Неверный пароль. Осталось попыток: " + (5 - bad);
                 $("pw").value = "";
             }
-            $("adm").onclick = () => {
-                if (unlocked) openAdm();
-                else openPw();
-            };
+            /* Кнопка админки убрана для всех; владелец открывает её двойным кликом по заголовку */
+            $("gui").addEventListener("dblclick", (e) => {
+                if (e.target.tagName === "H1") {
+                    if (unlocked) openAdm();
+                    else openPw();
+                }
+            });
             $("pok").onclick = tryPw;
             $("pw").addEventListener("keydown", (e) => {
                 if (e.key === "Enter") tryPw();
@@ -2230,7 +1695,7 @@
             function dbSave(now) {
                 if (!udoc) return Promise.resolve();
                 clearTimeout(dt);
-                const w = () => udoc.set({ inv, bet: bet || "", tgt: tgt || "", got }).catch(() => {});
+                const w = () => udoc.set({ inv, bet: bet || "", tgt: tgt || "", got, chest, csl: chestSL }).catch(() => {});
                 if (now) return w();
                 dt = setTimeout(w, 2000);
             }
@@ -2267,6 +1732,16 @@
                             inv = fit(o);
                             for (const k in d.got || {}) if (by(k)) got[k] = 1;
                             for (const k in inv) got[k] = 1;
+                            if (d.csl) chestSL = Math.max(10, Math.floor(+d.csl) || 10);
+                            {
+                                const co = {};
+                                for (const k in d.chest || {}) {
+                                    const n = Math.floor(+d.chest[k]),
+                                        m = mg(k);
+                                    if (by(m) && n > 0) co[m] = (co[m] || 0) + n;
+                                }
+                                if (Object.keys(co).length) chest = fit(co, chestSL);
+                            }
                             bet = by(d.bet) && inv[d.bet] > 0 ? d.bet : null;
                             tgt = by(d.tgt) && d.tgt !== bet ? d.tgt : null;
                             render();
@@ -2289,8 +1764,6 @@
             const RECIPES = [
                 { id: "planks", out: "planks", n: 4, shapeless: ["log"] },
                 { id: "stick", out: "stick", n: 4, pat: ["p", "p"], key: { p: "planks" } },
-                { id: "table", out: "table", n: 1, pat: ["pp", "pp"], key: { p: "planks" } },
-                { id: "chest", out: "chest", n: 1, pat: ["ppp", "p.p", "ppp"], key: { p: "planks" } },
                 { id: "furnace", out: "furnace", n: 1, pat: ["ccc", "c.c", "ccc"], key: { c: "cobble" } },
                 { id: "torch", out: "torch", n: 4, pat: ["c", "s"], key: { c: "coal", s: "stick" } },
                 { id: "torch2", out: "torch", n: 4, pat: ["c", "s"], key: { c: "charcoal", s: "stick" } },
@@ -2303,7 +1776,8 @@
                     shapeless: ["scrap", "scrap", "scrap", "scrap", "gold", "gold", "gold", "gold"],
                 },
                 { id: "gapple", out: "gapple", n: 1, pat: ["ggg", "gag", "ggg"], key: { g: "gold", a: "apple" } },
-                { id: "eye", out: "eye", n: 1, shapeless: ["pearl", "blaze"] },
+                { id: "blazep", out: "blazep", n: 2, shapeless: ["blaze"] },
+                { id: "eye", out: "eye", n: 1, shapeless: ["pearl", "blazep"] },
                 { id: "iblock", out: "iblock", n: 1, pat: ["iii", "iii", "iii"], key: { i: "iron" } },
                 { id: "gblock", out: "gblock", n: 1, pat: ["ggg", "ggg", "ggg"], key: { g: "gold" } },
                 { id: "dblock", out: "dblock", n: 1, pat: ["ddd", "ddd", "ddd"], key: { d: "dia" } },
@@ -2412,6 +1886,110 @@
                 $("toast").classList.add("on");
                 setTimeout(() => $("toast").classList.remove("on"), 3200);
             }
+            /* ===== Сундук (сейф): хранилище предметов и улучшение клеток ===== */
+            const chestMsg = (t) => {
+                const e = $("chh");
+                if (e) e.textContent = t;
+            };
+            function chestInfo() {
+                const u1 = $("up1"),
+                    u10 = $("up10");
+                if (u1) u1.disabled = spinning || !(inv.pearl > 0);
+                if (u10) u10.disabled = spinning || !(inv.dblock > 0);
+            }
+            function renderChest() {
+                const box = $("chst");
+                if (!box) return;
+                box.innerHTML = "";
+                const st = [];
+                ITEMS.forEach((i) => {
+                    let n = chest[i.id] || 0;
+                    while (n > 0) {
+                        const s = stk(i.id);
+                        st.push([i, Math.min(n, s)]);
+                        n -= s;
+                    }
+                });
+                for (let k = 0; k < chestSL; k++) {
+                    const e = st[k],
+                        i = e && e[0];
+                    let b;
+                    if (i) {
+                        b = document.createElement("button");
+                        b.className = "slot";
+                        slot(b, i.id, e[1]);
+                        b.disabled = spinning;
+                        b.onclick = () => fromChest(i.id);
+                    } else {
+                        b = document.createElement("div");
+                        b.className = "slot";
+                    }
+                    box.appendChild(b);
+                }
+                if (chestSel && !(inv[chestSel] > 0)) chestSel = null;
+                const put = $("put");
+                if (put) {
+                    put.hidden = tab !== "chest" || !chestSel;
+                    if (chestSel) put.textContent = "Убрать в сундук: " + by(chestSel).n;
+                }
+                chestInfo();
+            }
+            function toChest() {
+                if (spinning) return;
+                const id = chestSel;
+                if (!id || !(inv[id] > 0)) return;
+                const sp = chestRoom(id);
+                if (sp <= 0) {
+                    chestMsg("В сундуке нет свободного места. Улучши сундук.");
+                    snd(220, 0.15, "sawtooth");
+                    return;
+                }
+                const total = inv[id],
+                    n = Math.min(total, sp);
+                inv[id] -= n;
+                if (inv[id] <= 0) delete inv[id];
+                chest[id] = (chest[id] || 0) + n;
+                snd(560, 0.08, "square");
+                chestMsg(
+                    (n < total ? "Перенесено " + n + " из " + total + "× " : "Перенесено ") +
+                        by(id).n +
+                        " в сундук." +
+                        (n < total ? " В сундуке закончилось место." : "")
+                );
+                render();
+            }
+            function fromChest(id) {
+                if (spinning) return;
+                const sp = room(id);
+                if (sp <= 0) {
+                    chestMsg("В инвентаре нет места (50 клеток). Освободи место.");
+                    snd(220, 0.15, "sawtooth");
+                    return;
+                }
+                const total = chest[id] || 0,
+                    n = Math.min(total, sp);
+                if (n <= 0) return;
+                chest[id] -= n;
+                if (chest[id] <= 0) delete chest[id];
+                inv[id] = (inv[id] || 0) + n;
+                snd(500, 0.06, "square");
+                chestMsg("Возвращено " + n + "× " + by(id).n + " в инвентарь.");
+                render();
+            }
+            function upChest(n, costId, costN) {
+                if (spinning) return;
+                if (!(inv[costId] >= costN)) {
+                    chestMsg("Нужен предмет: " + costN + "× " + by(costId).n + ".");
+                    snd(220, 0.15, "sawtooth");
+                    return;
+                }
+                inv[costId] -= costN;
+                if (inv[costId] <= 0) delete inv[costId];
+                chestSL += n;
+                snd(660, 0.1, "square");
+                chestMsg("Сундук улучшен: +" + n + " клеток. Теперь клеток: " + chestSL + ".");
+                render();
+            }
             function renderCraft() {
                 pruneGrid();
                 const g = $("cg");
@@ -2513,23 +2091,87 @@
                 grid = Array(9).fill(null);
                 render();
             };
+            // цветные иконки-предметы рядом с названиями пунктов меню
+            [
+                ["t1", "eye"],
+                ["t2", "table"],
+                ["t3", "chest"],
+            ].forEach(([id, item]) => {
+                const b = $(id),
+                    it = by(item);
+                if (b && it) {
+                    const im = document.createElement("img");
+                    im.src = it.img;
+                    im.alt = "";
+                    im.setAttribute("aria-hidden", "true");
+                    b.appendChild(im);
+                }
+            });
+            // иконки-предметы в кнопках улучшения сундука (как в меню)
+            document.querySelectorAll(".uic").forEach((im) => {
+                const it = by(im.dataset.item);
+                if (it) im.src = it.img;
+            });
             function setTab(t) {
                 tab = t;
                 held = null;
+                chestSel = null;
+                $("mnusc").classList.remove("on");
                 if (t !== "craft") grid = Array(9).fill(null);
                 $("pg1").hidden = t !== "roulette";
                 $("pg2").hidden = t !== "craft";
                 $("pg3").hidden = t !== "craft";
+                $("pg4").hidden = t !== "chest";
                 $("t1").classList.toggle("on", t === "roulette");
                 $("t2").classList.toggle("on", t === "craft");
+                $("t3").classList.toggle("on", t === "chest");
                 $("ih").textContent =
                     t === "craft"
                         ? "Нажми на предмет в инвентаре, потом на клетку стола. Готовую вещь забери справа."
-                        : "Клик по предмету — в слот ставки. Клик по слоту цели — выбор предмета.";
+                        : t === "chest"
+                          ? ""
+                          : "Клик по предмету — в слот ставки. Клик по слоту цели — выбор предмета.";
+                if (t === "chest" && $("chh"))
+                    $("chh").textContent =
+                        "Выбери предмет в инвентаре и нажми «Убрать в сундук». Клик по предмету в сундуке вернёт его в инвентарь.";
                 render();
             }
+            // выравниваем выдвижное меню по верхнему краю игрового прямоугольника,
+            // чтобы оно не заходило на земляной фон сверху
+            const alignMenu = () => {
+                const r = $("gui").getBoundingClientRect();
+                const sc = $("mnusc");
+                sc.style.top = Math.max(0, Math.round(r.top)) + "px";
+                sc.style.bottom = Math.max(0, Math.round(window.innerHeight - r.bottom)) + "px";
+            };
+            $("tmenu").onclick = () => {
+                alignMenu();
+                $("mnusc").classList.toggle("on");
+                snd(400, 0.04, "square");
+            };
+            addEventListener(
+                "scroll",
+                () => {
+                    if ($("mnusc").classList.contains("on")) alignMenu();
+                },
+                { passive: true }
+            );
+            addEventListener("resize", () => {
+                if ($("mnusc").classList.contains("on")) alignMenu();
+            });
+            $("mnusc").addEventListener("click", (e) => {
+                if (e.target === $("mnusc")) $("mnusc").classList.remove("on");
+            });
+            $("mcx").onclick = () => {
+                $("mnusc").classList.remove("on");
+                snd(300, 0.04, "square");
+            };
             $("t1").onclick = () => setTab("roulette");
             $("t2").onclick = () => setTab("craft");
+            $("t3").onclick = () => setTab("chest");
+            $("put").onclick = toChest;
+            $("up1").onclick = () => upChest(1, "pearl", 1);
+            $("up10").onclick = () => upChest(10, "dblock", 1);
 
             function smelt(id, n = 1) {
                 if (spinning) return false;
@@ -2555,8 +2197,38 @@
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
                 {
-                    v: "2026.10.10",
-                    date: "10 октября 2026",
+                    v: "2026.10.13",
+                    date: "13 октября 2026",
+                    title: "Сундук и улучшения!",
+                    icons: ["chest", "pearl", "dblock", "amet", "eye", "dia", "dirt"],
+                    items: [
+                        [
+                            "new",
+                            "Новая вкладка «Сундук»: личное хранилище. Выбери предмет в инвентаре и нажми «Убрать в сундук» — вещь останется там даже после перезахода.",
+                        ],
+                        [
+                            "new",
+                            "Сундук можно улучшать: +1 клетка за 1 Жемчуг Края, +10 клеток — за 1 Алмазный блок. Растёт только сундук, инвентарь всегда 50 клеток.",
+                        ],
+                        [
+                            "new",
+                            "Новое меню: слева выезжает панель «Меню» по кнопке ☰ — компактная, с цветными иконками вкладок. Закрывается по фону, «Закрыть» или Esc.",
+                        ],
+                        [
+                            "chg",
+                            "Шанс выигрыша в рулетке повышен: теперь к расчёту добавляется ровно +3%, максимум — 98%.",
+                        ],
+                        ["chg", "Аметист перерисован — гроздь кристаллов стала детальнее, с гранями и бликами."],
+                        ["chg", "Жемчуг Края немного подешевел: 28 → 27."],
+                        [
+                            "chg",
+                            "Напоминание: инвентарь — ровно 50 клеток, размер стака как в Minecraft: 64 / 16 / 1 (жемчуг и ведро — 16, инструменты и мечи — 1).",
+                        ],
+                    ],
+                },
+                {
+                    v: "2026.10.12",
+                    date: "12 октября 2026",
                     title: "Верстак и крафт!",
                     icons: ["table", "furnace", "chest", "tnt", "gapple", "eye", "dpick", "dsword", "dblock"],
                     items: [
