@@ -3,17 +3,10 @@
     <head>
         <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store">
+    <meta http-equiv="Pragma" content="no-cache">
     <title>mineupgrade</title>
 
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
-      }
-    </script>
         <style>
             :root {
                 box-sizing: border-box;
@@ -611,21 +604,6 @@
                 justify-content: center;
                 margin-top: auto;
             }
-            /* тонкая полоска только перед пунктом «Промокоды» — такая же, как под заголовком «Меню» */
-            .mnu #t4 {
-                position: relative;
-                margin-top: 20px;
-            }
-            .mnu #t4::before {
-                content: "";
-                position: absolute;
-                left: -5px;
-                right: -5px;
-                top: -14px;
-                height: 2px;
-                background: #6f6f6f;
-                pointer-events: none;
-            }
             @media (max-width: 520px) {
                 /* экран телефона: поле во всю ширину (украшений больше нет),
                    а слоты ставки и цели стоят слева и справа от колеса, как на ПК */
@@ -976,7 +954,7 @@
                 <div id="pg5" hidden>
                     <h2>Промокоды</h2>
                     <div class="row">
-                        <label><input id="pcin" type="text" autocomplete="off" placeholder="Введи код" /></label>
+                        <label>Код <input id="pcin" type="text" autocomplete="off" placeholder="Введи код" /></label>
                     </div>
                     <button class="btn sm" id="pcok">Активировать</button>
                     <div class="info" id="pcm"></div>
@@ -991,6 +969,7 @@
                 <button class="btn sm" id="rs">Очистить инвентарь</button>
             </div>
         </div>
+
         <div class="mnu-sc" id="mnusc">
             <div class="mnu">
                 <h2>Меню</h2>
@@ -1001,6 +980,7 @@
                 <button class="btn sm" id="mcx">Закрыть</button>
             </div>
         </div>
+
         <div class="ov" id="pov">
             <div class="gui menu">
                 <h2 style="margin-top: 0">Вход в админ панель</h2>
@@ -1012,6 +992,7 @@
                 <button class="btn sm" data-close>Отмена</button>
             </div>
         </div>
+
         <div class="ov" id="aov">
             <div class="gui menu">
                 <h2 style="margin-top: 0">Админ панель</h2>
@@ -1061,6 +1042,7 @@
                 <button class="btn sm" data-close>Закрыть</button>
             </div>
         </div>
+
         <div class="ov" id="ov">
             <div class="gui menu">
                 <h2 style="margin-top: 0">Выбери желаемый предмет</h2>
@@ -1084,6 +1066,7 @@
             <img id="ti" />
             <div><b>Достижение получено!</b><span id="tn"></span></div>
         </div>
+
         <script>
             const $ = (id) => document.getElementById(id);
             function R(a) {
@@ -1107,6 +1090,7 @@
                 }, r);
                 return c.toDataURL();
             }
+
             /* --- оригинальные 2D-спрайты 16x16 (нарисованы с нуля) --- */
             const hash = (x, y) => Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
             const hex = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
@@ -1691,6 +1675,7 @@
                 ].forEach(([x, y], i) => p(x, y, i % 2 ? "#5e4524" : "#8a6a3a"));
             };
             const DIRT = noise(["#866043", "#79553a", "#6b4a30", "#94694a", "#5a3e28"]);
+
             const ITEMS = [
                 { id: "dirt", n: "Земля", v: 1, f: tile(grassDirt) },
                 { id: "sand", n: "Песок", v: 2, f: tile(sandTex) },
@@ -1916,6 +1901,7 @@
             /* фон — затемнённая земля, как в Minecraft */
             document.body.style.backgroundImage = `linear-gradient(#000a,#000a),url(${dirtTile})`;
             document.body.style.backgroundSize = "auto,96px";
+
             /* --- инвентарь: 50 клеток (5 строк по 10), размер стака у предметов свой --- */
             let betK = -1;
             const SL = 50,
@@ -2010,6 +1996,7 @@
                 ac,
                 note = "";
             let storeOk = true;
+
             function load() {
                 try {
                     const s = JSON.parse(localStorage.getItem("mcw2") || "null");
@@ -2059,6 +2046,7 @@
             load();
             if (!Object.values(inv).some((v) => v > 0)) inv = { dirt: 5 };
             for (const k in inv) got[k] = 1;
+
             function snd(f, d, t, f2) {
                 try {
                     ac = ac || new AudioContext();
@@ -2147,6 +2135,7 @@
                 e.textContent = t;
                 e.className = "info " + (cl || "");
             }
+
             function render() {
                 if (!(inv[bet] > 0)) bet = null;
                 if (tgt && bet) {
@@ -2233,6 +2222,7 @@
                 renderChest();
                 if (!spinning) save();
             }
+
             $("bet").onclick = () => {
                 if (bet) {
                     bet = null;
@@ -2281,6 +2271,7 @@
                 tp.style.left = Math.min(e.clientX + 14, innerWidth - tp.offsetWidth - 6) + "px";
                 tp.style.top = e.clientY - 8 + "px";
             });
+
             $("go").onclick = () => {
                 if (spinning || !bet || !tgt || !(inv[bet] > 0) || room(tgt) < 1 || !ok(tgt)) return;
                 const c = chance(),
@@ -2345,6 +2336,7 @@
                 }, 4700);
             };
             addEventListener("resize", () => labels(chance()));
+
             let rc = 0;
             $("rs").onclick = () => {
                 if (spinning) return;
@@ -2366,6 +2358,7 @@
                 hold = false;
                 render();
             };
+
             /* ===== Вход в админ панель по паролю (хранится только хэш SHA-256 от "mcw-admin:"+пароль) ===== */
             const PW_HASH = "2009e6378ae8b01d88b191ab684470642246544f2de844fff128fe69c9a7ef45";
             let unlocked = false,
@@ -2437,6 +2430,7 @@
             $("pw").addEventListener("keydown", (e) => {
                 if (e.key === "Enter") tryPw();
             });
+
             /* ===== События «удачи» и выдача предметов (только после входа) ===== */
             let EV = [],
                 evCol = null,
@@ -2522,6 +2516,7 @@
                 }
                 evRender();
             }
+
             document
                 .querySelectorAll("[data-close]")
                 .forEach((b) => (b.onclick = () => b.closest(".ov").classList.remove("on")));
@@ -2568,6 +2563,7 @@
                 };
                 $("agrid").appendChild(b);
             });
+
             /* ===== Промокоды =====
    Промокод ОДНОРАЗОВЫЙ: его может активировать только один игрок и только один раз.
    Плюс у него есть время действия: как только оно истекло — код не работает.
@@ -2716,6 +2712,7 @@
                 o.textContent = i.n;
                 $("pitem").appendChild(o);
             });
+
             /* ===== Облачное сохранение (работает только внутри артефакта Claude) ===== */
             function dbSave(now) {
                 if (!udoc) return Promise.resolve();
@@ -2787,6 +2784,7 @@
                     } else dbSave(true);
                 } catch (e) {}
             })();
+
             setInterval(() => {
                 evRender();
                 if ($("aov").classList.contains("on")) pmList();
@@ -2913,6 +2911,7 @@
                 return true;
             }
             /* @CRAFT-LOGIC-END */
+
             const used = (id) => grid.filter((x) => x === id).length;
             function pruneGrid() {
                 const c = {};
@@ -3228,6 +3227,7 @@
             $("put").onclick = toChest;
             $("up1").onclick = () => upChest(1, "pearl", 1);
             $("up10").onclick = () => upChest(10, "dblock", 1);
+
             function smelt(id, n = 1) {
                 if (spinning) return false;
                 const out = SMELT[id];
@@ -3245,27 +3245,12 @@
                 render();
                 return true;
             }
+
             /* ===== Окно «Обновление» перед входом в игру =====
    КАК ВЫПУСТИТЬ ОБНОВЛЕНИЕ НА GITHUB: добавь новый объект В НАЧАЛО списка UPDATES
    (с новым значением v). Каждый игрок увидит это окно один раз — пока не нажмёт «Играть!».
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
-                {
-                    v: "2026.10.16.8",
-                    date: "16 октября 2026",
-                    title: "Полоска в меню и поле кода",
-                    icons: ["em", "dia", "gold", "pearl", "dblock", "chest", "eye", "nblock"],
-                    items: [
-                        [
-                            "chg",
-                            "В меню появилась тонкая полоска перед пунктом «Промокоды» — такая же, как под заголовком «Меню»."
-                        ],
-                        [
-                            "chg",
-                            "На вкладке «Промокоды» убран лишний текст перед строкой ввода: поле кода стало на всю ширину."
-                        ],
-                    ],
-                },
                 {
                     v: "2026.10.16.7",
                     date: "16 октября 2026",
@@ -3509,13 +3494,10 @@
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape" && $("upd").classList.contains("on")) hideUpd();
             });
+
             window.MCW = { SMELT, FUEL, RECIPES, smelt, craft: doCraft, showUpd };
             render();
             showUpd();
         </script>
     </body>
-    <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }
 </html>
