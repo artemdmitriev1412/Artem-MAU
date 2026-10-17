@@ -2,9 +2,18 @@
 <html lang="ru">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Приложение закрыто</title>
-        <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mineupgrade</title>
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
+    </script>
             * {
                 box-sizing: border-box;
             }
@@ -36,6 +45,10 @@
         </style>
     </head>
     <body>
+        <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
         <p>Приложение закрыто до 24.10.2026 в связи с техническими сбоями</p>
     </body>
 </html>
