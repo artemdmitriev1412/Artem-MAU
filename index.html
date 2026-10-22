@@ -36,18 +36,30 @@
                 -webkit-text-size-adjust: 100%;
                 text-size-adjust: 100%;
             }
+            /* на широком экране полоса прокрутки не должна сдвигать панель влево:
+               резервируем место под неё с обеих сторон, тогда поля слева и справа равные */
+            @media (min-width: 521px) {
+                html {
+                    scrollbar-gutter: stable both-edges;
+                }
+            }
             body {
                 margin: 0;
                 min-height: 100vh;
+                min-height: 100dvh;
                 background: #4a3322;
                 font-family: "Courier New", ui-monospace, monospace;
                 font-weight: bold;
                 image-rendering: pixelated;
                 color: var(--ink);
+                display: flex;
+                flex-direction: column;
             }
             .wrap {
+                width: 100%;
                 max-width: 640px;
-                margin: 0 auto;
+                margin: auto;
+                flex: 0 0 auto;
                 padding: 14px;
                 position: relative;
                 z-index: 1;
@@ -590,8 +602,8 @@
                 /* экран телефона: поле во всю ширину (украшений больше нет),
                    а слоты ставки и цели стоят слева и справа от колеса, как на ПК */
                 .wrap {
-                    padding-left: 10px;
-                    padding-right: 10px;
+                    padding-left: 14px;
+                    padding-right: 14px;
                 }
                 .stage {
                     flex-wrap: nowrap;
@@ -632,8 +644,8 @@
             @media (max-width: 380px) {
                 /* совсем узкий экран — поле шире, чтобы строка «ставка — колесо — цель» влезла */
                 .wrap {
-                    padding-left: 6px;
-                    padding-right: 6px;
+                    padding-left: 8px;
+                    padding-right: 8px;
                 }
                 .slot.big {
                     width: clamp(42px, 14vw, 58px);
@@ -2977,9 +2989,9 @@
             // чтобы оно не заходило на земляной фон сверху
             const alignMenu = () => {
                 const r = $("gui").getBoundingClientRect();
-                const sc = $("mnusc");
-                sc.style.top = Math.max(0, Math.round(r.top)) + "px";
-                sc.style.bottom = Math.max(0, Math.round(window.innerHeight - r.bottom)) + "px";
+                const p = document.querySelector("#mnusc .mnu");
+                p.style.top = Math.max(0, Math.round(r.top)) + "px";
+                p.style.bottom = Math.max(0, Math.round(window.innerHeight - r.bottom)) + "px";
             };
             $("tmenu").onclick = () => {
                 alignMenu();
@@ -3033,6 +3045,18 @@
    (с новым значением v). Каждый игрок увидит это окно один раз — пока не нажмёт «Играть!».
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
+                {
+                    v: "2026.10.22.4",
+                    date: "22 октября 2026",
+                    title: "Ровные поля по краям",
+                    icons: ["chest", "dia", "pearl", "em", "dblock", "nblock", "eye", "gapple"],
+                    items: [
+                        [
+                            "fix",
+                            "Панель стоит по центру экрана: поля от земли ровные со всех сторон — сверху, снизу и по бокам. И на телефоне, и на компьютере.",
+                        ],
+                    ],
+                },
                 {
                     v: "2026.10.22.3",
                     date: "22 октября 2026",
