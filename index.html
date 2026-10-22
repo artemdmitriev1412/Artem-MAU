@@ -386,24 +386,6 @@
                 border: 2px solid var(--dk);
                 color: #000;
             }
-            /* быстрые кнопки времени действия промокода */
-            .durs {
-                display: flex;
-                gap: 6px;
-            }
-            .durs .btn {
-                flex: 1 1 0;
-                width: auto;
-                min-width: 0;
-                margin: 0;
-                padding: 8px 4px;
-                font-size: 13px;
-                text-align: center;
-            }
-            .durs .btn.on {
-                outline: 3px solid #ffd84a;
-                outline-offset: -3px;
-            }
             .ev {
                 background: var(--slot);
                 border: 3px solid var(--dk);
@@ -603,21 +585,6 @@
             .mnu .btn {
                 justify-content: center;
                 margin-top: auto;
-            }
-            /* тонкая полоска только перед пунктом «Промокоды» — такая же, как под заголовком «Меню» */
-            .mnu #t4 {
-                position: relative;
-                margin-top: 20px;
-            }
-            .mnu #t4::before {
-                content: "";
-                position: absolute;
-                left: -5px;
-                right: -5px;
-                top: -14px;
-                height: 2px;
-                background: #6f6f6f;
-                pointer-events: none;
             }
             @media (max-width: 520px) {
                 /* экран телефона: поле во всю ширину (украшений больше нет),
@@ -966,14 +933,6 @@
                         </button>
                     </div>
                 </div>
-                <div id="pg5" hidden>
-                    <h2>Промокоды</h2>
-                    <div class="row">
-                        <label><input id="pcin" type="text" autocomplete="off" placeholder="Введи код" /></label>
-                    </div>
-                    <button class="btn sm" id="pcok">Активировать</button>
-                    <div class="info" id="pcm"></div>
-                </div>
                 <h2>Инвентарь</h2>
                 <div class="inv" id="inv"></div>
                 <button class="btn sm" id="put" hidden>Убрать в сундук</button>
@@ -991,7 +950,6 @@
                 <button class="tab on" id="t1">Рулетка</button>
                 <button class="tab" id="t2">Верстак</button>
                 <button class="tab" id="t3">Сундук</button>
-                <button class="tab" id="t4">Промокоды</button>
                 <button class="btn sm" id="mcx">Закрыть</button>
             </div>
         </div>
@@ -1031,28 +989,6 @@
                     </div>
                     <button class="btn sm" id="eadd">Включить удачу</button>
                     <div id="alist"></div>
-                </div>
-                <div class="sec">
-                    <h2>Промокоды</h2>
-                    <div class="evf">
-                        <label class="full"
-                            >Код
-                            <input id="pcode" type="text" autocomplete="off" placeholder="НАПРИМЕР: WELCOME" />
-                        </label>
-                        <label class="full"
-                            >Предмет
-                            <select id="pitem"></select
-                        ></label>
-                        <label>Штук за раз <input id="pqty" type="number" min="1" max="1920" value="1" /></label>
-                        <label>Время действия, мин <input id="pmin" type="number" min="1" max="10080" value="5" /></label>
-                        <div class="full durs">
-                            <button class="btn sm durb" data-min="5" type="button">5 минут</button>
-                            <button class="btn sm durb" data-min="10" type="button">10 минут</button>
-                            <button class="btn sm durb" data-min="15" type="button">15 минут</button>
-                        </div>
-                    </div>
-                    <button class="btn sm" id="padd">Создать промокод</button>
-                    <div id="plist"></div>
                 </div>
                 <button class="btn sm" data-close>Закрыть</button>
             </div>
@@ -2395,7 +2331,6 @@
                         .toISOString()
                         .slice(0, 16);
                 evRender();
-                pmList();
                 $("aov").classList.add("on");
             }
             function openPw() {
@@ -2449,8 +2384,6 @@
             /* ===== События «удачи» и выдача предметов (только после входа) ===== */
             let EV = [],
                 evCol = null,
-                PM = [],
-                pmCol = null,
                 udoc = null,
                 dt = 0,
                 ll = 0;
@@ -2579,197 +2512,6 @@
                 $("agrid").appendChild(b);
             });
 
-            /* ===== Промокоды =====
-   Промокод ОБЩИЙ: один и тот же код может активировать каждый игрок — по одному разу.
-   Повторную активацию тем же игроком не даём (его список хранится на его устройстве).
-   Плюс у него есть время действия: как только оно истекло — код не работает.
-   В админ панели задаётся длительность в минутах (кнопки 5/10/15 или своё число). */
-            function pmNorm(p) {
-                if (!p || !p.id || !p.code) return null;
-                const hasT = p.at !== undefined && p.min !== undefined;
-                return {
-                    id: String(p.id),
-                    code: String(p.code).toUpperCase(),
-                    it: p.it,
-                    qty: Math.max(1, Math.floor(+p.qty || 1)),
-                    min: Math.max(1, Math.floor(+p.min || 60)),
-                    at: Math.floor(+p.at) || Date.now(),
-                    used: false,
-                    usedAt: Math.floor(+p.usedAt) || 0,
-                    acts: Math.max(0, Math.floor(+p.acts || 0)),
-                };
-            }
-            const pmUntil = (p) => p.at + p.min * 6e4;
-            const pmHM = (t) => new Date(t).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-            function pmLs() {
-                try {
-                    localStorage.setItem("mcw_pm", JSON.stringify(PM));
-                } catch (e) {}
-            }
-            function pmSave(p) {
-                pmLs();
-                if (pmCol)
-                    pmCol
-                        .doc(p.id)
-                        .set(p)
-                        .catch(() => {});
-            }
-            function pmList() {
-                const box = $("plist");
-                if (!box) return;
-                box.innerHTML = "";
-                if (!PM.length) {
-                    box.textContent = "Промокодов нет.";
-                    return;
-                }
-                const now = Date.now();
-                [...PM]
-                    .sort((a, b) => a.code.localeCompare(b.code))
-                    .forEach((p) => {
-                        const d = document.createElement("div"),
-                            left = pmUntil(p) - now;
-                        d.className = "ev" + (left <= 0 ? " done" : " on");
-                        d.innerHTML = "<b></b><small></small>";
-                        const nm = by(p.it) ? by(p.it).n : "?";
-                        d.children[0].textContent = p.code + " \u2192 " + nm + (p.qty > 1 ? " \u00d7" + p.qty : "");
-                        d.children[1].textContent = p.used
-                            ? "Активирован" + (p.usedAt ? " в " + pmHM(p.usedAt) : "") + " \u2014 больше не работает"
-                            : left <= 0
-                              ? "Время истекло (" + p.min + " мин), не активирован"
-                              : "Действует до " + pmHM(pmUntil(p)) + ", ещё \u2248 " + Math.max(1, Math.ceil(left / 6e4)) + " мин";
-                        if (p.acts) d.children[1].textContent += " · активаций: " + p.acts;
-                        const b = document.createElement("button");
-                        b.textContent = "Удалить";
-                        b.onclick = () => pmDel(p.id);
-                        d.appendChild(b);
-                        box.appendChild(d);
-                    });
-            }
-            function pmPut(p) {
-                if (!unlocked) return;
-                PM = PM.filter((x) => x.id !== p.id).concat([p]);
-                pmSave(p);
-                pmList();
-            }
-            function pmDel(id) {
-                if (!unlocked) return;
-                PM = PM.filter((p) => p.id !== id);
-                pmLs();
-                if (pmCol)
-                    pmCol
-                        .doc(id)
-                        .delete()
-                        .catch(() => {});
-                pmList();
-            }
-            /* какие коды уже взял этот игрок: у каждого свой список, поэтому один код
-               может активировать каждый — но только по одному разу */
-            function pmMine() {
-                try {
-                    return JSON.parse(localStorage.getItem("mcw_pm_used") || "{}") || {};
-                } catch (e) {
-                    return {};
-                }
-            }
-            function pmMineSet(code) {
-                try {
-                    const m = pmMine();
-                    m[code] = Date.now();
-                    localStorage.setItem("mcw_pm_used", JSON.stringify(m));
-                } catch (e) {}
-            }
-            /* Глобальные промокоды — записаны прямо в игру, поэтому работают у всех
-               и на любом устройстве, без общего сервера. Пример строки:
-                   { code: "MINE2026", it: "em", qty: 3 },
-               it — id предмета, qty — сколько штук выдаётся. Пока строка есть в списке,
-               каждый игрок может активировать код один раз. */
-            const GLOBAL_PROMOS = [];
-            function pmGlobal() {
-                return GLOBAL_PROMOS.map((g, i) => ({
-                    id: "g" + i,
-                    code: String(g.code || "").toUpperCase(),
-                    it: g.it,
-                    qty: Math.max(1, Math.floor(+g.qty || 1)),
-                    min: 525600,
-                    at: Date.now(),
-                    used: false,
-                    usedAt: 0,
-                    acts: 0,
-                }));
-            }
-            function pmUse() {
-                if (spinning) return;
-                const m = $("pcm"),
-                    code = ($("pcin").value || "").trim().toUpperCase();
-                if (!code) return;
-                const bad = (t) => {
-                    m.className = "info lose";
-                    m.textContent = t;
-                    snd(220, 0.3, "sawtooth");
-                };
-                const p = PM.concat(pmGlobal()).find((x) => x.code === code);
-                if (!p) return bad("Такого промокода нет.");
-                /* одноразовость убрана: код общий, повтор проверяется по списку игрока */
-                if (Date.now() > pmUntil(p)) return bad("Промокод больше не действует: время истекло.");
-                if (pmMine()[code]) return bad("Ты уже активировал этот промокод.");
-                const q = Math.max(1, Math.floor(+p.qty || 1));
-                if (room(p.it) < q) return bad("В инвентаре нет места для награды.");
-                inv[p.it] = (inv[p.it] || 0) + q;
-                got[p.it] = 1;
-                /* код общий: каждый игрок может взять его один раз, пока не вышло время */
-                pmMineSet(code);
-                if (PM.some((x) => x.id === p.id)) {
-                    p.usedAt = Date.now();
-                    p.acts = (+p.acts || 0) + 1;
-                    pmSave(p);
-                }
-                $("pcin").value = "";
-                m.className = "info win";
-                m.textContent = "Промокод активирован! Получено: " + (q > 1 ? q + "\u00d7 " : "") + by(p.it).n + ".";
-                snd(660, 0.12, "square");
-                setTimeout(() => snd(990, 0.2, "square"), 110);
-                render();
-                pmList();
-            }
-            function pmDur() {
-                const v = Math.max(1, Math.floor(+$("pmin").value || 5));
-                document.querySelectorAll(".durb").forEach((b) => b.classList.toggle("on", +b.dataset.min === v));
-            }
-            document.querySelectorAll(".durb").forEach((b) => {
-                b.onclick = () => {
-                    $("pmin").value = b.dataset.min;
-                    pmDur();
-                    snd(500, 0.05, "square");
-                };
-            });
-            $("pmin").addEventListener("input", pmDur);
-            pmDur();
-            $("padd").onclick = () => {
-                if (!unlocked) return;
-                const code = ($("pcode").value || "").trim().toUpperCase(),
-                    it = $("pitem").value;
-                const bad = () => snd(220, 0.2, "sawtooth");
-                if (!code || !by(it)) return bad();
-                if (PM.some((x) => x.code === code)) return bad();
-                const qty = Math.max(1, Math.min(1920, Math.floor(+$("pqty").value || 1))),
-                    min = Math.max(1, Math.min(10080, Math.floor(+$("pmin").value || 5)));
-                pmPut(
-                    pmNorm({ id: "p" + Date.now(), code, it, qty, min, at: Date.now(), used: false })
-                );
-                $("pcode").value = "";
-                snd(660, 0.1, "square");
-            };
-            $("pcok").onclick = pmUse;
-            $("pcin").addEventListener("keydown", (e) => {
-                if (e.key === "Enter") pmUse();
-            });
-            ITEMS.forEach((i) => {
-                const o = document.createElement("option");
-                o.value = i.id;
-                o.textContent = i.n;
-                $("pitem").appendChild(o);
-            });
-
             /* ===== Облачное сохранение (работает только внутри артефакта Claude) ===== */
             function dbSave(now) {
                 if (!udoc) return Promise.resolve();
@@ -2782,9 +2524,6 @@
                 try {
                     EV = JSON.parse(localStorage.getItem("mcw_ev") || "[]");
                 } catch (e) {}
-                try {
-                    PM = (JSON.parse(localStorage.getItem("mcw_pm") || "[]") || []).map(pmNorm).filter(Boolean);
-                } catch (e) {}
             }
             (async () => {
                 try {
@@ -2794,11 +2533,6 @@
                         evCol.onSnapshot((s) => {
                             EV = s.docs.map((d) => d.data()).filter((e) => e && e.id);
                             evRender();
-                        });
-                        pmCol = db.collection("promos");
-                        pmCol.onSnapshot((s) => {
-                            PM = s.docs.map((d) => pmNorm(d.data())).filter(Boolean);
-                            pmList();
                         });
                     }
                 } catch (e) {}
@@ -2844,7 +2578,6 @@
 
             setInterval(() => {
                 evRender();
-                if ($("aov").classList.contains("on")) pmList();
             }, 5000);
             /* ===== Верстак: рецепты, стол 3x3 и сборка ===== */
             // плавка в печи (интерфейс печи добавим позже)
@@ -3208,7 +2941,6 @@
                 ["t1", "eye"],
                 ["t2", "table"],
                 ["t3", "chest"],
-                ["t4", "em"],
             ].forEach(([id, item]) => {
                 const b = $(id),
                     it = by(item);
@@ -3235,16 +2967,10 @@
                 $("pg2").hidden = t !== "craft";
                 $("pg3").hidden = t !== "craft";
                 $("pg4").hidden = t !== "chest";
-                $("pg5").hidden = t !== "promo";
                 $("t1").classList.toggle("on", t === "roulette");
                 $("t2").classList.toggle("on", t === "craft");
                 $("t3").classList.toggle("on", t === "chest");
-                $("t4").classList.toggle("on", t === "promo");
                 if (t !== "chest" && $("chh")) $("chh").textContent = "";
-                if (t !== "promo" && $("pcm")) {
-                    $("pcm").textContent = "";
-                    $("pcm").className = "info";
-                }
                 render();
             }
             // выравниваем выдвижное меню по верхнему краю игрового прямоугольника,
@@ -3280,7 +3006,6 @@
             $("t1").onclick = () => setTab("roulette");
             $("t2").onclick = () => setTab("craft");
             $("t3").onclick = () => setTab("chest");
-            $("t4").onclick = () => setTab("promo");
             $("put").onclick = toChest;
             $("up1").onclick = () => upChest(1, "pearl", 1);
             $("up10").onclick = () => upChest(10, "dblock", 1);
@@ -3309,18 +3034,18 @@
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
                 {
-                    v: "2026.10.22.2",
+                    v: "2026.10.22.3",
                     date: "22 октября 2026",
-                    title: "Общие промокоды",
-                    icons: ["em", "dia", "pearl", "dblock", "chest", "nblock", "eye", "gapple"],
+                    title: "Промокоды убраны",
+                    icons: ["chest", "em", "dia", "pearl", "dblock", "nblock", "eye", "gapple"],
                     items: [
                         [
                             "chg",
-                            "Промокоды стали общими: один код теперь может активировать каждый игрок — но по одному разу. Время действия по-прежнему ограничено, после него код не работает.",
+                            "Промокоды убраны полностью и навсегда: нет вкладки «Промокоды» в меню, нет поля для кода и нет раздела в админ панели.",
                         ],
                         [
                             "chg",
-                            "В админ панели у промокода видно, сколько раз его активировали.",
+                            "В меню остались только «Рулетка», «Верстак» и «Сундук». Полоска в меню теперь одна — под заголовком «Меню».",
                         ],
                     ],
                 },
