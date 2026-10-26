@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
     <head>
-         <meta charset="UTF-8">
+        <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-store">
     <meta http-equiv="Pragma" content="no-cache">
@@ -18,35 +18,34 @@
     </script>
         <style>
             :root {
-                box-sizing: border-box;
-                padding-top: env(safe-area-inset-top, 0px);
-                padding-bottom: env(safe-area-inset-bottom, 0px);
-                --gui: #c6c6c6;
-                --slot: #8b8b8b;
-                --ink: #404040;
-                --dk: #373737;
-                --lt: #fff;
-            }
-            @media (prefers-color-scheme: dark) {
-                :root:not([data-theme="light"]) {
-                    --gui: #b4b4b4;
-                }
-            }
-            :root[data-theme="dark"] {
-                --gui: #b4b4b4;
+                --bg: #0a0d10;
+                --panel: #141a20;
+                --panel-2: #1a2129;
+                --tile: #202832;
+                --line: rgba(255, 255, 255, 0.09);
+                --line-2: rgba(255, 255, 255, 0.055);
+                --ink: #eef3f8;
+                --muted: #9aa7b6;
+                --muted-2: #8592a1;
+                --em: #3ddc8a;
+                --em-d: #12a05c;
+                --gold: #f2c96b;
+                --gold-d: #b98a35;
+                --red: #ea5a52;
+                --blue: #5b8def;
+                --rad: 18px;
+                --rad-s: 11px;
             }
             *,
             *:before,
             *:after {
-                box-sizing: inherit;
+                box-sizing: border-box;
             }
             html {
-                scroll-padding-top: env(safe-area-inset-top, 0px);
                 -webkit-text-size-adjust: 100%;
                 text-size-adjust: 100%;
+                background: #070a0d;
             }
-            /* на широком экране полоса прокрутки не должна сдвигать панель влево:
-               резервируем место под неё с обеих сторон, тогда поля слева и справа равные */
             @media (min-width: 521px) {
                 html {
                     scrollbar-gutter: stable both-edges;
@@ -56,161 +55,234 @@
                 margin: 0;
                 min-height: 100vh;
                 min-height: 100dvh;
-                background: #4a3322;
-                font-family: "Courier New", ui-monospace, monospace;
-                font-weight: bold;
-                image-rendering: pixelated;
-                color: var(--ink);
                 display: flex;
                 flex-direction: column;
+                background-color: var(--bg);
+                color: var(--ink);
+                font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Inter", Arial, sans-serif;
+                font-size: 15px;
+                line-height: 1.45;
+                -webkit-tap-highlight-color: transparent;
+                -webkit-font-smoothing: antialiased;
+            }
+            img {
+                -webkit-user-drag: none;
+                user-select: none;
+            }
+            button,
+            input,
+            select,
+            textarea {
+                font-family: inherit;
             }
             .wrap {
                 width: 100%;
-                max-width: 640px;
+                max-width: 660px;
                 margin: auto;
                 flex: 0 0 auto;
                 padding: 14px;
                 position: relative;
                 z-index: 1;
             }
+            /* ---------- панель ---------- */
             .gui {
-                background: var(--gui);
-                padding: 12px;
-                border: 4px solid #000;
-                box-shadow:
-                    inset 4px 4px 0 var(--lt),
-                    inset -4px -4px 0 var(--dk);
                 position: relative;
+                padding: 14px;
+                border-radius: var(--rad);
+                background:
+                    radial-gradient(120% 80% at 50% -10%, rgba(61, 220, 138, 0.08), transparent 55%),
+                    linear-gradient(180deg, rgba(28, 34, 41, 0.97), rgba(16, 20, 25, 0.98));
+                border: 1px solid var(--line);
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                    0 1px 0 rgba(0, 0, 0, 0.6),
+                    0 28px 70px -26px rgba(0, 0, 0, 0.95),
+                    0 0 0 1px rgba(0, 0, 0, 0.45);
+                backdrop-filter: blur(14px);
             }
             .gui.shake {
                 animation: sh 0.45s;
             }
             @keyframes sh {
                 20% {
-                    transform: translateX(-8px);
+                    transform: translateX(-7px);
                 }
                 40% {
-                    transform: translateX(8px);
+                    transform: translateX(7px);
                 }
                 60% {
-                    transform: translateX(-5px);
+                    transform: translateX(-4px);
                 }
                 80% {
-                    transform: translateX(5px);
+                    transform: translateX(4px);
                 }
             }
+            /* ---------- шапка ---------- */
+            .hdr {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 0 0 14px;
+            }
+            .menu-btn {
+                flex: none;
+                width: 40px;
+                height: 40px;
+                display: grid;
+                place-items: center;
+                padding: 0;
+                color: #d6e0ea;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02));
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                cursor: pointer;
+                transition: background 0.16s, color 0.16s, transform 0.16s;
+            }
+            .menu-btn:hover {
+                color: #fff;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+            }
+            .menu-btn:active {
+                transform: scale(0.95);
+            }
+            .menu-btn svg {
+                width: 19px;
+                height: 19px;
+                display: block;
+                fill: currentColor;
+            }
             h1 {
-                margin: 0 0 8px;
-                font-size: clamp(17px, 4.5vw, 24px);
-                text-shadow: 2px 2px #fff8;
-                letter-spacing: 1px;
+                flex: 1 1 auto;
+                min-width: 0;
+                margin: 0;
+                font-size: clamp(14px, 4vw, 19px);
+                font-weight: 700;
+                letter-spacing: -0.015em;
+                line-height: 1.1;
+                color: #fff;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+                word-break: break-word;
+            }
+            .wallet {
+                flex: none;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 11px 6px 8px;
+                font-size: 14px;
+                font-weight: 600;
+                font-variant-numeric: tabular-nums;
+                color: var(--gold);
+                border-radius: 999px;
+                background: linear-gradient(180deg, rgba(242, 201, 107, 0.16), rgba(242, 201, 107, 0.06));
+                border: 1px solid rgba(242, 201, 107, 0.28);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+                white-space: nowrap;
+            }
+            .wallet img {
+                width: 18px;
+                height: 18px;
+                display: block;
+                image-rendering: pixelated;
             }
             h2 {
-                margin: 14px 0 4px;
-                font-size: 14px;
+                margin: 16px 0 8px;
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--muted-2);
             }
+            .ihdr,
+            .chesthead,
+            .uhdr {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                margin: 16px 0 8px;
+            }
+            .ihdr h2,
+            .chesthead h2,
+            .uhdr h2 {
+                margin: 0;
+            }
+            .cnt {
+                font-size: 11.5px;
+                font-weight: 500;
+                color: var(--muted-2);
+                font-variant-numeric: tabular-nums;
+                padding: 2px 8px;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid var(--line-2);
+            }
+            /* ---------- колесо ---------- */
             .stage {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: clamp(8px, 3vw, 22px);
-                flex-wrap: wrap;
-                margin: 10px 0; }
+                gap: clamp(8px, 3vw, 20px);
+                margin: 4px 0 12px;
+            }
             .sb {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 6px;
-                font-size: 13px;
+                gap: 8px;
+                flex: none;
+                font-size: 9.5px;
+                font-weight: 600;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--muted-2);
             }
-            .slot {
-                width: clamp(44px, 11vw, 60px);
-                aspect-ratio: 1;
-                background: var(--slot);
-                border: 0;
-                border-top: 3px solid var(--dk);
-                border-left: 3px solid var(--dk);
-                border-right: 3px solid var(--lt);
-                border-bottom: 3px solid var(--lt);
-                padding: 0;
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font: inherit;
-                color: inherit;
+            .stage .sb:first-child {
+                color: #cfd8e2;
             }
-            .slot.big {
-                width: clamp(70px, 18vw, 92px);
-            }
-            button.slot {
-                cursor: pointer;
-            }
-            button.slot:hover:not(:disabled):after,
-            button.slot:focus-visible:after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: #fff8;
-            }
-            button.slot:disabled {
-                cursor: default;
-            }
-            .slot.sel {
-                outline: 3px solid #ffd84a;
-                outline-offset: -3px;
-            }
-            .slot.dim .ic {
-                opacity: 0.3;
-            }
-            .ic {
-                width: 78%;
-                height: 78%;
-                image-rendering: pixelated;
-                pointer-events: none;
-            }
-            .n {
-                position: absolute;
-                right: 2px;
-                bottom: -2px;
-                color: #fff;
-                font-size: 16px;
-                text-shadow: 2px 2px #3f3f3f;
-                pointer-events: none;
-                z-index: 1;
-            }
-            .inv .n {
-                font-size: clamp(10px, 2.6vw, 15px);
-            }
-            .q {
-                opacity: 0.35;
-                font-size: 28px;
-                pointer-events: none;
+            .stage .sb.gt {
+                color: var(--em);
             }
             .ww {
                 position: relative;
                 width: clamp(190px, 50vw, 270px);
                 aspect-ratio: 1;
+                flex: none;
+            }
+            .ww:before {
+                content: "";
+                position: absolute;
+                inset: -14%;
+                border-radius: 50%;
+                background: radial-gradient(circle at 50% 45%, rgba(61, 220, 138, 0.14), rgba(61, 220, 138, 0) 62%);
+                pointer-events: none;
             }
             .wheel {
                 position: absolute;
                 inset: 0;
                 transition: transform 4.6s cubic-bezier(0.12, 0.65, 0.08, 1);
+                will-change: transform;
             }
             .wheel canvas {
                 width: 100%;
                 height: 100%;
-                image-rendering: pixelated;
-                border-radius: 50%;
                 display: block;
+                border-radius: 50%;
+                filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+                image-rendering: pixelated;
             }
             .lbl {
                 position: absolute;
                 left: 50%;
                 top: 50%;
                 color: #fff;
-                font-size: clamp(14px, 3.8vw, 20px);
-                text-shadow: 2px 2px #000;
+                font-size: clamp(17px, 4.6vw, 25px);
+                font-weight: 700;
+                font-variant-numeric: tabular-nums;
+                text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000,
+                    2px 2px 0 rgba(0, 0, 0, 0.65);
                 white-space: nowrap;
             }
             .ptr {
@@ -225,143 +297,318 @@
                 z-index: 3;
             }
             .info {
+                min-height: 2.6em;
+                margin: 4px 0 10px;
                 text-align: center;
-                min-height: 2.8em;
-                margin: 12px 0 8px;
-                font-size: 15px;
+                font-size: 13.5px;
+                line-height: 1.35;
+                color: var(--muted);
             }
             .info.win {
-                color: #117a11;
+                color: #7ef0b0;
             }
             .info.lose {
-                color: #a00;
+                color: #ff9d95;
             }
+            /* ---------- кнопки ---------- */
             .btn {
-                display: block;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
                 width: min(320px, 100%);
                 margin: 0 auto;
-                padding: 10px 8px;
+                padding: 15px 16px;
                 font: inherit;
-                font-size: 17px;
-                color: #fff;
-                text-shadow: 2px 2px #3f3f3f;
-                background: #7a7a7a;
-                border: 3px solid #000;
+                font-size: 16px;
+                font-weight: 700;
+                letter-spacing: -0.01em;
+                color: #06210f;
+                background: linear-gradient(180deg, #59eda0 0%, #2ec97f 45%, #14a564 100%);
+                border: 0;
+                border-radius: 14px;
                 box-shadow:
-                    inset 3px 3px 0 #b8b8b8,
-                    inset -3px -3px 0 #4a4a4a;
+                    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+                    0 10px 22px -10px rgba(61, 220, 138, 0.8);
                 cursor: pointer;
+                transition: transform 0.12s, filter 0.16s, box-shadow 0.16s;
             }
             .btn:hover:not(:disabled) {
-                background: #6f7cb0;
-                color: #ffffa0;
+                filter: brightness(1.06);
+                transform: translateY(-1px);
                 box-shadow:
-                    inset 3px 3px 0 #a9b4e0,
-                    inset -3px -3px 0 #3d4672;
+                    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                    0 16px 28px -12px rgba(61, 220, 138, 0.85);
             }
             .btn:active:not(:disabled) {
-                transform: translateY(2px);
+                transform: translateY(1px) scale(0.995);
+                filter: brightness(0.98);
             }
             .btn:disabled {
-                background: #474747;
-                color: #9a9a9a;
-                text-shadow: none;
-                box-shadow:
-                    inset 3px 3px 0 #5e5e5e,
-                    inset -3px -3px 0 #2c2c2c;
+                color: #7b8794;
+                background: linear-gradient(180deg, #242c35, #1b222a);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
                 cursor: not-allowed;
             }
+            .btn.sm {
+                width: min(320px, 100%);
+                margin-top: 10px;
+                padding: 12px 14px;
+                font-size: 13.5px;
+                font-weight: 600;
+                color: #e6eef7;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025));
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            }
+            .btn.sm:hover:not(:disabled) {
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.04));
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+            }
             .btn.spin {
-                animation: pl 0.8s infinite alternate;
+                animation: pl 1s ease-in-out infinite alternate;
             }
             @keyframes pl {
                 to {
-                    color: #ffffa0;
+                    box-shadow:
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                        0 14px 30px -10px rgba(61, 220, 138, 1);
                 }
-            }
-            .btn.sm {
-                margin-top: 8px;
             }
             .up {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 7px;
+                gap: 8px;
             }
             .up .uic {
-                width: 26px;
-                height: 26px;
+                width: 22px;
+                height: 22px;
                 image-rendering: pixelated;
                 pointer-events: none;
             }
+            .btn.up:not(:disabled) {
+                color: #06210f;
+                background: linear-gradient(180deg, #59eda0, #16a868);
+                border: 0;
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                    0 10px 20px -12px rgba(61, 220, 138, 0.9);
+            }
+            .btn.up:disabled {
+                background: linear-gradient(180deg, #242c35, #1b222a);
+            }
             .up:disabled .uic {
-                opacity: 0.45;
+                opacity: 0.4;
+            }
+            /* ---------- слоты ---------- */
+            .slot {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: clamp(48px, 12vw, 62px);
+                aspect-ratio: 1;
+                padding: 0;
+                font: inherit;
+                border: 1px solid var(--line-2);
+                border-radius: var(--rad-s);
+                background: linear-gradient(180deg, #222a33, #161c22);
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                    inset 0 -8px 14px -10px rgba(0, 0, 0, 0.9);
+                transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+            }
+            .slot.big {
+                width: clamp(64px, 17vw, 82px);
+            }
+            button.slot {
+                cursor: pointer;
+            }
+            button.slot:hover:not(:disabled) {
+                border-color: rgba(255, 255, 255, 0.16);
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+                    0 6px 16px -10px rgba(0, 0, 0, 0.9);
+            }
+            button.slot:active:not(:disabled) {
+                transform: scale(0.97);
+            }
+            button.slot:hover:not(:disabled):after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                border-radius: inherit;
+                background: rgba(255, 255, 255, 0.06);
+            }
+            button.slot:disabled {
+                cursor: default;
+            }
+            .slot.sel {
+                border-color: rgba(61, 220, 138, 0.75);
+                box-shadow:
+                    inset 0 0 0 1px rgba(61, 220, 138, 0.35),
+                    0 0 0 3px rgba(61, 220, 138, 0.14),
+                    0 0 20px -4px rgba(61, 220, 138, 0.45);
+            }
+            .slot.gt.sel,
+            .sb.gt .slot.sel {
+                border-color: rgba(242, 201, 107, 0.8);
+                box-shadow:
+                    inset 0 0 0 1px rgba(242, 201, 107, 0.35),
+                    0 0 0 3px rgba(242, 201, 107, 0.14),
+                    0 0 20px -4px rgba(242, 201, 107, 0.45);
+            }
+            .slot.dim .ic {
+                opacity: 0.28;
+                filter: grayscale(0.6);
+            }
+            .slot.dim {
+                opacity: 0.55;
+            }
+            .ic {
+                width: 76%;
+                height: 76%;
+                image-rendering: pixelated;
+                pointer-events: none;
+                filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
+            }
+            .n {
+                position: absolute;
+                right: 4px;
+                bottom: 2px;
+                font-size: 12px;
+                font-weight: 700;
+                font-variant-numeric: tabular-nums;
+                color: #fff;
+                text-shadow: 0 1px 2px #000, 0 0 4px #000;
+                pointer-events: none;
+                z-index: 1;
+            }
+            .inv .n {
+                font-size: clamp(8px, 1.9vw, 10px);
+                right: 2px;
+                bottom: 1px;
+                line-height: 1;
+            }
+            @media (max-width: 520px) {
+                .inv .n {
+                    font-size: 8px;
+                    right: 1px;
+                    bottom: 0;
+                    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+                }
+            }
+            @media (max-width: 380px) {
+                .inv .n {
+                    font-size: 7px;
+                }
+            }
+            .q {
+                font-size: 20px;
+                font-weight: 300;
+                color: var(--muted-2);
+                opacity: 0.7;
+                pointer-events: none;
             }
             .inv {
                 display: grid;
                 grid-template-columns: repeat(10, 1fr);
-                gap: 0;
+                gap: 5px;
+                padding: 6px;
+                border-radius: 14px;
+                background: rgba(0, 0, 0, 0.24);
+                border: 1px solid var(--line-2);
+                box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.4);
             }
             .inv .slot {
                 width: 100%;
+                border-radius: 8px;
             }
             .hint {
-                font-size: 12px;
-                margin: 8px 0 0;
+                min-height: 1.4em;
+                margin: 10px 0 0;
                 text-align: center;
-                opacity: 0.8;
+                font-size: 12.5px;
+                color: var(--muted);
             }
+            .bar {
+                height: 8px;
+                margin: 0 0 12px;
+                border-radius: 999px;
+                background: rgba(0, 0, 0, 0.45);
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+                overflow: hidden;
+            }
+            .bar i {
+                display: block;
+                width: 0;
+                height: 100%;
+                border-radius: 999px;
+                background: linear-gradient(90deg, #14a564, #59eda0);
+                box-shadow: 0 0 12px rgba(61, 220, 138, 0.55);
+                transition: width 0.35s ease;
+            }
+            /* ---------- окна ---------- */
             .ov {
                 position: fixed;
                 inset: 0;
-                background: #000b;
+                z-index: 10;
                 display: none;
                 align-items: center;
                 justify-content: center;
                 padding: 14px;
-                z-index: 10;
+                background: rgba(4, 6, 8, 0.72);
+                backdrop-filter: blur(6px);
             }
             .ov.on {
                 display: flex;
             }
             .menu {
-                max-width: 420px;
                 width: 100%;
+                max-width: 460px;
                 max-height: 92vh;
                 overflow: auto;
+                padding: 16px;
             }
             .grid {
                 display: grid;
                 grid-template-columns: repeat(6, 1fr);
+                gap: 5px;
             }
             .grid .slot {
                 width: 100%;
             }
             .sec {
-                border: 3px solid var(--dk);
-                padding: 8px;
                 margin: 12px 0;
-                background: #0001;
+                padding: 12px;
+                border-radius: 14px;
+                background: rgba(255, 255, 255, 0.022);
+                border: 1px solid var(--line-2);
             }
             .sec h2 {
-                margin-top: 0;
+                margin: 0 0 8px;
             }
             .sec small {
-                font-weight: normal;
+                color: var(--muted);
+                font-size: 11.5px;
             }
             .row {
                 display: flex;
-                gap: 6px;
                 flex-wrap: wrap;
                 align-items: center;
-                margin: 6px 0;
+                gap: 8px;
+                margin: 8px 0;
             }
             .row label {
                 display: flex;
-                gap: 6px;
-                align-items: center;
-                font-size: 13px;
                 flex: 1 1 100%;
+                align-items: center;
+                gap: 8px;
+                font-size: 12.5px;
+                color: var(--muted);
             }
             .row label input,
             .row label select {
@@ -369,28 +616,44 @@
             }
             .row input,
             .row select,
-            .row textarea {
-                font: inherit;
-                font-size: 13px;
-                padding: 5px;
-                background: #fff;
-                border: 2px solid var(--dk);
-                color: #000;
+            .row textarea,
+            .evf input,
+            .evf select {
                 min-width: 0;
+                padding: 9px 11px;
+                font: inherit;
+                font-size: 13.5px;
+                color: var(--ink);
+                background: rgba(0, 0, 0, 0.35);
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                outline: none;
+                transition: border-color 0.15s, box-shadow 0.15s;
+            }
+            .row input:focus,
+            .row select:focus,
+            .row textarea:focus,
+            .evf input:focus,
+            .evf select:focus,
+            .shq:focus {
+                border-color: rgba(61, 220, 138, 0.6);
+                box-shadow: 0 0 0 3px rgba(61, 220, 138, 0.14);
+            }
+            .row input {
                 flex: 1 1 120px;
             }
             .evf {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
-                margin: 6px 0;
+                margin: 8px 0;
             }
             .evf label {
                 display: flex;
                 flex-direction: column;
-                gap: 3px;
-                font-size: 12px;
-                min-width: 0;
+                gap: 4px;
+                font-size: 11.5px;
+                color: var(--muted);
             }
             .evf .full {
                 grid-column: 1/-1;
@@ -398,154 +661,118 @@
             .evf input,
             .evf select {
                 width: 100%;
-                min-width: 0;
-                height: 32px;
-                font: inherit;
-                font-size: 13px;
-                padding: 4px 6px;
-                background: #fff;
-                border: 2px solid var(--dk);
-                color: #000;
+                height: 36px;
             }
             .ev {
-                background: var(--slot);
-                border: 3px solid var(--dk);
-                padding: 6px 8px;
-                margin: 6px 0;
-                font-size: 13px;
-                color: #fff;
-                text-shadow: 1px 1px #3f3f3f;
+                margin: 8px 0;
+                padding: 9px 11px;
+                font-size: 12.5px;
+                border-radius: 11px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--line-2);
+                color: #dce5ef;
             }
             .ev small {
                 display: block;
-                font-weight: normal;
-                opacity: 0.9;
+                margin-top: 2px;
+                font-size: 11.5px;
+                color: var(--muted-2);
             }
             .ev.on {
-                border-color: #2fd35a;
+                border-color: rgba(61, 220, 138, 0.45);
+                background: rgba(61, 220, 138, 0.07);
             }
             .ev.done {
-                opacity: 0.6;
+                opacity: 0.5;
             }
             .ev button {
-                font: inherit;
-                font-size: 12px;
-                margin-top: 4px;
+                margin-top: 6px;
+                padding: 5px 10px;
+                font-size: 11.5px;
+                color: #dbe4ee;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid var(--line);
+                border-radius: 8px;
                 cursor: pointer;
             }
             #pm {
                 min-height: 1.4em;
-                color: #a00;
+                font-size: 12.5px;
+                color: #ff9d95;
             }
+            /* ---------- подсказка ---------- */
             #tip {
                 position: fixed;
-                pointer-events: none;
-                z-index: 30;
+                z-index: 70;
                 display: none;
-                background: #100010f0;
-                border: 2px solid #2a0a6a;
-                box-shadow: inset 0 0 0 2px #5a1fb0;
-                color: #fff;
-                padding: 5px 9px;
-                font-size: 14px;
-                text-shadow: 2px 2px #3f3f3f;
+                padding: 7px 10px;
+                font-size: 12.5px;
+                color: #eef3f8;
+                background: rgba(10, 13, 17, 0.96);
+                border: 1px solid var(--line);
+                border-radius: 9px;
+                box-shadow: 0 12px 26px -10px #000;
+                pointer-events: none;
             }
             #tip small {
                 display: block;
-                color: #aaa;
-                font-weight: normal;
+                margin-top: 2px;
+                font-size: 11px;
+                font-weight: 400;
+                color: var(--muted-2);
             }
+            /* ---------- всплывающее достижение ---------- */
             #toast {
                 position: fixed;
                 left: 50%;
                 top: 12px;
-                transform: translate(-50%, -140%);
-                transition: transform 0.5s;
-                background: #222;
-                border: 3px solid #000;
-                box-shadow: inset 0 0 0 3px #555;
-                color: #fff;
-                padding: 8px 14px 8px 8px;
+                z-index: 120;
                 display: flex;
-                gap: 10px;
                 align-items: center;
-                z-index: 40;
-                font-size: 13px;
-                min-width: 230px;
+                gap: 11px;
+                min-width: 236px;
+                padding: 10px 15px 10px 11px;
+                font-size: 12.5px;
+                color: #eef3f8;
+                background: linear-gradient(180deg, rgba(30, 36, 43, 0.98), rgba(17, 21, 26, 0.98));
+                border: 1px solid rgba(242, 201, 107, 0.32);
+                border-radius: 13px;
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                    0 20px 40px -16px #000;
+                transform: translate(-50%, -160%);
+                transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1);
             }
             #toast.on {
-                transform: translate(-50%, calc(env(safe-area-inset-top, 0px) + 4px));
+                transform: translate(-50%, calc(env(safe-area-inset-top, 0px) + 8px));
             }
             #toast b {
-                color: #ffff55;
                 display: block;
+                color: var(--gold);
+                font-size: 12.5px;
             }
             #toast img {
-                width: 38px;
-                height: 38px;
-                image-rendering: pixelated;
-                background: #555;
+                width: 40px;
+                height: 40px;
                 padding: 4px;
+                image-rendering: pixelated;
+                border-radius: 10px;
+                background: rgba(0, 0, 0, 0.4);
+                border: 1px solid var(--line-2);
             }
             [hidden] {
                 display: none !important;
             }
-            .tabs {
-                display: flex;
-                gap: 6px;
-                margin: 6px 0 8px;
-            }
-            .tab {
-                flex: 1;
-                font: inherit;
-                font-size: 16px;
-                padding: 9px 4px;
-                color: #fff;
-                text-shadow: 2px 2px #3f3f3f;
-                background: #8b8b8b;
-                border: 3px solid #000;
-                box-shadow:
-                    inset 3px 3px 0 #b8b8b8,
-                    inset -3px -3px 0 #4a4a4a;
-                cursor: pointer;
-            }
-            .tab:hover,
-            .tab.on {
-                background: #6f7cb0;
-                color: #ffffa0;
-            }
-            .tab.on {
-                box-shadow:
-                    inset 3px 3px 0 #a9b4e0,
-                    inset -3px -3px 0 #3d4672;
-            }
-            .tabs {
-                position: relative;
-            }
-            .tabs .menu-btn {
-                flex: none;
-                width: 78px;
-                height: 54px;
-                padding: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .tabs .menu-btn svg {
-                width: 30px;
-                height: 30px;
-                display: block;
-                fill: currentColor;
-            }
-            /* Выдвижное меню: узкое окно от левого края на всю высоту */
+            /* ---------- меню ---------- */
             .mnu-sc {
                 position: fixed;
                 inset: 0;
-                background: #0008;
+                z-index: 20;
+                background: rgba(4, 6, 8, 0.66);
+                backdrop-filter: blur(4px);
                 opacity: 0;
                 pointer-events: none;
-                transition: opacity 0.18s ease;
-                z-index: 20;
+                transition: opacity 0.2s ease;
             }
             .mnu-sc.on {
                 opacity: 1;
@@ -556,357 +783,730 @@
                 top: 0;
                 left: 0;
                 bottom: 0;
-                width: min(170px, 62vw);
                 display: flex;
                 flex-direction: column;
-                gap: 6px;
-                padding: 11px 9px;
-                padding-top: calc(11px + env(safe-area-inset-top, 0px));
-                padding-bottom: calc(11px + env(safe-area-inset-bottom, 0px));
-                padding-left: calc(9px + env(safe-area-inset-left, 0px));
+                gap: 4px;
+                width: min(238px, 76vw);
+                padding: 16px 12px;
+                padding-top: calc(16px + env(safe-area-inset-top, 0px));
+                padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
                 overflow-y: auto;
-                background: #8b8b8b;
-                border-right: 4px solid #000;
-                box-shadow:
-                    inset 3px 3px 0 #b8b8b8,
-                    inset -3px -3px 0 #4a4a4a,
-                    8px 0 0 #00000033;
+                background: linear-gradient(180deg, rgba(20, 25, 31, 0.99), rgba(11, 14, 18, 0.99));
+                border-right: 1px solid var(--line);
+                border-radius: 0 20px 20px 0;
+                box-shadow: 24px 0 60px -20px #000;
+                transform: translateX(-10px);
+                transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+            .mnu-sc.on .mnu {
+                transform: none;
+            }
+            .mnu-h {
+                margin: 0 4px 12px;
+                padding: 0 2px 12px;
+                border-bottom: 1px solid var(--line-2);
             }
             .mnu h2 {
-                margin: 0 -9px 6px;
-                padding: 8px 12px;
-                text-align: center;
-                color: #fff;
+                margin: 0;
                 font-family: "Arial Black", "Segoe UI", Arial, sans-serif;
                 font-weight: 900;
-                font-size: 16px;
-                text-shadow: 2px 2px #3f3f3f;
-                border-bottom: 2px solid #6f6f6f;
+                font-size: 17px;
+                letter-spacing: 0.01em;
+                text-transform: uppercase;
+                color: #fff;
             }
             .mnu .tab,
             .mnu .btn {
+                position: relative;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                gap: 8px;
-                width: auto;
+                gap: 10px;
+                width: 100%;
                 flex: none;
                 align-self: stretch;
-                margin: 0 -4px;
-                padding: 8px 16px;
-                font-size: 13px;
+                margin: 0;
+                padding: 11px 12px;
+                font: inherit;
+                font-size: 13.5px;
+                font-weight: 600;
+                text-align: left;
+                color: #c8d3df;
+                background: transparent;
+                border: 1px solid transparent;
+                border-radius: 11px;
+                cursor: pointer;
+                transition: background 0.15s, color 0.15s, border-color 0.15s;
+            }
+            .mnu .tab:hover {
+                color: #fff;
+                background: rgba(255, 255, 255, 0.05);
+            }
+            .mnu .tab.on {
+                color: #fff;
+                background: linear-gradient(90deg, rgba(61, 220, 138, 0.18), rgba(61, 220, 138, 0.04));
+                border-color: rgba(61, 220, 138, 0.32);
+            }
+            .mnu .tab.on:before {
+                content: "";
+                position: absolute;
+                left: -12px;
+                top: 50%;
+                width: 3px;
+                height: 20px;
+                margin-top: -10px;
+                border-radius: 0 3px 3px 0;
+                background: var(--em);
+                box-shadow: 0 0 12px rgba(61, 220, 138, 0.8);
             }
             .mnu .tab img {
-                width: 18px;
-                height: 18px;
                 flex: none;
+                order: 2;
+                width: 20px;
+                height: 20px;
                 display: block;
                 image-rendering: pixelated;
+                opacity: 0.9;
+            }
+            .mnu-line {
+                flex: none;
+                height: 1px;
+                margin: 7px 6px;
+                background: var(--line-2);
             }
             .mnu .btn {
                 justify-content: center;
                 margin-top: auto;
+                color: #aeb9c6;
+                border-color: var(--line-2);
+                background: rgba(255, 255, 255, 0.03);
             }
+            .mnu .btn:hover {
+                color: #fff;
+                background: rgba(255, 255, 255, 0.07);
+            }
+            /* ---------- верстак ---------- */
+            .bench {
+                margin: 4px 0 12px;
+                padding: 14px 12px 16px;
+                border-radius: 16px;
+                background:
+                    radial-gradient(120% 90% at 50% 0%, rgba(242, 201, 107, 0.09), transparent 60%),
+                    linear-gradient(180deg, #2a2018, #1a1410);
+                border: 1px solid rgba(242, 201, 107, 0.16);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            }
+            .bench h3 {
+                margin: 0 0 12px;
+                text-align: center;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.28em;
+                color: #d8b78a;
+            }
+            .bg {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: clamp(8px, 3vw, 24px);
+                flex-wrap: nowrap;
+            }
+            .cg {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 4px;
+                padding: 5px;
+                border-radius: 12px;
+                background: rgba(0, 0, 0, 0.34);
+                border: 1px solid var(--line-2);
+            }
+            .cg .slot {
+                width: clamp(42px, 12.5vw, 78px);
+            }
+            .arr {
+                flex: none;
+                width: 0;
+                height: 0;
+                border-top: clamp(8px, 2.6vw, 14px) solid transparent;
+                border-bottom: clamp(8px, 2.6vw, 14px) solid transparent;
+                border-left: clamp(12px, 3.6vw, 24px) solid rgba(242, 201, 107, 0.55);
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+            }
+            .bench .slot.big {
+                width: clamp(54px, 16vw, 92px);
+                border-color: rgba(242, 201, 107, 0.22);
+            }
+            #cinfo {
+                min-height: 2.1em;
+                margin: 10px 0 4px;
+                text-align: center;
+                font-size: 12.5px;
+                color: var(--muted);
+            }
+            .rb {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                margin-top: 8px;
+                max-height: min(52vh, 470px);
+                padding-right: 2px;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                scrollbar-width: thin;
+            }
+            .rr {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                min-width: 0;
+                padding: 8px;
+                font-size: 12px;
+                color: #dbe4ee;
+                background: rgba(255, 255, 255, 0.028);
+                border: 1px solid var(--line-2);
+                border-radius: 11px;
+                cursor: pointer;
+                transition: background 0.15s, border-color 0.15s;
+            }
+            .rr:hover {
+                background: rgba(255, 255, 255, 0.06);
+            }
+            .rr.no {
+                opacity: 0.42;
+            }
+            .rr.can {
+                border-color: rgba(61, 220, 138, 0.4);
+                background: rgba(61, 220, 138, 0.08);
+            }
+            .rr img {
+                flex: none;
+                width: 28px;
+                height: 28px;
+                image-rendering: pixelated;
+            }
+            .rr b {
+                display: block;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            .rr small {
+                display: block;
+                font-size: 11px;
+                color: var(--muted-2);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            /* ---------- магазин ---------- */
+            .shopbar {
+                display: flex;
+                align-items: stretch;
+                gap: 8px;
+                margin: 2px 0 10px;
+            }
+            .seg {
+                display: flex;
+                flex: 1;
+                gap: 3px;
+                padding: 3px;
+                border-radius: 12px;
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid var(--line-2);
+            }
+            .segbtn {
+                flex: 1;
+                padding: 8px 6px;
+                font: inherit;
+                font-size: 12.5px;
+                font-weight: 600;
+                color: var(--muted);
+                background: transparent;
+                border: 0;
+                border-radius: 9px;
+                cursor: pointer;
+                transition: color 0.15s, background 0.18s, box-shadow 0.18s;
+            }
+            .segbtn.on {
+                color: #08210f;
+                background: linear-gradient(180deg, #59eda0, #22b673);
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+                    0 4px 12px -6px rgba(61, 220, 138, 0.9);
+            }
+            .bal {
+                flex: none;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 0 12px;
+                font-size: 13px;
+                font-weight: 600;
+                font-variant-numeric: tabular-nums;
+                color: var(--gold);
+                border-radius: 12px;
+                background: linear-gradient(180deg, rgba(242, 201, 107, 0.14), rgba(242, 201, 107, 0.05));
+                border: 1px solid rgba(242, 201, 107, 0.26);
+            }
+            .bal img {
+                width: 16px;
+                height: 16px;
+                image-rendering: pixelated;
+            }
+            .shq {
+                width: 100%;
+                margin: 0 0 10px;
+                padding: 10px 12px;
+                font-size: 13.5px;
+                color: var(--ink);
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid var(--line);
+                border-radius: 11px;
+                outline: none;
+            }
+            .shq::placeholder {
+                color: var(--muted-2);
+            }
+            .shlist {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                max-height: min(55vh, 460px);
+                padding-right: 2px;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                scrollbar-width: thin;
+            }
+            .srow {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                padding: 7px 8px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.026);
+                border: 1px solid var(--line-2);
+                transition: background 0.15s, border-color 0.15s;
+            }
+            .srow:hover {
+                background: rgba(255, 255, 255, 0.05);
+                border-color: var(--line);
+            }
+            .sic {
+                flex: none;
+                display: grid;
+                place-items: center;
+                width: 38px;
+                height: 38px;
+                border-radius: 10px;
+                background: linear-gradient(180deg, #222a33, #161c22);
+                border: 1px solid var(--line-2);
+            }
+            .sic img {
+                width: 76%;
+                height: 76%;
+                image-rendering: pixelated;
+            }
+            .sname {
+                flex: 1;
+                min-width: 0;
+            }
+            .sname b {
+                display: block;
+                font-size: 12.5px;
+                font-weight: 600;
+                color: #e8eff7;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .sname small {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 11.5px;
+                font-variant-numeric: tabular-nums;
+                color: var(--muted);
+            }
+            .sname small img {
+                width: 13px;
+                height: 13px;
+                image-rendering: pixelated;
+            }
+            .sname small.buy {
+                color: #ffb2a8;
+            }
+            .sname small.sell {
+                color: #8ce9b4;
+            }
+            .sbtns {
+                display: flex;
+                flex: none;
+                gap: 4px;
+            }
+            .sbtn {
+                min-width: 34px;
+                padding: 7px 6px;
+                font: inherit;
+                font-size: 11px;
+                font-weight: 600;
+                font-variant-numeric: tabular-nums;
+                color: #8ce9b4;
+                background: rgba(61, 220, 138, 0.12);
+                border: 1px solid rgba(61, 220, 138, 0.26);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background 0.14s, border-color 0.14s, transform 0.1s;
+            }
+            .sbtn.sec {
+                color: var(--gold);
+                background: rgba(242, 201, 107, 0.1);
+                border-color: rgba(242, 201, 107, 0.24);
+            }
+            .sbtn:hover:not(:disabled) {
+                background: rgba(61, 220, 138, 0.2);
+                border-color: rgba(61, 220, 138, 0.4);
+            }
+            .sbtn.sec:hover:not(:disabled) {
+                background: rgba(242, 201, 107, 0.18);
+                border-color: rgba(242, 201, 107, 0.4);
+            }
+            .sbtn:active:not(:disabled) {
+                transform: scale(0.95);
+            }
+            .sbtn:disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+            }
+            .shmsg {
+                min-height: 1.6em;
+                margin: 10px 0 0;
+                text-align: center;
+                font-size: 12px;
+                color: var(--muted);
+            }
+            .shmsg.bad {
+                color: #ff9d95;
+            }
+            .shmsg.good {
+                color: #8ce9b4;
+            }
+            /* ---------- обновление ---------- */
+            .ulist {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                max-height: min(58vh, 520px);
+                padding-right: 2px;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                scrollbar-width: thin;
+            }
+            .ucard {
+                position: relative;
+                padding: 13px 14px;
+                border-radius: 15px;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+                border: 1px solid var(--line-2);
+            }
+            .ucard.now {
+                border-color: rgba(61, 220, 138, 0.4);
+                box-shadow: 0 0 30px -14px rgba(61, 220, 138, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            }
+            .uhead {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px;
+            }
+            .uver {
+                padding: 3px 9px;
+                font-size: 10.5px;
+                font-weight: 700;
+                letter-spacing: 0.06em;
+                font-variant-numeric: tabular-nums;
+                color: #8ef0bd;
+                background: rgba(61, 220, 138, 0.13);
+                border: 1px solid rgba(61, 220, 138, 0.3);
+                border-radius: 999px;
+            }
+            .uhead .udate {
+                margin: 0;
+                font-size: 11.5px;
+                color: var(--muted-2);
+            }
+            .utitle {
+                margin: 9px 0 10px;
+                font-size: 15px;
+                font-weight: 700;
+                letter-spacing: -0.01em;
+                color: #fff;
+            }
+            .uitems {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+                margin: 0 0 8px;
+            }
+            .uitems img {
+                width: 30px;
+                height: 30px;
+                padding: 3px;
+                image-rendering: pixelated;
+                border-radius: 9px;
+                background: rgba(0, 0, 0, 0.32);
+                border: 1px solid var(--line-2);
+            }
+            .urow {
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 8px 0;
+                font-size: 12.5px;
+                line-height: 1.5;
+                color: #c6d0dc;
+                border-top: 1px solid var(--line-2);
+            }
+            .urow:first-of-type {
+                border-top: 0;
+            }
+            .tag {
+                flex: none;
+                display: inline-block;
+                margin-top: 2px;
+                padding: 2px 7px;
+                font-size: 9px;
+                font-weight: 700;
+                letter-spacing: 0.06em;
+                line-height: 1.5;
+                white-space: nowrap;
+                border-radius: 6px;
+            }
+            .tag.new {
+                color: #8ef0bd;
+                background: rgba(61, 220, 138, 0.14);
+                border: 1px solid rgba(61, 220, 138, 0.3);
+            }
+            .tag.chg {
+                color: var(--gold);
+                background: rgba(242, 201, 107, 0.12);
+                border: 1px solid rgba(242, 201, 107, 0.28);
+            }
+            .tag.fix {
+                color: #a8c4ff;
+                background: rgba(91, 141, 239, 0.14);
+                border: 1px solid rgba(91, 141, 239, 0.32);
+            }
+            /* ---------- баннер обновления ---------- */
+            #upd {
+                position: fixed;
+                inset: 0;
+                z-index: 100;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                padding: 14px;
+                overflow: auto;
+                background: rgba(3, 5, 7, 0.78);
+                backdrop-filter: blur(9px);
+            }
+            #upd.on {
+                display: flex;
+            }
+            .paper {
+                display: flex;
+                flex-direction: column;
+                width: min(520px, 100%);
+                max-height: min(93vh, 800px);
+                overflow: hidden;
+                padding: 20px 18px 16px;
+                text-align: center;
+                border-radius: 22px;
+                background:
+                    radial-gradient(120% 70% at 50% 0%, rgba(61, 220, 138, 0.1), transparent 58%),
+                    linear-gradient(180deg, rgba(29, 35, 42, 0.99), rgba(14, 18, 22, 0.99));
+                border: 1px solid var(--line);
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                    0 40px 90px -30px #000;
+            }
+            .pbody {
+                flex: 1;
+                min-height: 0;
+                overflow: auto;
+            }
+            .paper > .btn {
+                flex: none;
+                margin: 16px auto 0;
+            }
+            .ribbon {
+                display: inline-block;
+                padding: 4px 11px;
+                font-size: 10.5px;
+                font-weight: 700;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                font-variant-numeric: tabular-nums;
+                color: #ffd98a;
+                background: rgba(242, 201, 107, 0.12);
+                border: 1px solid rgba(242, 201, 107, 0.3);
+                border-radius: 999px;
+            }
+            .ud {
+                margin-top: 9px;
+                font-size: 11.5px;
+                color: var(--muted-2);
+            }
+            .paper h2 {
+                margin: 6px 0 2px;
+                font-size: clamp(19px, 5.4vw, 26px);
+                font-weight: 800;
+                letter-spacing: -0.02em;
+                line-height: 1.2;
+                text-transform: none;
+                color: #fff;
+            }
+            .ico {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 6px;
+                margin: 14px 0 16px;
+            }
+            .ico img {
+                width: 40px;
+                height: 40px;
+                padding: 5px;
+                image-rendering: pixelated;
+                border-radius: 12px;
+                background: rgba(0, 0, 0, 0.32);
+                border: 1px solid var(--line-2);
+            }
+            .paper ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                text-align: left;
+            }
+            .paper li {
+                display: flex;
+                align-items: flex-start;
+                gap: 9px;
+                margin: 6px 0;
+                padding: 10px 12px;
+                font-size: 12.5px;
+                line-height: 1.5;
+                color: #cbd5e0;
+                background: rgba(255, 255, 255, 0.028);
+                border: 1px solid var(--line-2);
+                border-radius: 12px;
+            }
+            /* ---------- телефон ---------- */
             @media (max-width: 520px) {
-                /* экран телефона: поле во всю ширину (украшений больше нет),
-                   а слоты ставки и цели стоят слева и справа от колеса, как на ПК */
                 .wrap {
                     padding-left: 14px;
                     padding-right: 14px;
                 }
+                .gui {
+                    padding: 12px;
+                }
+                .hdr {
+                    gap: 8px;
+                    margin-bottom: 10px;
+                }
+                .menu-btn {
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 11px;
+                }
+                .menu-btn svg {
+                    width: 17px;
+                    height: 17px;
+                }
+                .wallet {
+                    padding: 5px 9px 5px 7px;
+                    font-size: 12.5px;
+                }
+                .wallet img {
+                    width: 16px;
+                    height: 16px;
+                }
                 .stage {
-                    flex-wrap: nowrap;
                     gap: 6px;
                 }
                 .sb {
-                    font-size: 11px;
-                    gap: 4px;
-                }
-                .slot.big {
-                    width: clamp(46px, 15vw, 68px);
+                    font-size: 8.5px;
+                    letter-spacing: 0.08em;
+                    gap: 6px;
                 }
                 .ww {
                     flex: 1 1 0;
                     width: auto;
                     min-width: 0;
                 }
+                .sb .slot.big {
+                    width: clamp(46px, 14vw, 64px);
+                }
+                .rb {
+                    grid-template-columns: 1fr;
+                    max-height: min(46vh, 380px);
+                }
+                .shlist,
+                .ulist {
+                    max-height: min(47vh, 380px);
+                }
                 .mnu {
-                    width: min(164px, 62vw);
+                    width: min(228px, 78vw);
                 }
-                .tabs .menu-btn {
-                    width: 40px;
-                    height: 36px;
-                }
-                .tabs .menu-btn svg {
-                    width: 20px;
-                    height: 20px;
-                }
-                .mnu .tab {
-                    padding: 8px 10px;
-                    font-size: 13px;
-                }
-                .mnu .btn {
-                    padding: 8px 10px;
-                    font-size: 12px;
+                .paper {
+                    padding: 18px 14px 14px;
                 }
             }
             @media (max-width: 380px) {
-                /* совсем узкий экран — поле шире, чтобы строка «ставка — колесо — цель» влезла */
                 .wrap {
                     padding-left: 8px;
                     padding-right: 8px;
                 }
-                .slot.big {
-                    width: clamp(42px, 14vw, 58px);
+                h1 {
+                    font-size: 13.5px;
                 }
-            }
-            .bench {
-                margin: 6px 0 10px;
-                padding: 12px 8px 14px;
-                border: 4px solid #000;
-                background: repeating-linear-gradient(0deg, #a37c46 0 14px, #8a6a3a 14px 16px);
-                box-shadow:
-                    inset 4px 4px 0 #d9b574,
-                    inset -4px -4px 0 #5e4524;
-            }
-            .bench h3 {
-                margin: 0 0 10px;
-                text-align: center;
-                font-size: clamp(16px, 4vw, 22px);
-                color: #fff;
-                text-shadow: 2px 2px #3a2610;
-                letter-spacing: 4px;
-            }
-            .bg {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: clamp(8px, 4vw, 28px);
-                flex-wrap: wrap;
-            }
-            .cg {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                background: #3a2610;
-                padding: 6px;
-                border: 3px solid #000;
-            }
-            .cg .slot {
-                width: clamp(54px, 15vw, 78px);
-            }
-            .arr {
-                width: 0;
-                height: 0;
-                border-top: 16px solid transparent;
-                border-bottom: 16px solid transparent;
-                border-left: 28px solid #3a2610;
-            }
-            .bench .slot.big {
-                width: clamp(70px, 19vw, 96px);
-            }
-            #cinfo {
-                text-align: center;
-                min-height: 2.4em;
-                margin: 10px 0 6px;
-                font-size: 14px;
-            }
-            .rb {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
-                margin-top: 6px;
-            }
-            @media (max-width: 520px) {
-                .rb {
-                    grid-template-columns: 1fr;
+                .menu-btn {
+                    width: 32px;
+                    height: 32px;
                 }
-            }
-            .rr {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                background: #0002;
-                padding: 5px 8px;
-                border: 2px solid var(--dk);
-                cursor: pointer;
-                color: var(--ink);
-                font-size: 12px;
-                min-width: 0;
-            }
-            .rr:hover {
-                background: #fff4;
-            }
-            .rr.no {
-                opacity: 0.5;
-            }
-            .rr img {
-                width: 28px;
-                height: 28px;
-                image-rendering: pixelated;
-                flex: none;
-            }
-            .rr b {
-                display: block;
-            }
-            .rr small {
-                display: block;
-                font-weight: normal;
-                opacity: 0.85;
-            }
-            #upd {
-                position: fixed;
-                inset: 0;
-                z-index: 100;
-                background: #000d;
-                display: none;
-                align-items: center;
-                justify-content: center;
-                padding: 12px;
-                overflow: auto;
-            }
-            #upd.on {
-                display: flex;
-            }
-            .paper {
-                position: relative;
-                width: min(600px, 100%);
-                max-height: 96vh;
-                overflow: auto;
-                background: #f3e7c4;
-                color: #3b2a14;
-                border: 5px solid #000;
-                box-shadow:
-                    inset 0 0 0 4px #b8935a,
-                    inset 0 0 50px #c9a86a99;
-                padding: 26px 22px 20px;
-                text-align: center;
-            }
-            .ribbon {
-                display: inline-block;
-                background: #b02a22;
-                color: #fff;
-                font-size: clamp(14px, 3.6vw, 18px);
-                letter-spacing: 3px;
-                padding: 6px 22px;
-                border: 3px solid #000;
-                box-shadow:
-                    inset 3px 3px 0 #e8604f,
-                    inset -3px -3px 0 #741812;
-                text-shadow: 2px 2px #3a0a06;
-            }
-            .ud {
-                margin-top: 8px;
-                font-size: 13px;
-                opacity: 0.75;
-            }
-            .paper h2 {
-                margin: 10px 0 6px;
-                font-size: clamp(22px, 6vw, 32px);
-                text-shadow: 2px 2px #fff8;
-            }
-            .ico {
-                display: flex;
-                gap: 6px;
-                flex-wrap: wrap;
-                justify-content: center;
-                margin: 10px 0 14px;
-            }
-            .ico img {
-                width: 40px;
-                height: 40px;
-                image-rendering: pixelated;
-                background: #8b8b8b;
-                border: 3px solid #373737;
-                border-right-color: #fff;
-                border-bottom-color: #fff;
-                padding: 3px;
-            }
-            .paper ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                text-align: left;
-            }
-            .paper li {
-                margin: 10px 0;
-                padding: 8px 10px;
-                background: #fff6;
-                border-left: 5px solid #b8935a;
-                font-size: 14px;
-                line-height: 1.45;
-            }
-            .tag {
-                display: inline-block;
-                padding: 1px 7px;
-                margin-right: 8px;
-                font-size: 11px;
-                color: #fff;
-                border: 2px solid #000;
-                vertical-align: 1px;
-            }
-            .tag.new {
-                background: #3a9a2a;
-            }
-            .tag.chg {
-                background: #c87a1a;
-            }
-            .tag.fix {
-                background: #2a6ab0;
-            }
-            .paper .btn {
-                margin-top: 16px;
-            }
-            .paper {
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-                max-height: min(96vh, 780px);
-                padding: 0;
-            }
-            .pbody {
-                overflow: auto;
-                flex: 1;
-                min-height: 0;
-                padding: 24px 20px 6px;
-                text-align: center;
-            }
-            .paper > .btn {
-                margin: 10px auto 16px;
-                flex: none;
-            }
-            .bg {
-                flex-wrap: nowrap;
-                gap: clamp(6px, 2.5vw, 26px);
-            }
-            .cg .slot {
-                width: clamp(44px, 12.5vw, 84px);
-            }
-            .bench .slot.big {
-                width: clamp(56px, 16vw, 104px);
-            }
-            .arr {
-                border-top-width: clamp(10px, 3vw, 18px);
-                border-bottom-width: clamp(10px, 3vw, 18px);
-                border-left-width: clamp(14px, 4vw, 30px);
-            }
-            .rr {
-                padding: 4px 6px;
-            }
-            .rr.no {
-                opacity: 0.6;
-            }
-            .rr.can {
-                border-color: #2fd35a;
-                background: #2fd35a22;
+                .wallet {
+                    padding: 4px 7px 4px 6px;
+                    font-size: 11.5px;
+                    gap: 4px;
+                }
+                .wallet img {
+                    width: 14px;
+                    height: 14px;
+                }
+                .sbtn {
+                    min-width: 30px;
+                    padding: 6px 4px;
+                    font-size: 10.5px;
+                }
+                .sic {
+                    width: 32px;
+                    height: 32px;
+                }
+                .sname small {
+                    font-size: 11px;
+                }
+                .uitems img {
+                    width: 26px;
+                    height: 26px;
+                }
             }
 </style>
     </head>
     <body>
         <div class="wrap">
             <div class="gui" id="gui">
-                <h1>Колесо фортуны</h1>
-                <div class="tabs">
-                    <button class="tab menu-btn" id="tmenu" aria-label="Меню"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="2.6" rx="1.3"></rect><rect x="2.5" y="10.7" width="19" height="2.6" rx="1.3"></rect><rect x="2.5" y="16.4" width="19" height="2.6" rx="1.3"></rect></svg></button>
+                <div class="hdr">
+                    <button class="menu-btn" id="tmenu" aria-label="Меню"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="2.6" rx="1.3"></rect><rect x="2.5" y="10.7" width="19" height="2.6" rx="1.3"></rect><rect x="2.5" y="16.4" width="19" height="2.6" rx="1.3"></rect></svg></button>
+                    <h1>Колесо фортуны</h1>
+                    <div class="wallet" id="wbox"><img id="wico" alt="" /><b id="wcoins">0</b></div>
                 </div>
                 <div id="pg1">
                     <div class="stage">
@@ -937,11 +1537,15 @@
                     <button class="btn sm" id="cx">Очистить стол</button>
                 </div>
                 <div id="pg4" hidden>
-                    <h2>Сундук</h2>
+                    <div class="chesthead">
+                        <h2>Сундук</h2>
+                        <span class="cnt" id="csl2"></span>
+                    </div>
+                    <div class="bar"><i id="cbar"></i></div>
                     <div class="inv" id="chst"></div>
                     <p class="hint" id="chh"></p>
                     <div class="sec">
-                        <h2 style="margin-top: 0">Улучшение сундука <span id="csl2" style="font-size: 13px; font-weight: normal; opacity: 0.85"></span></h2>
+                        <h2>Улучшение сундука</h2>
                         <button class="btn sm up" id="up1" aria-label="Добавить 1 клетку сундука за 1 Жемчуг Края">
                             <span>+1</span
                             ><img class="uic" data-item="chest" alt="" aria-hidden="true" /><span>—</span><span>1</span
@@ -954,27 +1558,50 @@
                         </button>
                     </div>
                 </div>
-                <h2>Инвентарь</h2>
-                <div class="inv" id="inv"></div>
-                <button class="btn sm" id="put" hidden>Убрать в сундук</button>
+                <div id="pg5" hidden>
+                    <div class="shopbar">
+                        <div class="seg">
+                            <button class="segbtn on" id="shbuy">Купить</button>
+                            <button class="segbtn" id="shsell">Продать</button>
+                        </div>
+                        <div class="bal"><img id="sico" alt="" /><b id="sbal">0</b></div>
+                    </div>
+                    <input class="shq" id="shq" type="text" inputmode="search" autocomplete="off" placeholder="Поиск" />
+                    <div class="shlist" id="shlist"></div>
+                    <p class="shmsg" id="shmsg"></p>
+                </div>
+                <div id="pg6" hidden>
+                    <div class="uhdr">
+                        <h2>Обновление</h2>
+                    </div>
+                    <div class="ulist" id="ulist"></div>
+                </div>
+                <div id="invblock">
+                    <div class="ihdr">
+                        <h2>Инвентарь</h2>
+                        <span class="cnt" id="icnt"></span>
+                    </div>
+                    <div class="inv" id="inv"></div>
+                    <button class="btn sm" id="put" hidden>Убрать в сундук</button>
+                </div>
                 <div id="pg3" hidden>
                     <h2>Рецепты</h2>
                     <div class="rb" id="rb"></div>
                 </div>
-                <button class="btn sm" id="rs">Очистить инвентарь</button>
             </div>
         </div>
-
         <div class="mnu-sc" id="mnusc">
             <div class="mnu">
-                <h2>Меню</h2>
+                <div class="mnu-h"><h2>Меню</h2></div>
                 <button class="tab on" id="t1">Рулетка</button>
+                <button class="tab" id="t4">Магазин</button>
                 <button class="tab" id="t2">Верстак</button>
                 <button class="tab" id="t3">Сундук</button>
+                <div class="mnu-line"></div>
+                <button class="tab" id="t5">Обновление</button>
                 <button class="btn sm" id="mcx">Закрыть</button>
             </div>
         </div>
-
         <div class="ov" id="pov">
             <div class="gui menu">
                 <h2 style="margin-top: 0">Вход в админ панель</h2>
@@ -986,7 +1613,6 @@
                 <button class="btn sm" data-close>Отмена</button>
             </div>
         </div>
-
         <div class="ov" id="aov">
             <div class="gui menu">
                 <h2 style="margin-top: 0">Админ панель</h2>
@@ -1014,7 +1640,6 @@
                 <button class="btn sm" data-close>Закрыть</button>
             </div>
         </div>
-
         <div class="ov" id="ov">
             <div class="gui menu">
                 <h2 style="margin-top: 0">Выбери желаемый предмет</h2>
@@ -1038,7 +1663,6 @@
             <img id="ti" />
             <div><b>Достижение получено!</b><span id="tn"></span></div>
         </div>
-
         <script>
             const $ = (id) => document.getElementById(id);
             function R(a) {
@@ -1062,7 +1686,6 @@
                 }, r);
                 return c.toDataURL();
             }
-
             /* --- оригинальные 2D-спрайты 16x16 (нарисованы с нуля) --- */
             const hash = (x, y) => Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
             const hex = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
@@ -1647,7 +2270,6 @@
                 ].forEach(([x, y], i) => p(x, y, i % 2 ? "#5e4524" : "#8a6a3a"));
             };
             const DIRT = noise(["#866043", "#79553a", "#6b4a30", "#94694a", "#5a3e28"]);
-
             const ITEMS = [
                 { id: "dirt", n: "Земля", v: 1, f: tile(grassDirt) },
                 { id: "sand", n: "Песок", v: 2, f: tile(sandTex) },
@@ -1869,11 +2491,24 @@
                 seedOf = (i) => (i.s != null ? i.s : SEED[i.id] != null ? SEED[i.id] : 7);
             ITEMS.forEach((i) => (i.img = mk(seedOf(i), i.f)));
             const dirtTile = mk(3, DIRT);
+            /* --- монета: валюта магазина (золотой кружок с ободком и бликом) --- */
+            const coinImg = mk(77, (p) => {
+                for (let i = 0; i < 16; i++)
+                    for (let j = 0; j < 16; j++) {
+                        const d = Math.hypot(i - 7.5, j - 7.5);
+                        if (d < 7.6) {
+                            if (d > 6.3) p(i, j, i + j < 14 ? "#8a5a06" : "#c98f12");
+                            else if (d > 4.3) p(i, j, i + j < 12 ? "#ffe680" : i + j > 19 ? "#e0a81c" : "#f7cf3f");
+                            else p(i, j, i + j < 12 ? "#fff6c0" : "#ffd84a");
+                        }
+                    }
+            });
             const by = (id) => ITEMS.find((i) => i.id === id);
             /* фон — затемнённая земля, как в Minecraft */
-            document.body.style.backgroundImage = `linear-gradient(#000a,#000a),url(${dirtTile})`;
-            document.body.style.backgroundSize = "auto,96px";
-
+            document.body.style.backgroundImage = `radial-gradient(1100px 620px at 50% -12%, rgba(61,220,138,.10), transparent 62%), radial-gradient(900px 520px at 50% 112%, rgba(242,201,107,.07), transparent 62%), linear-gradient(#080b0eeb, #060809f7), url(${dirtTile})`;
+            document.body.style.backgroundSize = "auto, auto, auto, 128px";
+            document.body.style.backgroundAttachment = "fixed, fixed, fixed, fixed";
+            document.body.style.backgroundRepeat = "no-repeat, no-repeat, no-repeat, repeat";
             /* --- инвентарь: 50 клеток (5 строк по 10), размер стака у предметов свой --- */
             let betK = -1;
             const SL = 50,
@@ -1962,13 +2597,13 @@
                 chestSel = null,
                 bet = null,
                 tgt = null,
+                coins = 0,
                 spinning = false,
                 rot = 0,
                 hold = false,
                 ac,
                 note = "";
             let storeOk = true;
-
             function load() {
                 try {
                     const s = JSON.parse(localStorage.getItem("mcw2") || "null");
@@ -1980,7 +2615,7 @@
                                 m = mg(k);
                             if (by(m) && n > 0) o[m] = (o[m] || 0) + n;
                         }
-                        if (Object.keys(o).length) inv = fit(o);
+                        inv = Object.keys(o).length ? fit(o) : {};
                     }
                     {
                         const sb = mg(s.bet),
@@ -1989,6 +2624,7 @@
                         if (by(sg) && sg !== bet && ok(sg)) tgt = sg;
                     }
                     if (s.got) for (const k in s.got) if (by(k)) got[k] = 1;
+                    if (s.coins != null && isFinite(+s.coins)) coins = Math.max(0, Math.floor(+s.coins));
                     if (s.csl) chestSL = Math.max(10, Math.min(MAXC, Math.floor(+s.csl) || 10));
                     if (s.chest) {
                         const o = {};
@@ -2009,16 +2645,14 @@
             }
             function save(d) {
                 try {
-                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL }));
+                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL, coins }));
                 } catch (e) {
                     storeOk = false;
                 }
                 if (typeof dbSave === "function") dbSave();
             }
             load();
-            if (!Object.values(inv).some((v) => v > 0)) inv = { dirt: 5 };
             for (const k in inv) got[k] = 1;
-
             function snd(f, d, t, f2) {
                 try {
                     ac = ac || new AudioContext();
@@ -2057,6 +2691,7 @@
                     delete el.dataset.tip;
                 }
             }
+            /* колесо: пиксельная отрисовка — как в старом дизайне */
             function paint(c) {
                 const cv = $("wc"),
                     x = cv.getContext("2d"),
@@ -2107,7 +2742,6 @@
                 e.textContent = t;
                 e.className = "info " + (cl || "");
             }
-
             function render() {
                 if (!(inv[bet] > 0)) bet = null;
                 if (tgt && bet) {
@@ -2173,6 +2807,8 @@
                 const c = chance();
                 paint(c);
                 labels(c);
+                const icn = $("icnt");
+                if (icn) icn.textContent = slotsOf(inv) + " / " + SL + " клеток";
                 const g = $("go"),
                     full = !!tgt && room(tgt) < 1;
                 g.disabled = spinning || !bet || !tgt || full;
@@ -2192,9 +2828,9 @@
                 }
                 renderCraft();
                 renderChest();
-                if (!spinning) save();
+                if (tab === "shop") renderShop();
+                wallet();
             }
-
             $("bet").onclick = () => {
                 if (bet) {
                     bet = null;
@@ -2243,7 +2879,6 @@
                 tp.style.left = Math.min(e.clientX + 14, innerWidth - tp.offsetWidth - 6) + "px";
                 tp.style.top = e.clientY - 8 + "px";
             });
-
             $("go").onclick = () => {
                 if (spinning || !bet || !tgt || !(inv[bet] > 0) || room(tgt) < 1 || !ok(tgt)) return;
                 const c = chance(),
@@ -2267,7 +2902,7 @@
                         after[b] -= 1;
                         if (after[b] <= 0) delete after[b];
                     }
-                    save(Object.values(after).some((v) => v > 0) ? after : { dirt: 1 });
+                    save(after);
                 }
                 setInfo("Колесо вращается...");
                 snd(300, 0.2, "square", 600);
@@ -2299,38 +2934,11 @@
                         void g.offsetWidth;
                         g.classList.add("shake");
                     }
-                    if (!Object.values(inv).some((v) => v > 0)) {
-                        inv = { dirt: 1 };
-                        m += " Инвентарь пуст — выдана 1 земля.";
-                    }
                     render();
                     setInfo(m, cl);
                 }, 4700);
             };
             addEventListener("resize", () => labels(chance()));
-
-            let rc = 0;
-            $("rs").onclick = () => {
-                if (spinning) return;
-                const b = $("rs");
-                if (!rc) {
-                    b.textContent = "Нажми ещё раз для очистки";
-                    rc = setTimeout(() => {
-                        rc = 0;
-                        b.textContent = "Очистить инвентарь";
-                    }, 3000);
-                    return;
-                }
-                clearTimeout(rc);
-                rc = 0;
-                b.textContent = "Очистить инвентарь";
-                inv = { dirt: 5 };
-                got = { dirt: 1 };
-                bet = tgt = null;
-                hold = false;
-                render();
-            };
-
             /* ===== Вход в админ панель по паролю (хранится только хэш SHA-256 от "mcw-admin:"+пароль) ===== */
             const PW_HASH = "2009e6378ae8b01d88b191ab684470642246544f2de844fff128fe69c9a7ef45";
             let unlocked = false,
@@ -2401,7 +3009,6 @@
             $("pw").addEventListener("keydown", (e) => {
                 if (e.key === "Enter") tryPw();
             });
-
             /* ===== События «удачи» и выдача предметов (только после входа) ===== */
             let EV = [],
                 evCol = null,
@@ -2485,7 +3092,6 @@
                 }
                 evRender();
             }
-
             document
                 .querySelectorAll("[data-close]")
                 .forEach((b) => (b.onclick = () => b.closest(".ov").classList.remove("on")));
@@ -2532,12 +3138,11 @@
                 };
                 $("agrid").appendChild(b);
             });
-
             /* ===== Облачное сохранение (работает только внутри артефакта Claude) ===== */
             function dbSave(now) {
                 if (!udoc) return Promise.resolve();
                 clearTimeout(dt);
-                const w = () => udoc.set({ inv, bet: bet || "", tgt: tgt || "", got, chest, csl: chestSL }).catch(() => {});
+                const w = () => udoc.set({ inv, bet: bet || "", tgt: tgt || "", got, chest, csl: chestSL, coins }).catch(() => {});
                 if (now) return w();
                 dt = setTimeout(w, 2000);
             }
@@ -2576,6 +3181,7 @@
                             for (const k in d.got || {}) if (by(k)) got[k] = 1;
                             for (const k in inv) got[k] = 1;
                             if (d.csl) chestSL = Math.max(10, Math.min(MAXC, Math.floor(+d.csl) || 10));
+                            if (d.coins != null && isFinite(+d.coins)) coins = Math.max(coins, Math.floor(+d.coins));
                             {
                                 const co = {};
                                 for (const k in d.chest || {}) {
@@ -2596,7 +3202,6 @@
                     } else dbSave(true);
                 } catch (e) {}
             })();
-
             setInterval(() => {
                 evRender();
             }, 5000);
@@ -2722,7 +3327,6 @@
                 return true;
             }
             /* @CRAFT-LOGIC-END */
-
             const used = (id) => grid.filter((x) => x === id).length;
             function pruneGrid() {
                 const c = {};
@@ -2749,9 +3353,9 @@
                 if (u1) u1.disabled = spinning || chestSL >= MAXC || !(inv.pearl > 0);
                 if (u10) u10.disabled = spinning || chestSL + 10 > MAXC || !(inv.dblock > 0);
                 const c2 = $("csl2");
-                if (c2)
-                    c2.textContent =
-                        chestSL >= MAXC ? "Клеток: " + chestSL + " (максимум)" : "Клеток: " + chestSL + " из " + MAXC;
+                if (c2) c2.textContent = chestSL + " / " + MAXC + " клеток";
+                const br = $("cbar");
+                if (br) br.style.width = Math.round((chestSL / MAXC) * 100) + "%";
             }
             function renderChest() {
                 const box = $("chst");
@@ -2962,6 +3566,8 @@
                 ["t1", "eye"],
                 ["t2", "table"],
                 ["t3", "chest"],
+                ["t4", "em"],
+                ["t5", "torch"],
             ].forEach(([id, item]) => {
                 const b = $(id),
                     it = by(item);
@@ -2978,6 +3584,173 @@
                 const it = by(im.dataset.item);
                 if (it) im.src = it.img;
             });
+            // иконка монеты в кошельке и в магазине
+            ["wico", "sico"].forEach((id) => {
+                const e = $(id);
+                if (e) e.src = coinImg;
+            });
+            /* ===== Монеты: валюта магазина ===== */
+            const money = (n) => Math.floor(n).toLocaleString("ru-RU");
+            const plural = (n, a, b, c) => {
+                const k = Math.abs(n) % 100,
+                    d = k % 10;
+                return d === 1 && k !== 11 ? a : d >= 2 && d <= 4 && (k < 10 || k >= 20) ? b : c;
+            };
+            const coinsWord = (n) => plural(n, "монету", "монеты", "монет");
+            function wallet() {
+                const t = money(coins);
+                if ($("wcoins")) $("wcoins").textContent = t;
+                if ($("sbal")) $("sbal").textContent = t;
+            }
+            /* цена покупки и продажи считается от ценности предмета */
+            const buyPrice = (id) => Math.max(2, Math.round(by(id).v * 2));
+            const sellPrice = (id) => Math.max(1, Math.round(by(id).v * 0.6));
+            let shMode = "buy",
+                shQ = "",
+                shNote = "";
+            const coinTag = (n) => `<img src="${coinImg}" alt="">` + money(n);
+            function shopMsg(t, bad) {
+                const e = $("shmsg");
+                if (!e) return;
+                e.textContent = t || "";
+                e.className = "shmsg" + (t ? (bad ? " bad" : " good") : "");
+            }
+            function renderShop() {
+                const box = $("shlist");
+                if (!box) return;
+                const q = shQ.trim().toLowerCase(),
+                    buy = shMode === "buy";
+                const list = ITEMS.filter((i) => {
+                    if (!buy && !(inv[i.id] > 0)) return false;
+                    if (!q) return true;
+                    return i.n.toLowerCase().includes(q) || i.id.includes(q);
+                });
+                box.innerHTML = "";
+                if (!list.length) {
+                    const e = document.createElement("p");
+                    e.className = "shmsg";
+                    e.textContent = buy ? "Ничего не найдено." : "Нечего продавать.";
+                    box.appendChild(e);
+                    return;
+                }
+                list.forEach((it) => {
+                    const price = buy ? buyPrice(it.id) : sellPrice(it.id),
+                        row = document.createElement("div");
+                    row.className = "srow";
+                    const ic = document.createElement("div");
+                    ic.className = "sic";
+                    const im = document.createElement("img");
+                    im.src = it.img;
+                    im.alt = "";
+                    ic.appendChild(im);
+                    const nm = document.createElement("div");
+                    nm.className = "sname";
+                    nm.innerHTML =
+                        "<b></b><small class=\"" +
+                        (buy ? "buy" : "sell") +
+                        '">' +
+                        coinTag(price) +
+                        "</small>";
+                    nm.querySelector("b").textContent = it.n;
+                    nm.querySelector("small").insertAdjacentText("beforeend", " за штуку");
+                    const bs = document.createElement("div");
+                    bs.className = "sbtns";
+                    const has = inv[it.id] || 0;
+                    const steps = buy ? [1, 10, 64] : [1, 10, 0];
+                    steps.forEach((n) => {
+                        const b = document.createElement("button");
+                        b.className = "sbtn" + (buy ? "" : " sec");
+                        b.textContent = n ? "×" + n : "всё";
+                        if (buy) {
+                            b.disabled = spinning || coins < price || room(it.id) < 1;
+                            b.onclick = () => shBuy(it.id, n);
+                        } else {
+                            b.disabled = spinning || has < 1 || (n > 0 && has < n);
+                            b.onclick = () => shSell(it.id, n || has);
+                        }
+                        bs.appendChild(b);
+                    });
+                    row.append(ic, nm, bs);
+                    box.appendChild(row);
+                });
+                shopMsg(shNote, false);
+                shNote = "";
+            }
+            function shBuy(id, n) {
+                if (spinning) return;
+                const price = buyPrice(id),
+                    can = Math.min(n, room(id), Math.floor(coins / price));
+                if (can < 1) {
+                    shopMsg(coins < price ? "Не хватает монет." : "Нет места в инвентаре.", true);
+                    snd(220, 0.15, "sawtooth");
+                    return;
+                }
+                coins -= price * can;
+                inv[id] = (inv[id] || 0) + can;
+                got[id] = 1;
+                snd(660, 0.07, "square");
+                shNote = "Куплено: " + by(id).n + " ×" + can + " за " + money(price * can) + " " + coinsWord(price * can) + ".";
+                render();
+            }
+            function shSell(id, n) {
+                if (spinning) return;
+                const have = inv[id] || 0;
+                if (have < 1) return;
+                const cnt = Math.min(n, have),
+                    price = sellPrice(id);
+                inv[id] -= cnt;
+                if (inv[id] <= 0) delete inv[id];
+                coins += price * cnt;
+                snd(560, 0.08, "square");
+                shNote = "Продано: " + by(id).n + " ×" + cnt + " за " + money(price * cnt) + " " + coinsWord(price * cnt) + ".";
+                render();
+            }
+            /* ===== Вкладка «Обновление» ===== */
+            function renderUpdates() {
+                const box = $("ulist");
+                if (!box) return;
+                box.innerHTML = "";
+                UPDATES.slice(0, 1).forEach((u, idx) => {
+                    const c = document.createElement("div");
+                    c.className = "ucard" + (idx === 0 ? " now" : "");
+                    const h = document.createElement("div");
+                    h.className = "uhead";
+                    const v = document.createElement("span");
+                    v.className = "uver";
+                    v.textContent = u.v;
+                    const d = document.createElement("span");
+                    d.className = "udate";
+                    d.textContent = u.date || "";
+                    h.append(v, d);
+                    const t = document.createElement("div");
+                    t.className = "utitle";
+                    t.textContent = u.title || "";
+                    c.append(h, t);
+                    if (u.icons && u.icons.length) {
+                        const ic = document.createElement("div");
+                        ic.className = "uitems";
+                        u.icons.forEach((id) => {
+                            if (!by(id)) return;
+                            const im = document.createElement("img");
+                            im.src = by(id).img;
+                            im.alt = by(id).n;
+                            im.title = by(id).n;
+                            ic.appendChild(im);
+                        });
+                        if (ic.children.length) c.appendChild(ic);
+                    }
+                    (u.items || []).forEach(([type, txt]) => {
+                        const r = document.createElement("div");
+                        r.className = "urow";
+                        const g = document.createElement("span");
+                        g.className = "tag " + type;
+                        g.textContent = type === "new" ? "НОВОЕ" : type === "fix" ? "ИСПРАВЛЕНО" : "ИЗМЕНЕНО";
+                        r.append(g, document.createTextNode(txt));
+                        c.appendChild(r);
+                    });
+                    box.appendChild(c);
+                });
+            }
             function setTab(t) {
                 tab = t;
                 held = null;
@@ -2988,10 +3761,22 @@
                 $("pg2").hidden = t !== "craft";
                 $("pg3").hidden = t !== "craft";
                 $("pg4").hidden = t !== "chest";
-                $("t1").classList.toggle("on", t === "roulette");
-                $("t2").classList.toggle("on", t === "craft");
-                $("t3").classList.toggle("on", t === "chest");
+                $("pg5").hidden = t !== "shop";
+                $("pg6").hidden = t !== "updates";
+                $("invblock").hidden = t === "updates";
+                [
+                    ["t1", "roulette"],
+                    ["t2", "craft"],
+                    ["t3", "chest"],
+                    ["t4", "shop"],
+                    ["t5", "updates"],
+                ].forEach(([b, k]) => {
+                    const e = $(b);
+                    if (e) e.classList.toggle("on", t === k);
+                });
                 if (t !== "chest" && $("chh")) $("chh").textContent = "";
+                if (t === "updates") renderUpdates();
+                if (t === "shop") shopMsg("");
                 render();
             }
             // выравниваем выдвижное меню по верхнему краю игрового прямоугольника,
@@ -3027,10 +3812,31 @@
             $("t1").onclick = () => setTab("roulette");
             $("t2").onclick = () => setTab("craft");
             $("t3").onclick = () => setTab("chest");
+            $("t4").onclick = () => setTab("shop");
+            $("t5").onclick = () => setTab("updates");
+            $("shbuy").onclick = () => {
+                shMode = "buy";
+                $("shbuy").classList.add("on");
+                $("shsell").classList.remove("on");
+                shopMsg("");
+                snd(500, 0.04, "square");
+                render();
+            };
+            $("shsell").onclick = () => {
+                shMode = "sell";
+                $("shsell").classList.add("on");
+                $("shbuy").classList.remove("on");
+                shopMsg("");
+                snd(500, 0.04, "square");
+                render();
+            };
+            $("shq").addEventListener("input", () => {
+                shQ = $("shq").value;
+                renderShop();
+            });
             $("put").onclick = toChest;
             $("up1").onclick = () => upChest(1, "pearl", 1);
             $("up10").onclick = () => upChest(10, "dblock", 1);
-
             function smelt(id, n = 1) {
                 if (spinning) return false;
                 const out = SMELT[id];
@@ -3048,248 +3854,41 @@
                 render();
                 return true;
             }
-
             /* ===== Окно «Обновление» перед входом в игру =====
    КАК ВЫПУСТИТЬ ОБНОВЛЕНИЕ НА GITHUB: добавь новый объект В НАЧАЛО списка UPDATES
    (с новым значением v). Каждый игрок увидит это окно один раз — пока не нажмёт «Играть!».
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
                 {
-                    v: "2026.10.22.4",
-                    date: "22 октября 2026",
-                    title: "Ровные поля по краям",
-                    icons: ["chest", "dia", "pearl", "em", "dblock", "nblock", "eye", "gapple"],
+                    v: "2026.10.26.1",
+                    date: "26 октября 2026",
+                    title: "Всё, что добавлено в игру",
+                    icons: ["dia", "gapple", "em", "gold"],
                     items: [
-                        [
-                            "fix",
-                            "Панель стоит по центру экрана: поля от земли ровные со всех сторон — сверху, снизу и по бокам. И на телефоне, и на компьютере.",
-                        ],
+                        ["new", "Колесо рулетки нарисовано точно по mcupgrade.alphch.dev: пиксельная отрисовка 96×96, жёлтый указатель вниз, шкала чисел с обводкой, картинки предметов в секторах."],
+                        ["new", "Ставка и цель: слот ставки, выбор желаемого предмета и подсказки при наведении."],
+                        ["new", "Магазин с монетами: покупка и продажа предметов, кнопки ×1, ×10 и ×64 на каждый товар."],
+                        ["new", "Верстак с рецептами на сетке 3×3, стрелкой сборки и кнопкой очистки стола."],
+                        ["new", "Сундук-хранилище, инвентарь на 50 слотов и кошелёк монет с покупкой дополнительных ячеек."],
+                        ["new", "Боковое меню: Рулетка → Магазин → Верстак → Сундук → Обновление."],
+                        ["new", "Тёмный современный дизайн: стеклянная панель, мягкие тени, аккуратная типографика, читаемые счётчики на мобильных."],
+                        ["new", "Звуковые эффекты вращения, покупок и наград, плюс всплывающее окно с новым предметом."],
+                        ["new", "Сохранение прогресса: инвентарь, монеты, сундук и настройки остаются на месте при повторном входе."],
+                        ["new", "В папку проекта добавлен start_server.bat — локальный сервер запускается в один клик и открывает http://127.0.0.1:8080/ (в сети — http://192.168.1.22:8080/)."],
+                        ["chg", "Вкладка «Обновление» показывает только текущую запись, без счётчика «1 запись»."],
+                        ["chg", "Странствующий торговец убран из игры: спрайт, панель сделок и весь связанный код удалены."],
                     ],
                 },
                 {
-                    v: "2026.10.22.3",
-                    date: "22 октября 2026",
-                    title: "Промокоды убраны",
-                    icons: ["chest", "em", "dia", "pearl", "dblock", "nblock", "eye", "gapple"],
+                    v: "2026.10.23.2",
+                    date: "23 октября 2026",
+                    title: "Современный дизайн и реалистичное колесо",
+                    icons: ["em", "gold", "chest", "table", "dia", "pearl", "dblock", "gapple"],
                     items: [
-                        [
-                            "chg",
-                            "Промокоды убраны полностью и навсегда: нет вкладки «Промокоды» в меню, нет поля для кода и нет раздела в админ панели.",
-                        ],
-                        [
-                            "chg",
-                            "В меню остались только «Рулетка», «Верстак» и «Сундук». Полоска в меню теперь одна — под заголовком «Меню».",
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.16.8",
-                    date: "16 октября 2026",
-                    title: "Полоска в меню и поле кода",
-                    icons: ["em", "dia", "gold", "pearl", "dblock", "chest", "eye", "nblock"],
-                    items: [
-                        [
-                            "chg",
-                            "В меню появилась тонкая полоска перед пунктом «Промокоды» — такая же, как под заголовком «Меню»."
-                        ],
-                        [
-                            "chg",
-                            "На вкладке «Промокоды» убран лишний текст перед строкой ввода: поле кода стало на всю ширину."
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.16.7",
-                    date: "16 октября 2026",
-                    title: "Промокоды на время",
-                    icons: ["em", "dia", "gold", "pearl", "dblock", "chest", "eye", "nblock"],
-                    items: [
-                        [
-                            "chg",
-                            "Промокод теперь одноразовый: его может активировать только один игрок и только один раз. Второй раз или у другого игрока код уже не сработает."
-                        ],
-                        [
-                            "chg",
-                            "Вместо количества активаций задаётся время действия: готовые кнопки 5, 10 и 15 минут или своё значение. Когда время вышло — код перестаёт работать, даже если его никто не активировал."
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.16.6",
-                    date: "16 октября 2026",
-                    title: "Промокоды",
-                    icons: ["em", "dia", "gold", "pearl", "dblock", "chest", "eye", "nblock"],
-                    items: [
-                        [
-                            "new",
-                            "Новая вкладка «Промокоды»: введи код и получи награду."
-                        ],
-                        [
-                            "new",
-                            "В админ панели можно создавать промокоды: код, предмет, сколько штук за раз и сколько всего активаций. Когда активации кончатся, код перестанет работать."
-                        ],
-                        [
-                            "chg",
-                            "Убраны кнопки ×2 ×4 ×6 и счётчик ставки — экран рулетки снова простой."
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.16.5",
-                    date: "16 октября 2026",
-                    title: "Сундук не больше 50 клеток",
-                    icons: ["chest", "pearl", "dblock", "dia"],
-                    items: [
-                        [
-                            "fix",
-                            "Сундук теперь ограничен 50 клетками — как инвентарь. Раньше его можно было улучшать без предела."
-                        ],
-                        [
-                            "new",
-                            "Над улучшениями видно, сколько клеток сейчас: например «Клеток: 10 из 50»."
-                        ],
-                        [
-                            "chg",
-                            "Кнопка +10 гаснет, когда до максимума остаётся меньше 10 клеток; кнопка +1 работает до 50."
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.16.4",
-                    date: "16 октября 2026",
-                    title: "Честные шансы",
-                    icons: ["iron", "dia", "gold", "em", "pearl", "dblock", "gapple", "nblock"],
-                    items: [
-                        [
-                            "fix",
-                            "Шанс выигрыша пересчитан честно: он зависит от ценности ставки и цели. Раньше формула была произвольной, и при ставке дороже цели шанс упирался в 98%."
-                        ],
-                        [
-                            "chg",
-                            "Теперь так: одинаковые предметы — 50%, цель в 2 раза дороже — 33%, в 3 раза — 25%, в 4 раза — 20%, в 6 раз — 14%. Если цель дешевле ставки, шанс выше (в 2 раза дешевле — 67%), но не 98%."
-                        ],
-                        [
-                            "fix",
-                            "Убрана возможность фарма: раньше можно было ставить дорогой предмет на дешёвый и почти всегда выигрывать, оставляя ставку себе. Теперь игра честна по ценности — в среднем отдаёшь столько же, сколько получаешь."
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.16.3",
-                    date: "16 октября 2026",
-                    title: "Телефон как ПК, ×2 ×4 ×6 и счётчик ставки",
-                    icons: ["iron", "dia", "gold", "em", "pearl", "dblock", "gapple", "nblock"],
-                    items: [
-                        [
-                            "chg",
-                            "На телефоне слоты «Ставка» и «Цель» теперь стоят слева и справа от колеса — как на компьютере. Раньше они переносились друг под друга.",
-                        ],
-                        [
-                            "new",
-                            "Под слотом цели появились кнопки ×2, ×4 и ×6: они сами ставят цель, которая примерно в 2, 4 или 6 раз дороже ставки. Нужна сначала ставка в левом слоте.",
-                        ],
-                        [
-                            "new",
-                            "Под слотом ставки — счётчик: кнопками − и + выбирай, сколько предметов поставить (удерживай кнопку — меняется быстрее). Выигрыш и проигрыш считаются по количеству.",
-                        ],
-                        [
-                            "chg",
-                            "Убраны все подсказки на экране — интерфейс стал чище.",
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.16.1",
-                    date: "16 октября 2026",
-                    title: "Хэллоуин убран",
-                    icons: ["furnace", "chest", "table", "dia", "neth", "gapple", "dblock", "apple"],
-                    items: [
-                        [
-                            "chg",
-                            "Праздничное оформление полностью убрано: фон снова обычная земляная текстура, а панель, кнопки, вкладки и слоты вернулись к классическому виду Minecraft.",
-                        ],
-                        [
-                            "chg",
-                            "Убраны все хэллоуинские предметы: Тыква, Тыква-фонарь, Кость, Костная мука, Паутина, Свеча, Котёл, Тухлая плоть, Паучий глаз и Череп скелета. Если они были в инвентаре — превратятся в похожие вещи.",
-                        ],
-                        [
-                            "chg",
-                            "Рецепты с этими предметами на верстаке тоже удалены. Остальные рецепты и ценности не изменились.",
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.14",
-                    date: "14 октября 2026",
-                    title: "Незерит и исправления!",
-                    icons: ["nblock", "neth", "scrap", "gapple", "eapple", "furnace", "tnt", "chest"],
-                    items: [
-                        [
-                            "new",
-                            "Новый предмет — Незеритовый блок. Крафт как в Minecraft: 9 незеритовых слитков на верстаке.",
-                        ],
-                        [
-                            "fix",
-                            "Ценности приведены в порядок: Зачарованное золотое яблоко (941) теперь дороже Золотого (110), Незеритовый слиток стоит 300 вместо 80 — крафт больше не отнимает ценность у материалов.",
-                        ],
-                        [
-                            "fix",
-                            "Печь (24) и ТНТ (53) тоже больше не дешевеют на крафте.",
-                        ],
-                        [
-                            "chg",
-                            "Убраны предметы, которых нет в Minecraft: Конфета, Кукурузная конфета, Надгробие и Ведьминская шляпа. Если они у тебя были — они превратятся в похожие вещи.",
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.13",
-                    date: "13 октября 2026",
-                    title: "Сундук и улучшения!",
-                    icons: ["chest", "pearl", "dblock", "amet", "eye", "dia", "dirt"],
-                    items: [
-                        [
-                            "new",
-                            "Новая вкладка «Сундук»: личное хранилище. Выбери предмет в инвентаре и нажми «Убрать в сундук» — вещь останется там даже после перезахода.",
-                        ],
-                        [
-                            "new",
-                            "Сундук можно улучшать: +1 клетка за 1 Жемчуг Края, +10 клеток — за 1 Алмазный блок. Растёт только сундук, инвентарь всегда 50 клеток.",
-                        ],
-                        [
-                            "new",
-                            "Новое меню: слева выезжает панель «Меню» по кнопке ☰ — компактная, с цветными иконками вкладок. Закрывается по фону, «Закрыть» или Esc.",
-                        ],
-                        [
-                            "chg",
-                            "Шанс выигрыша в рулетке повышен: теперь к расчёту добавляется ровно +3%, максимум — 98%.",
-                        ],
-                        ["chg", "Аметист перерисован — гроздь кристаллов стала детальнее, с гранями и бликами."],
-                        ["chg", "Жемчуг Края немного подешевел: 28 → 27."],
-                        [
-                            "chg",
-                            "Напоминание: инвентарь — ровно 50 клеток, размер стака как в Minecraft: 64 / 16 / 1 (жемчуг и ведро — 16, инструменты и мечи — 1).",
-                        ],
-                    ],
-                },
-                {
-                    v: "2026.10.12",
-                    date: "12 октября 2026",
-                    title: "Верстак и крафт!",
-                    icons: ["table", "furnace", "chest", "tnt", "gapple", "eye", "dpick", "dsword", "dblock"],
-                    items: [
-                        ["new", "Новая вкладка «Верстак»: большой стол 3×3, на котором вещи собираются по рецептам."],
-                        [
-                            "new",
-                            "18 новых предметов: верстак, печь, сундук, факел, ТНТ, золотое яблоко, Око Края, блоки металлов, кирки и мечи.",
-                        ],
-                        ["new", "Книга рецептов под столом: нажми на рецепт — материалы сами ляжут на стол."],
-                        [
-                            "chg",
-                            "Созданные вещи нельзя выиграть в рулетке — их можно только скрафтить. Доски, палка, ведро и незеритовый слиток теперь тоже только крафтом.",
-                        ],
-                        ["chg", "Созданные вещи можно ставить в рулетку, а в админ панели доступны все предметы."],
-                        ["fix", "Исправлена вёрстка верстака на телефоне: стол, результат и инвентарь теперь рядом."],
+                        ["new", "Новый дизайн: тёмная стеклянная панель, мягкие тени, ровные отступы и аккуратная типографика."],
+                        ["new", "Колесо перерисовано с нуля: металлический обод, глянцевые сектора, штифты по краю и золочёная ступица."],
+                        ["new", "Магазин с монетами: покупка и продажа предметов, кнопки ×1, ×10 и ×64 на каждый товар."],
+                        ["chg", "Вкладка «Обновление» теперь показывает только текущую версию — коротко и без истории."],
                     ],
                 },
             ];
@@ -3341,9 +3940,9 @@
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape" && $("upd").classList.contains("on")) hideUpd();
             });
-
             window.MCW = { SMELT, FUEL, RECIPES, smelt, craft: doCraft, showUpd };
             render();
+            renderUpdates();
             showUpd();
         </script>
     </body>
