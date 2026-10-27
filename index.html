@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html lang="ru">
     <head>
         <meta charset="UTF-8">
@@ -565,6 +565,36 @@
             }
             .ov.on {
                 display: flex;
+            }
+            .row .btn.sm {
+                flex: 1 1 130px;
+                width: auto;
+                margin-top: 0;
+            }
+            .gob {
+                position: fixed;
+                inset: 0;
+                z-index: 90;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                padding: 14px;
+                background: rgba(4, 6, 8, 0.82);
+                backdrop-filter: blur(6px);
+            }
+            .gob.on {
+                display: flex;
+            }
+            .gob .gui {
+                text-align: center;
+                animation: sh 0.4s;
+            }
+            .gob h2 {
+                margin: 6px 0 4px;
+                font-size: 25px;
+            }
+            .gob .btn {
+                margin-top: 18px;
             }
             .menu {
                 width: 100%;
@@ -1624,6 +1654,22 @@
                     <div class="grid" id="agrid"></div>
                 </div>
                 <div class="sec">
+                    <h2>Монеты</h2>
+                    <div class="row">
+                        <label>Количество <input id="acoin" type="number" min="1" max="999999" value="100" /></label>
+                    </div>
+                    <div class="row">
+                        <button class="btn sm" id="agivc" type="button">Выдать монеты</button>
+                        <button class="btn sm" id="atakc" type="button">Убрать монеты</button>
+                    </div>
+                    <p class="hint" id="acinfo"></p>
+                </div>
+                <div class="sec">
+                    <h2>Очистка инвентаря</h2>
+                    <button class="btn sm" id="aclr" type="button">Очистить инвентарь</button>
+                    <p class="hint" id="ainfo"></p>
+                </div>
+                <div class="sec">
                     <h2>Удача</h2>
                     <div class="evf">
                         <label class="full"
@@ -1662,6 +1708,13 @@
         <div id="toast">
             <img id="ti" />
             <div><b>Достижение получено!</b><span id="tn"></span></div>
+        </div>
+        <div class="gob" id="gob">
+            <div class="gui menu">
+                <h2>Игра окончена!</h2>
+                <p class="hint">Предметы и монеты закончились.</p>
+                <button class="btn" id="gostart" type="button">Начать заново</button>
+            </div>
         </div>
         <script>
             const $ = (id) => document.getElementById(id);
@@ -2830,6 +2883,8 @@
                 renderChest();
                 if (tab === "shop") renderShop();
                 wallet();
+                if (!spinning) save();
+                checkGameOver();
             }
             $("bet").onclick = () => {
                 if (bet) {
@@ -2960,6 +3015,7 @@
                         .toISOString()
                         .slice(0, 16);
                 evRender();
+                admInfo();
                 $("aov").classList.add("on");
             }
             function openPw() {
@@ -3094,12 +3150,24 @@
             }
             document
                 .querySelectorAll("[data-close]")
-                .forEach((b) => (b.onclick = () => b.closest(".ov").classList.remove("on")));
+                .forEach(
+                    (b) =>
+                        (b.onclick = () => {
+                            b.closest(".ov").classList.remove("on");
+                            checkGameOver();
+                        })
+                );
             $("aov").onclick = (e) => {
-                if (e.target === e.currentTarget) e.currentTarget.classList.remove("on");
+                if (e.target === e.currentTarget) {
+                    e.currentTarget.classList.remove("on");
+                    checkGameOver();
+                }
             };
             $("pov").onclick = (e) => {
-                if (e.target === e.currentTarget) e.currentTarget.classList.remove("on");
+                if (e.target === e.currentTarget) {
+                    e.currentTarget.classList.remove("on");
+                    checkGameOver();
+                }
             };
             $("eadd").onclick = () => {
                 if (!unlocked) return;
@@ -3135,9 +3203,78 @@
                     got[i.id] = 1;
                     snd(660, 0.08, "square");
                     render();
+                    admInfo();
                 };
                 $("agrid").appendChild(b);
             });
+            /* ===== Монеты и очистка инвентаря (админ-панель) ===== */
+            function admInfo() {
+                const a = $("acinfo"),
+                    b = $("ainfo");
+                if (a) a.textContent = "Сейчас: монет " + coins;
+                if (b)
+                    b.textContent =
+                        "Инвентарь: " + slotsOf(inv) + " / " + SL + " клеток · сундук: " + slotsOf(chest) + " / " + chestSL;
+            }
+            $("agivc").onclick = () => {
+                if (!unlocked) return;
+                const n = Math.max(1, Math.min(999999, Math.floor(+$("acoin").value || 0)));
+                coins += n;
+                snd(660, 0.07, "square");
+                render();
+                admInfo();
+            };
+            $("atakc").onclick = () => {
+                if (!unlocked) return;
+                const n = Math.max(1, Math.min(999999, Math.floor(+$("acoin").value || 0)));
+                coins = Math.max(0, coins - n);
+                snd(330, 0.07, "square");
+                render();
+                admInfo();
+            };
+            $("aclr").onclick = () => {
+                if (!unlocked) return;
+                inv = {};
+                bet = null;
+                betK = -1;
+                hold = false;
+                snd(220, 0.15, "sawtooth");
+                render();
+                admInfo();
+            };
+            /* ===== Игра окончена ===== */
+            function gameOverOn() {
+                return slotsOf(inv) === 0 && slotsOf(chest) === 0 && coins === 0;
+            }
+            function checkGameOver() {
+                const g = $("gob");
+                if (!g) return;
+                const busy =
+                    spinning ||
+                    $("aov").classList.contains("on") ||
+                    $("pov").classList.contains("on") ||
+                    $("upd").classList.contains("on");
+                g.classList.toggle("on", gameOverOn() && !busy);
+            }
+            $("gostart").onclick = () => {
+                got = {};
+                inv = { dirt: 5 };
+                chest = {};
+                chestSL = 10;
+                bet = null;
+                betK = -1;
+                tgt = null;
+                coins = 0;
+                grid = Array(9).fill(null);
+                lastRc = null;
+                cmsg = "";
+                hold = false;
+                note = "";
+                $("gob").classList.remove("on");
+                snd(660, 0.09, "square");
+                setTimeout(() => snd(880, 0.12, "square"), 110);
+                render();
+            };
             /* ===== Облачное сохранение (работает только внутри артефакта Claude) ===== */
             function dbSave(now) {
                 if (!udoc) return Promise.resolve();
@@ -3876,7 +4013,8 @@
                         ["new", "Сохранение прогресса: инвентарь, монеты, сундук и настройки остаются на месте при повторном входе."],
                         ["new", "В папку проекта добавлен start_server.bat — локальный сервер запускается в один клик и открывает http://127.0.0.1:8080/ (в сети — http://192.168.1.22:8080/)."],
                         ["chg", "Вкладка «Обновление» показывает только текущую запись, без счётчика «1 запись»."],
-                        ["chg", "Странствующий торговец убран из игры: спрайт, панель сделок и весь связанный код удалены."],
+                        ["add", "Админ-панель: раздельные секции — выдача и удаление монет, очистка инвентаря одной кнопкой."],
+                        ["add", "Экран «Игра окончена!» с кнопкой «Начать заново» — появляется, когда не осталось ни предметов, ни монет."],
                     ],
                 },
                 {
@@ -3932,6 +4070,7 @@
                 try {
                     localStorage.setItem("mcw_upd", UPDATES[0].v);
                 } catch (e) {}
+                checkGameOver();
             }
             $("up").onclick = hideUpd;
             $("upd").addEventListener("click", (e) => {
