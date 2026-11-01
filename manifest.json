@@ -1,6 +1,6 @@
 {
-  "name": "mineupgrade",
-  "short_name": "mcupgrade",
+  "name": "MineUpgrade",
+  "short_name": "McUpgrade",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
