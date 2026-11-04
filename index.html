@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-store">
     <meta http-equiv="Pragma" content="no-cache">
-    <title>MineUpgrade</title>
+    <title>McUpgrade</title>
 
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png">
@@ -16,12 +16,6 @@
         navigator.serviceWorker.register('/sw.js');
       }
     </script>
-
-    <!-- Vercel Web Analytics -->
-    <script>
-      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
         <style>
             :root {
                 --bg: #0a0d10;
@@ -127,6 +121,7 @@
             .hdr {
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
                 gap: 10px;
                 margin: 0 0 14px;
             }
@@ -316,6 +311,290 @@
             .info.lose {
                 color: #ff9d95;
             }
+            /* ---------- переключатель: колесо / кликер ---------- */
+            .rmode {
+                display: flex;
+                gap: 5px;
+                padding: 4px;
+                margin: 0 0 12px;
+                border: 1px solid var(--line);
+                border-radius: 13px;
+                background: rgba(255, 255, 255, 0.035);
+            }
+            .rmode button {
+                flex: 1 1 0;
+                padding: 9px 8px;
+                font: inherit;
+                font-size: 12.5px;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                color: var(--muted-2);
+                background: transparent;
+                border: 0;
+                border-radius: 9px;
+                cursor: pointer;
+                transition: color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.1s;
+            }
+            .rmode button:active:not(:disabled) {
+                transform: scale(0.985);
+            }
+            .rmode button.on {
+                color: #06210f;
+                background: linear-gradient(180deg, #59eda0, #2ec97f 55%, #14a564);
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                    0 6px 16px -8px rgba(61, 220, 138, 0.8);
+            }
+            .rmode button:disabled {
+                cursor: default;
+                opacity: 0.6;
+            }
+            /* ---------- кликер ---------- */
+            .clk {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .clk-h {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+            }
+            .clk-h b {
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: var(--muted-2);
+            }
+            .clk-left {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 3px 11px;
+                border-radius: 999px;
+                font-size: 12.5px;
+                font-weight: 700;
+                font-variant-numeric: tabular-nums;
+                color: var(--em);
+                background: rgba(61, 220, 138, 0.09);
+                border: 1px solid rgba(61, 220, 138, 0.26);
+                transition: color 0.2s, background 0.2s, border-color 0.2s;
+            }
+            .clk-left.off {
+                color: #ff9d95;
+                background: rgba(234, 90, 82, 0.09);
+                border-color: rgba(234, 90, 82, 0.26);
+            }
+            .clk-box {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2px;
+                min-height: clamp(196px, 45vw, 244px);
+                padding: 18px 14px;
+                border-radius: 20px;
+                border: 1px solid var(--line);
+                background:
+                    radial-gradient(circle at 50% 42%, rgba(61, 220, 138, 0.1), rgba(61, 220, 138, 0) 66%),
+                    linear-gradient(180deg, #1b222a, #12171d);
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                    inset 0 -20px 40px -30px #000;
+                overflow: hidden;
+                isolation: isolate;
+            }
+            .clk-box:before {
+                content: "";
+                position: absolute;
+                inset: -40% -60%;
+                background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.09) 50%, transparent 58%);
+                transform: translateX(-75%) rotate(8deg);
+                animation: clkShine 4.6s ease-in-out infinite;
+                pointer-events: none;
+                z-index: -1;
+            }
+            @keyframes clkShine {
+                0%,
+                55% {
+                    transform: translateX(-75%) rotate(8deg);
+                }
+                80%,
+                100% {
+                    transform: translateX(75%) rotate(8deg);
+                }
+            }
+            .clk-box.roll {
+                animation: clkShake 0.22s linear infinite;
+            }
+            .clk-box.roll:before {
+                animation-duration: 0.8s;
+            }
+            .clk-box.roll .clk-ic {
+                filter: blur(0.4px) drop-shadow(0 0 16px rgba(61, 220, 138, 0.55));
+                animation: none;
+            }
+            @keyframes clkShake {
+                0%,
+                100% {
+                    transform: translateX(0);
+                }
+                25% {
+                    transform: translateX(-2px) rotate(-0.25deg);
+                }
+                75% {
+                    transform: translateX(2px) rotate(0.25deg);
+                }
+            }
+            .clk-box.hit {
+                animation: clkPop 0.55s cubic-bezier(0.2, 1.6, 0.4, 1);
+            }
+            .clk-box.hit .clk-nm,
+            .clk-box.hit .clk-pr {
+                animation: clkUp 0.5s ease 0.08s both;
+            }
+            @keyframes clkUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(7px);
+                }
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
+            .clk-ic.in {
+                animation: clkIn 0.62s cubic-bezier(0.2, 1.5, 0.4, 1);
+            }
+            @keyframes clkIn {
+                0% {
+                    transform: scale(0.35) rotate(-16deg);
+                    opacity: 0;
+                }
+                62% {
+                    transform: scale(1.12) rotate(4deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(1) rotate(0deg);
+                }
+            }
+            @keyframes clkPop {
+                0% {
+                    transform: scale(0.94);
+                }
+                45% {
+                    transform: scale(1.035);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+            .clk-ph {
+                font-size: clamp(54px, 14vw, 68px);
+                font-weight: 800;
+                line-height: 1;
+                color: rgba(255, 255, 255, 0.1);
+                text-shadow: 0 0 34px rgba(61, 220, 138, 0.16);
+                user-select: none;
+            }
+            .clk-ic {
+                width: clamp(84px, 22vw, 104px);
+                height: clamp(84px, 22vw, 104px);
+                image-rendering: pixelated;
+                filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.6));
+                animation: clkFloat 3.2s ease-in-out infinite;
+            }
+            @keyframes clkFloat {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-4px);
+                }
+            }
+            .clk-nm {
+                margin-top: 8px;
+                max-width: 100%;
+                font-size: 15px;
+                font-weight: 700;
+                line-height: 1.25;
+                color: #fff;
+                text-align: center;
+            }
+            .clk-pr {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                margin-top: 4px;
+                padding: 3px 10px 3px 8px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 700;
+                font-variant-numeric: tabular-nums;
+                color: var(--gold);
+                background: rgba(242, 201, 107, 0.08);
+                border: 1px solid rgba(242, 201, 107, 0.22);
+            }
+            .clk-pr img {
+                width: 14px;
+                height: 14px;
+                image-rendering: pixelated;
+            }
+            .clk-pr b {
+                font-size: 12.5px;
+            }
+            .clk-spark {
+                position: absolute;
+                width: 6px;
+                height: 6px;
+                margin: -3px 0 0 -3px;
+                border-radius: 2px;
+                pointer-events: none;
+                background: var(--sc, #f2c96b);
+                box-shadow: 0 0 8px var(--sc, #f2c96b);
+                animation: clkSpark 0.95s ease-out forwards;
+            }
+            @keyframes clkSpark {
+                0% {
+                    transform: translate(0, 0) scale(1) rotate(0deg);
+                    opacity: 0;
+                }
+                12% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(var(--dx), var(--dy)) scale(0.2) rotate(180deg);
+                    opacity: 0;
+                }
+            }
+            .clk-msg {
+                min-height: 1.35em;
+                margin: 0;
+                text-align: center;
+                font-size: 12.5px;
+                line-height: 1.35;
+                color: var(--muted);
+            }
+            .clk-msg.win {
+                color: #7ef0b0;
+            }
+            .clk-msg.bad {
+                color: #ff9d95;
+            }
+            @media (max-width: 520px) {
+                .clk-box {
+                    min-height: 186px;
+                    border-radius: 17px;
+                }
+                .clk-nm {
+                    font-size: 14px;
+                }
+            }
             /* ---------- кнопки ---------- */
             .btn {
                 display: flex;
@@ -387,13 +666,36 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 8px;
+                gap: 9px;
+                padding: 8px 12px;
+                font-variant-numeric: tabular-nums;
+            }
+            .up-set {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 3px 10px 3px 11px;
+                border-radius: 999px;
+                background: rgba(4, 38, 20, 0.16);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+                line-height: 1;
+            }
+            .up-set b {
+                font-size: 14.5px;
+                font-weight: 800;
+                letter-spacing: 0.01em;
             }
             .up .uic {
-                width: 22px;
-                height: 22px;
+                width: 20px;
+                height: 20px;
                 image-rendering: pixelated;
                 pointer-events: none;
+            }
+            .up-for {
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0;
+                opacity: 0.62;
             }
             .btn.up:not(:disabled) {
                 color: #06210f;
@@ -408,6 +710,10 @@
             }
             .up:disabled .uic {
                 opacity: 0.4;
+            }
+            .up:disabled .up-set {
+                background: rgba(255, 255, 255, 0.05);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
             }
             /* ---------- слоты ---------- */
             .slot {
@@ -1048,6 +1354,196 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+            /* ---------- печь ---------- */
+            .furn {
+                margin: 4px 0 12px;
+                padding: 14px 12px 14px;
+                border-radius: 16px;
+                background:
+                    radial-gradient(120% 90% at 50% 100%, rgba(255, 138, 26, 0.12), transparent 62%),
+                    linear-gradient(180deg, #241a17, #150f0d);
+                border: 1px solid rgba(255, 138, 26, 0.18);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            }
+            .furn-h {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 8px;
+                margin: 0 0 12px;
+            }
+            .furn-h h2 {
+                margin: 0;
+                font-size: 12.5px;
+                font-weight: 700;
+                letter-spacing: 0.22em;
+                color: #e8b98a;
+                text-transform: uppercase;
+            }
+            .furn-note {
+                font-size: 11px;
+                color: var(--muted-2);
+                white-space: nowrap;
+            }
+            .furn-body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: clamp(6px, 2.4vw, 16px);
+                flex-wrap: nowrap;
+            }
+            .fcol {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+                min-width: 0;
+            }
+            .flab {
+                font-size: 9.5px;
+                font-weight: 700;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: #b39782;
+                white-space: nowrap;
+            }
+            .fsub {
+                min-height: 13px;
+                font-size: 10.5px;
+                color: var(--muted-2);
+                white-space: nowrap;
+            }
+            .furn .slot.big {
+                width: clamp(46px, 13vw, 74px);
+                border-color: rgba(255, 138, 26, 0.2);
+            }
+            .furn .slot.big.sel {
+                border-color: rgba(255, 154, 60, 0.75);
+            }
+            .furn .slot .fx {
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                width: 17px;
+                height: 17px;
+                border-radius: 50%;
+                background: #2a1a12;
+                border: 1px solid rgba(255, 154, 60, 0.75);
+                color: #ffb46a;
+                font-size: 12px;
+                font-style: normal;
+                line-height: 15px;
+                text-align: center;
+                pointer-events: none;
+            }
+            .fmid {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+                width: clamp(26px, 8vw, 46px);
+            }
+            .flame {
+                width: 16px;
+                height: 20px;
+                border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+                background: radial-gradient(circle at 50% 75%, #ffd36b, #ff8a1a 60%, #d1440a);
+                opacity: 0.3;
+                filter: drop-shadow(0 0 6px rgba(255, 138, 26, 0.5));
+                transition: opacity 0.2s;
+            }
+            .flame.on {
+                opacity: 1;
+                animation: flick 0.35s ease-in-out infinite alternate;
+            }
+            @keyframes flick {
+                from {
+                    transform: scaleY(0.9) translateY(1px);
+                }
+                to {
+                    transform: scaleY(1.08) translateY(-1px);
+                }
+            }
+            .fbar {
+                width: 100%;
+                height: 5px;
+                border-radius: 999px;
+                background: rgba(0, 0, 0, 0.45);
+                overflow: hidden;
+            }
+            .fbar i {
+                display: block;
+                width: 0;
+                height: 100%;
+                border-radius: 999px;
+                background: linear-gradient(90deg, #ffb347, #ff7a18);
+                transition: width 0.45s ease;
+            }
+            .fhint {
+                min-height: 2.2em;
+                margin: 12px 0 8px;
+                text-align: center;
+                font-size: 12px;
+                line-height: 1.35;
+                color: var(--muted);
+            }
+            .frow {
+                display: flex;
+                gap: 8px;
+            }
+            .frow .btn {
+                flex: 1;
+            }
+            .frec {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .frr {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                min-width: 0;
+                padding: 7px 8px;
+                font-size: 11.5px;
+                color: #dbe4ee;
+                background: rgba(255, 255, 255, 0.028);
+                border: 1px solid var(--line-2);
+                border-radius: 11px;
+                cursor: pointer;
+                transition: background 0.15s, border-color 0.15s;
+            }
+            .frr:hover {
+                background: rgba(255, 255, 255, 0.06);
+            }
+            .frr.sel {
+                border-color: rgba(255, 154, 60, 0.55);
+                background: rgba(255, 138, 26, 0.08);
+            }
+            .frr.no {
+                opacity: 0.45;
+            }
+            .frr img {
+                flex: none;
+                width: 20px;
+                height: 20px;
+                image-rendering: pixelated;
+            }
+            .frr .fq {
+                margin-left: auto;
+                font-size: 10.5px;
+                color: var(--muted-2);
+                white-space: nowrap;
+            }
+            .frr .farr {
+                flex: none;
+                font-size: 11px;
+                color: #b39782;
+            }
+            .frr > span:not(.fq):not(.farr) {
+                font-size: 10.5px;
+                color: var(--muted);
+            }
             /* ---------- магазин ---------- */
             .shopbar {
                 display: flex;
@@ -1066,9 +1562,9 @@
             }
             .segbtn {
                 flex: 1;
-                padding: 8px 6px;
+                padding: 11px 6px;
                 font: inherit;
-                font-size: 12.5px;
+                font-size: 13px;
                 font-weight: 600;
                 color: var(--muted);
                 background: transparent;
@@ -1083,25 +1579,6 @@
                 box-shadow:
                     inset 0 1px 0 rgba(255, 255, 255, 0.45),
                     0 4px 12px -6px rgba(61, 220, 138, 0.9);
-            }
-            .bal {
-                flex: none;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 0 12px;
-                font-size: 13px;
-                font-weight: 600;
-                font-variant-numeric: tabular-nums;
-                color: var(--gold);
-                border-radius: 12px;
-                background: linear-gradient(180deg, rgba(242, 201, 107, 0.14), rgba(242, 201, 107, 0.05));
-                border: 1px solid rgba(242, 201, 107, 0.26);
-            }
-            .bal img {
-                width: 16px;
-                height: 16px;
-                image-rendering: pixelated;
             }
             .shq {
                 width: 100%;
@@ -1239,6 +1716,165 @@
             }
             .shmsg.good {
                 color: #8ce9b4;
+            }
+            /* ---------- акция недели ---------- */
+            .offer {
+                margin: 0 0 10px;
+                padding: 12px 12px 10px;
+                border-radius: var(--rad);
+                background: linear-gradient(180deg, rgba(94, 234, 160, 0.1), rgba(20, 25, 31, 0.55));
+                border: 1px solid rgba(94, 234, 160, 0.24);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            }
+            .offer-h {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .offer-ic {
+                flex: none;
+                display: grid;
+                place-items: center;
+                width: 38px;
+                height: 38px;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--line);
+            }
+            .offer-ic img {
+                width: 24px;
+                height: 24px;
+                image-rendering: pixelated;
+            }
+            .offer-tt {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+            .offer-tt b {
+                display: block;
+                font-size: 14px;
+                color: #eaf4ff;
+            }
+            .offer-tt small {
+                display: block;
+                margin-top: 2px;
+                font-size: 11px;
+                color: var(--muted-2);
+            }
+            .offer-badge {
+                flex: none;
+                padding: 3px 8px;
+                border-radius: 999px;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: #0a2a18;
+                background: linear-gradient(180deg, #59eda0, #16a868);
+            }
+            .offer-badge.wait {
+                color: #cfd8e3;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid var(--line);
+            }
+            .offer-txt {
+                margin: 8px 0 10px;
+                font-size: 11.5px;
+                line-height: 1.4;
+                color: var(--muted);
+            }
+            .offer-foot {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .offer-price {
+                flex: 1 1 auto;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                color: #dfe8f2;
+            }
+            .offer-price b {
+                font-size: 14px;
+            }
+            .offer-price img {
+                width: 18px;
+                height: 18px;
+                image-rendering: pixelated;
+            }
+            .offer-buy {
+                width: auto;
+                margin: 0;
+                padding: 9px 14px;
+                font-size: 12.5px;
+            }
+            .offer-msg {
+                min-height: 1.4em;
+                margin: 8px 0 0;
+                font-size: 11.5px;
+                color: var(--muted-2);
+            }
+            .offer-msg.good {
+                color: #8ce9b4;
+            }
+            .offer-msg.bad {
+                color: #ff9d95;
+            }
+            /* ---------- автокликер ---------- */
+            .autobar {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                width: min(320px, 100%);
+                margin: 8px auto 0;
+                padding: 7px 8px 7px 10px;
+                font-size: 11.5px;
+                color: #bfe9d2;
+                border-radius: 999px;
+                background: rgba(61, 220, 138, 0.08);
+                border: 1px solid rgba(61, 220, 138, 0.22);
+            }
+            .autobar.paused {
+                color: #cfd8e3;
+                background: rgba(255, 255, 255, 0.04);
+                border-color: var(--line);
+            }
+            .auto-dot {
+                flex: none;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #3ddc8a;
+                box-shadow: 0 0 8px #3ddc8a;
+                animation: ablink 1.6s ease-in-out infinite;
+            }
+            .autobar.paused .auto-dot {
+                background: #7b8794;
+                box-shadow: none;
+                animation: none;
+            }
+            @keyframes ablink {
+                50% {
+                    opacity: 0.35;
+                }
+            }
+            .autobar span {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+            .auto-pause {
+                flex: none;
+                padding: 4px 10px;
+                font: inherit;
+                font-size: 11px;
+                font-weight: 600;
+                color: #e6eef7;
+                background: rgba(255, 255, 255, 0.07);
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                cursor: pointer;
             }
             /* ---------- обновление ---------- */
             .ulist {
@@ -1450,227 +2086,6 @@
                 border: 1px solid var(--line-2);
                 border-radius: 12px;
             }
-            /* ---------- TikTok ---------- */
-            .tt {
-                position: relative;
-                margin: 4px 0 0;
-                padding: 20px 16px 18px;
-                overflow: hidden;
-                text-align: center;
-                border-radius: 18px;
-                background:
-                    radial-gradient(80% 120% at 8% 0%, rgba(37, 244, 238, 0.16), transparent 58%),
-                    radial-gradient(85% 120% at 95% 100%, rgba(254, 44, 85, 0.18), transparent 58%),
-                    linear-gradient(180deg, #171e26, #0d1115);
-                border: 1px solid rgba(255, 255, 255, 0.085);
-                box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-                    0 22px 55px -32px #000;
-            }
-            .tt:before {
-                content: "";
-                position: absolute;
-                inset: 0;
-                border-radius: inherit;
-                background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.055) 46%, transparent 60%);
-                background-size: 250% 250%;
-                animation: ttshine 7s linear infinite;
-                pointer-events: none;
-            }
-            @keyframes ttshine {
-                from {
-                    background-position: 140% 0;
-                }
-                to {
-                    background-position: -60% 0;
-                }
-            }
-            .tt-logo {
-                position: relative;
-                width: 74px;
-                height: 74px;
-                margin: 2px auto 14px;
-                filter: drop-shadow(0 10px 22px rgba(37, 244, 238, 0.3)) drop-shadow(0 10px 26px rgba(254, 44, 85, 0.28));
-                animation: ttpulse 3.8s ease-in-out infinite;
-            }
-            .tt-logo svg {
-                position: absolute;
-                inset: 0;
-                width: 100%;
-                height: 100%;
-            }
-            .tt-logo .c {
-                fill: #25f4ee;
-                transform: translate(-3px, -3px);
-                opacity: 0.85;
-                mix-blend-mode: screen;
-            }
-            .tt-logo .r {
-                fill: #fe2c55;
-                transform: translate(3px, 3px);
-                opacity: 0.85;
-                mix-blend-mode: screen;
-            }
-            .tt-logo .w {
-                fill: #fff;
-            }
-            @keyframes ttpulse {
-                50% {
-                    transform: scale(1.05);
-                }
-            }
-            .tt-kick {
-                display: block;
-                font-size: 10.5px;
-                font-weight: 700;
-                letter-spacing: 0.2em;
-                text-transform: uppercase;
-                color: #8fa0b2;
-            }
-            .tt-name {
-                display: inline-block;
-                margin: 6px 0 0;
-                font-family: "Arial Black", "Segoe UI", Arial, sans-serif;
-                font-weight: 900;
-                font-size: clamp(22px, 6.6vw, 31px);
-                letter-spacing: -0.02em;
-                line-height: 1.12;
-                color: #fff;
-                text-decoration: none;
-                text-shadow:
-                    0 0 20px rgba(37, 244, 238, 0.45),
-                    0 0 34px rgba(254, 44, 85, 0.3);
-                transition: text-shadow 0.2s;
-            }
-            .tt-name:hover {
-                text-shadow:
-                    0 0 26px rgba(37, 244, 238, 0.75),
-                    0 0 40px rgba(254, 44, 85, 0.55);
-            }
-            .tt-txt {
-                max-width: 340px;
-                margin: 10px auto 0;
-                font-size: 12.5px;
-                line-height: 1.5;
-                color: var(--muted);
-            }
-            .tt-tags {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 6px;
-                margin: 12px 0 0;
-            }
-            .tt-tags span {
-                padding: 4px 10px;
-                font-size: 11px;
-                font-weight: 600;
-                color: #c9d4e0;
-                border-radius: 999px;
-                background: rgba(255, 255, 255, 0.045);
-                border: 1px solid var(--line-2);
-            }
-            .tt-perks {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-                margin: 14px 0 0;
-            }
-            .tt-perks div {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 7px;
-                padding: 10px 5px 9px;
-                border-radius: 13px;
-                background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-                border: 1px solid var(--line-2);
-            }
-            .tt-perks img {
-                width: 26px;
-                height: 26px;
-                image-rendering: pixelated;
-                filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
-            }
-            .tt-perks span {
-                font-size: 10.5px;
-                font-weight: 600;
-                letter-spacing: 0.02em;
-                color: #c9d4e0;
-            }
-            .tt-wave {
-                display: flex;
-                align-items: flex-end;
-                justify-content: center;
-                gap: 4px;
-                height: 26px;
-                margin: 16px 0 2px;
-            }
-            .tt-wave i {
-                width: 4px;
-                height: 100%;
-                border-radius: 999px;
-                background: linear-gradient(180deg, #25f4ee, #fe2c55);
-                transform-origin: bottom;
-                opacity: 0.9;
-                animation: ttwave 1.1s ease-in-out infinite alternate;
-            }
-            .tt-wave i:nth-child(2n) {
-                animation-duration: 0.85s;
-            }
-            .tt-wave i:nth-child(3n) {
-                animation-duration: 1.35s;
-            }
-            .tt-wave i:nth-child(4n) {
-                animation-duration: 0.68s;
-            }
-            @keyframes ttwave {
-                from {
-                    transform: scaleY(0.2);
-                }
-                to {
-                    transform: scaleY(1);
-                }
-            }
-            .tt-open {
-                margin: 14px auto 0;
-                color: #0a0d10;
-                text-decoration: none;
-                background: linear-gradient(180deg, #ffffff, #dde6ef);
-                box-shadow:
-                    inset 0 1px 0 #fff,
-                    0 12px 26px -14px rgba(37, 244, 238, 0.8),
-                    0 14px 30px -16px rgba(254, 44, 85, 0.75);
-            }
-            .tt-open svg {
-                flex: none;
-                width: 19px;
-                height: 19px;
-            }
-            .tt-open.btn:hover:not(:disabled) {
-                filter: brightness(1.03);
-                box-shadow:
-                    inset 0 1px 0 #fff,
-                    0 16px 32px -12px rgba(37, 244, 238, 0.9),
-                    0 18px 34px -14px rgba(254, 44, 85, 0.85);
-            }
-            .tt-copy {
-                margin-top: 10px;
-            }
-            .tt-msg {
-                min-height: 1.4em;
-                margin: 8px 0 0;
-                font-size: 11.5px;
-                text-align: center;
-                color: var(--muted);
-            }
-            .tt-msg.good {
-                color: #8ce9b4;
-            }
-            .tt-msg.bad {
-                color: #ff9d95;
-            }
             /* ---------- телефон ---------- */
             @media (max-width: 520px) {
                 .wrap {
@@ -1777,24 +2192,51 @@
             <div class="gui" id="gui">
                 <div class="hdr">
                     <button class="menu-btn" id="tmenu" aria-label="Меню"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="2.6" rx="1.3"></rect><rect x="2.5" y="10.7" width="19" height="2.6" rx="1.3"></rect><rect x="2.5" y="16.4" width="19" height="2.6" rx="1.3"></rect></svg></button>
-                    <h1>Колесо фортуны</h1>
+                    <h1 id="ttl">McUpgrade</h1>
                     <div class="wallet" id="wbox"><img id="wico" alt="" /><b id="wcoins">0</b></div>
                 </div>
                 <div id="pg1">
-                    <div class="stage">
-                        <div class="sb">
-                            Ставка<button class="slot big" id="bet" aria-label="Слот ставки"></button>
+                    <div class="rmode" role="tablist" aria-label="Режим">
+                        <button class="on" id="mrWheel" type="button" role="tab" aria-selected="true">Колесо</button>
+                        <button id="mrClick" type="button" role="tab" aria-selected="false">Кликер</button>
+                    </div>
+                    <div id="rwheel">
+                        <div class="stage">
+                            <div class="sb">
+                                Ставка<button class="slot big" id="bet" aria-label="Слот ставки"></button>
+                            </div>
+                            <div class="ww">
+                                <div class="ptr"></div>
+                                <div class="wheel" id="wheel"><canvas id="wc" width="96" height="96"></canvas></div>
+                            </div>
+                            <div class="sb gt">
+                                Цель<button class="slot big" id="tgt" aria-label="Выбрать желаемый предмет"></button>
+                            </div>
                         </div>
-                        <div class="ww">
-                            <div class="ptr"></div>
-                            <div class="wheel" id="wheel"><canvas id="wc" width="96" height="96"></canvas></div>
-                        </div>
-                        <div class="sb gt">
-                            Цель<button class="slot big" id="tgt" aria-label="Выбрать желаемый предмет"></button>
+                        <div class="info" id="info"></div>
+                        <button class="btn" id="go" disabled>Крутить!</button>
+                        <div class="autobar" id="autobar" hidden>
+                            <i class="auto-dot" aria-hidden="true"></i>
+                            <span id="autotxt">Автокликер включён</span>
+                            <button class="auto-pause" id="autopause" type="button">Пауза</button>
                         </div>
                     </div>
-                    <div class="info" id="info"></div>
-                    <button class="btn" id="go" disabled>Крутить!</button>
+                    <div id="rclick" hidden>
+                        <div class="clk">
+                            <div class="clk-h">
+                                <b>Генератор предметов</b>
+                                <span class="clk-left" id="clkleft">10 / 10</span>
+                            </div>
+                            <div class="clk-box" id="clkbox">
+                                <span class="clk-ph" id="clkph">?</span>
+                                <img class="clk-ic" id="clkic" alt="" hidden />
+                                <span class="clk-nm" id="clknm" hidden></span>
+                                <span class="clk-pr" id="clkpr" hidden></span>
+                            </div>
+                            <button class="btn" id="clkgo" type="button">Жать!</button>
+                            <p class="clk-msg" id="clkmsg"></p>
+                        </div>
+                    </div>
                 </div>
                 <div id="pg2" hidden>
                     <div class="bench">
@@ -1808,6 +2250,45 @@
                     <div id="cinfo"></div>
                     <button class="btn sm" id="cx">Очистить стол</button>
                 </div>
+                <div id="pg8" hidden>
+                    <div class="furn">
+                        <div class="furn-h">
+                            <h2>Печь</h2>
+                            <span class="furn-note" id="ftop"></span>
+                        </div>
+                        <div class="furn-body">
+                            <div class="fcol">
+                                <span class="flab">Плавим</span>
+                                <button class="slot big" id="fin" type="button" aria-label="Что плавим"></button>
+                                <span class="fsub" id="fdin"></span>
+                            </div>
+                            <div class="fmid" aria-hidden="true">
+                                <i class="flame" id="fflame"></i>
+                                <div class="fbar"><i id="fbar"></i></div>
+                            </div>
+                            <div class="fcol">
+                                <span class="flab">Топливо</span>
+                                <button class="slot big" id="ffuel" type="button" aria-label="Топливо"></button>
+                                <span class="fsub" id="fdfuel"></span>
+                            </div>
+                            <span class="arr"></span>
+                            <div class="fcol">
+                                <span class="flab">Результат</span>
+                                <span class="slot big" id="fout" aria-hidden="true"></span>
+                                <span class="fsub" id="fdout"></span>
+                            </div>
+                        </div>
+                        <p class="fhint" id="fhint"></p>
+                        <div class="frow">
+                            <button class="btn sm" id="fone" type="button">Разжечь</button>
+                            <button class="btn sm" id="fall" type="button">Разжечь всё</button>
+                        </div>
+                    </div>
+                    <div class="sec">
+                        <h2>Что можно переплавить</h2>
+                        <div class="frec" id="frec"></div>
+                    </div>
+                </div>
                 <div id="pg4" hidden>
                     <div class="chesthead">
                         <h2>Сундук</h2>
@@ -1819,24 +2300,46 @@
                     <div class="sec">
                         <h2>Улучшение сундука</h2>
                         <button class="btn sm up" id="up1" aria-label="Добавить 1 клетку сундука за 1 Жемчуг Края">
-                            <span>+1</span
-                            ><img class="uic" data-item="chest" alt="" aria-hidden="true" /><span>—</span><span>1</span
-                            ><img class="uic" data-item="pearl" alt="" aria-hidden="true" />
+                            <span class="up-set"><b>+1</b><img class="uic" data-item="chest" alt="" aria-hidden="true" /></span>
+                            <span class="up-for">за</span>
+                            <span class="up-set"><b>1</b><img class="uic" data-item="pearl" alt="" aria-hidden="true" /></span>
                         </button>
                         <button class="btn sm up" id="up10" aria-label="Добавить 10 клеток сундука за 1 Алмазный блок">
-                            <span>+10</span
-                            ><img class="uic" data-item="chest" alt="" aria-hidden="true" /><span>—</span><span>1</span
-                            ><img class="uic" data-item="dblock" alt="" aria-hidden="true" />
+                            <span class="up-set"><b>+10</b><img class="uic" data-item="chest" alt="" aria-hidden="true" /></span>
+                            <span class="up-for">за</span>
+                            <span class="up-set"><b>1</b><img class="uic" data-item="dblock" alt="" aria-hidden="true" /></span>
                         </button>
                     </div>
                 </div>
                 <div id="pg5" hidden>
+                    <div class="offer" id="offer" hidden>
+                        <div class="offer-h">
+                            <div class="offer-ic"><img class="uic" data-item="nblock" alt="" aria-hidden="true" /></div>
+                            <div class="offer-tt">
+                                <b>Автокликер</b>
+                                <small>Акция дня · только в четверг</small>
+                            </div>
+                            <span class="offer-badge" id="obadge">ЧТ</span>
+                        </div>
+                        <p class="offer-txt">
+                            Сам нажимает «Крутить!» с твоей ставкой и целью. Появляется в магазине только по
+                            четвергам.
+                        </p>
+                        <div class="offer-foot">
+                            <span class="offer-price"
+                                ><b>3</b><img class="uic" data-item="nblock" alt="" aria-hidden="true" /><span
+                                    >Незеритовый блок</span
+                                ></span
+                            >
+                            <button class="btn sm offer-buy" id="autobuy" type="button">Купить</button>
+                        </div>
+                        <p class="offer-msg" id="automsg"></p>
+                    </div>
                     <div class="shopbar">
                         <div class="seg">
                             <button class="segbtn on" id="shbuy">Купить</button>
                             <button class="segbtn" id="shsell">Продать</button>
                         </div>
-                        <div class="bal"><img id="sico" alt="" /><b id="sbal">0</b></div>
                     </div>
                     <input class="shq" id="shq" type="text" inputmode="search" autocomplete="off" placeholder="Поиск" />
                     <div class="shlist" id="shlist"></div>
@@ -1848,38 +2351,12 @@
                     </div>
                     <div class="ulist" id="ulist"></div>
                 </div>
-                <div id="pg7" hidden>
-                    <div class="tt">
-                        <div class="tt-logo" aria-hidden="true">
-                            <svg class="c" viewBox="0 0 24 24"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" /></svg>
-                            <svg class="r" viewBox="0 0 24 24"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" /></svg>
-                            <svg class="w" viewBox="0 0 24 24"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" /></svg>
-                        </div>
-                        <span class="tt-kick">Мы в TikTok</span>
-                        <a class="tt-name" id="ttname" href="https://www.tiktok.com/@mcupgrade" target="_blank" rel="noopener">@mcupgrade</a>
-                        <p class="tt-txt">Короткие клипы с прокрутами, анонсы и спойлеры к обновлениям — раньше всех у нас в TikTok.</p>
-                        <div class="tt-tags"><span>#mineupgrade</span><span>#рулетка</span><span>#майнкрафт</span></div>
-                        <div class="tt-perks">
-                            <div><img class="uic" data-item="dia" alt="" /><span>Клипы</span></div>
-                            <div><img class="uic" data-item="gapple" alt="" /><span>Анонсы</span></div>
-                            <div><img class="uic" data-item="em" alt="" /><span>Спойлеры</span></div>
-                        </div>
-                        <div class="tt-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                        <a class="btn tt-open" id="ttopen" href="https://www.tiktok.com/@mcupgrade" target="_blank" rel="noopener">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" /></svg>
-                            Открыть TikTok
-                        </a>
-                        <button class="btn sm tt-copy" id="ttcopy" type="button">Скопировать @mcupgrade</button>
-                        <p class="tt-msg" id="ttmsg"></p>
-                    </div>
-                </div>
                 <div id="invblock">
                     <div class="ihdr">
                         <h2>Инвентарь</h2>
                         <span class="cnt" id="icnt"></span>
                     </div>
                     <div class="inv" id="inv"></div>
-                    <button class="btn sm" id="put" hidden>Убрать в сундук</button>
                 </div>
                 <div id="pg3" hidden>
                     <h2>Рецепты</h2>
@@ -1890,13 +2367,13 @@
         <div class="mnu-sc" id="mnusc">
             <div class="mnu">
                 <div class="mnu-h"><h2>Меню</h2></div>
-                <button class="tab on" id="t1">Рулетка</button>
+                <button class="tab on" id="t1">Колесо и кликер</button>
                 <button class="tab" id="t4">Магазин</button>
                 <button class="tab" id="t2">Верстак</button>
+                <button class="tab" id="t7">Печь<img class="uic" data-item="furnace" alt="" aria-hidden="true" /></button>
                 <button class="tab" id="t3">Сундук</button>
                 <div class="mnu-line"></div>
                 <button class="tab" id="t5">Обновление</button>
-                <button class="tab" id="t6">Мы в TikTok<svg class="tmi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" /></svg></button>
                 <button class="btn sm" id="mcx">Закрыть</button>
             </div>
         </div>
@@ -1938,13 +2415,25 @@
                     <p class="hint" id="ainfo"></p>
                 </div>
                 <div class="sec">
+                    <h2>Автокликер</h2>
+                    <div class="row">
+                        <button class="btn sm" id="agiva" type="button">Выдать</button>
+                        <button class="btn sm" id="atka" type="button">Убрать</button>
+                    </div>
+                    <p class="hint" id="ainfoa"></p>
+                </div>
+                <div class="sec">
                     <h2>Удача</h2>
+                    <p class="hint">
+                        Скрытая подкрутка: на колесе и в подсказке шанс не меняется, а настоящий шанс выигрыша
+                        увеличивается на указанный процент.
+                    </p>
                     <div class="evf">
                         <label class="full"
                             >Предмет
                             <select id="ei"></select
                         ></label>
-                        <label>Шанс, % <input id="el" type="number" min="1" max="90" value="20" /></label>
+                        <label>Скрытый бонус, % <input id="el" type="number" min="1" max="90" value="20" /></label>
                         <label>Длит., мин <input id="ed" type="number" min="1" value="60" /></label>
                         <label class="full">Начало <input id="ea" type="datetime-local" /></label>
                     </div>
@@ -2371,8 +2860,8 @@
                                 ? "#3e2a14"
                                 : w == 1
                                   ? "#8a6a3c"
-                                  : x >= 6 && x <= 8 && y >= 6 && y <= 8
-                                    ? "#3a2610"
+                                  : y % 8 == 0
+                                    ? "#5a3f22"
                                     : pk(["#6a4a28", "#5e4224", "#76542c"], r)
                         );
                     }
@@ -2412,22 +2901,6 @@
                     [12, 12],
                 ].forEach(([x, y], i) => p(x, y, i % 2 ? "#c8a0ff" : "#ffffff"));
             };
-            const BUCKET = [
-                "................",
-                "................",
-                "....kkkkkkkk....",
-                "...k........k...",
-                "..kLLLLLLLLLLk..",
-                "..kWwwWWWWWWWk..",
-                "..kGGGGGGGGGGk..",
-                "..kGLgggggggdk..",
-                "..kGLgggggggdk..",
-                "...kGLgggggdk...",
-                "...kGLgggggdk...",
-                "....kGLgggdk....",
-                "....kGLgggdk....",
-                "....kkkkkkkk....",
-            ];
             const TABLE = [
                 "gggggggggggggggg",
                 "gttttgttttgttttg",
@@ -2533,6 +3006,51 @@
                         p(x, y, e ? (x < 2 || y < 2 ? l : d) : x % 7 == 0 || y % 7 == 0 ? d : r() < 0.15 ? l : m);
                     }
             };
+            /* фон камня: ровные пятна вместо шумной «гальки» */
+            const stoneBg = (p, r) => {
+                for (let y = 0; y < 16; y += 2)
+                    for (let x = 0; x < 16; x += 2) {
+                        const c = pk(["#808080", "#858585", "#7b7b7b", "#898989"], r);
+                        for (let dy = 0; dy < 2; dy++)
+                            for (let dx = 0; dx < 2; dx++)
+                                p(x + dx, y + dy, r() < 0.1 ? "#6f6f6f" : c);
+                    }
+            };
+            /* фон незеррака: тёмно-красные прожилки */
+            const netherBg = (p, r) => {
+                for (let y = 0; y < 16; y++)
+                    for (let x = 0; x < 16; x++) {
+                        const n = Math.sin(x * 1.7 + y * 0.6) + Math.sin(y * 2.1 - x * 0.4);
+                        p(
+                            x,
+                            y,
+                            n > 1.1
+                                ? pk(["#8a2a22", "#7d241d"], r)
+                                : n < -1.1
+                                  ? pk(["#45100e", "#3c0d0b"], r)
+                                  : pk(["#611916", "#5a1613", "#6a1d19"], r)
+                        );
+                    }
+            };
+            /* руда: каменная основа с цветными вкраплениями */
+            const oreTile = (cols, bg) =>
+                tile((p, r) => {
+                    (bg || stoneBg)(p, r);
+                    const shape = [
+                        [0, 0],
+                        [1, 0],
+                        [0, 1],
+                        [1, 1],
+                        [2, 1],
+                        [1, 2],
+                    ];
+                    const spots = 6 + Math.floor(r() * 3);
+                    for (let k = 0; k < spots; k++) {
+                        const cx = 1 + Math.floor(r() * 12),
+                            cy = 1 + Math.floor(r() * 12);
+                        shape.forEach(([dx, dy], i) => p(cx + dx, cy + dy, i % 3 === 0 ? cols[1] : cols[0]));
+                    }
+                });
             const pickG = (h, m, l) => (p) => {
                 for (let x = 2; x <= 11; x++) {
                     p(x, 16 - x, "#8a6a3a");
@@ -2601,10 +3119,12 @@
                     v: 3,
                     f: tile(voro(["#7a7a7a", "#8a8a8a", "#6e6e6e", "#969696", "#828282"], "#3f3f3f", "#b0b0b0", 9)),
                 },
+                { id: "stone", n: "Камень", v: 3, f: tile(stoneBg) },
                 {
                     id: "coal",
                     n: "Уголь",
                     v: 5,
+                    nw: 1,
                     f: art(COAL, { k: "#050505", G: "#2a2a2a", B: "#5a5a5a", D: "#141414" }),
                 },
                 {
@@ -2620,10 +3140,10 @@
                         g: "#3fa030",
                     }),
                 },
-                { id: "copper", n: "Медный слиток", v: 6, f: ingot(["#4a2010", "#ffbf94", "#e0803f", "#a8501f"]) },
-                { id: "iron", n: "Железный слиток", v: 8, f: ingot(["#3a3a3a", "#f0f0f0", "#d4d4d4", "#9a9a9a"]) },
+                { id: "copper", n: "Медный слиток", v: 6, nw: 1, f: ingot(["#4a2010", "#ffbf94", "#e0803f", "#a8501f"]) },
+                { id: "iron", n: "Железный слиток", v: 8, nw: 1, f: ingot(["#3a3a3a", "#f0f0f0", "#d4d4d4", "#9a9a9a"]) },
                 { id: "gunp", n: "Порох", v: 9, f: mound(["#2e2e2e", "#9a9a9a", "#6a6a6a", "#454545"]) },
-                { id: "lapis", n: "Лазурит", v: 10, f: lump(["#0a1850", "#4a6cf0", "#2a4fd0", "#1a2f9a"], "#e8f0ff") },
+                { id: "lapis", n: "Лазурит", v: 10, nw: 1, f: lump(["#0a1850", "#4a6cf0", "#2a4fd0", "#1a2f9a"], "#e8f0ff") },
                 { id: "blaze", n: "Огненный стержень", v: 12, f: blazeF(["#f2a21a", "#c26a0a", "#ffd24a"]) },
                 {
                     id: "blazep",
@@ -2632,11 +3152,12 @@
                     c: 1,
                     f: mound(["#c98a1a", "#e8b428", "#a06a0a", "#f2c030"]),
                 },
-                { id: "gold", n: "Золотой слиток", v: 13, f: ingot(["#6b4a00", "#fff3a0", "#fbd635", "#c9981a"]) },
+                { id: "gold", n: "Золотой слиток", v: 13, nw: 1, f: ingot(["#6b4a00", "#fff3a0", "#fbd635", "#c9981a"]) },
                 {
                     id: "quartz",
                     n: "Кварц",
                     v: 14,
+                    nw: 1,
                     f: art(QUARTZ, {
                         a: "#fcf9f8",
                         b: "#f3e8e2",
@@ -2648,7 +3169,7 @@
                         h: "#cfa28b",
                     }),
                 },
-                { id: "red", n: "Редстоун", v: 18, f: mound(["#4a0000", "#ff6a5a", "#e01010", "#9a0a0a"]) },
+                { id: "red", n: "Редстоун", v: 18, nw: 1, f: mound(["#4a0000", "#ff6a5a", "#e01010", "#9a0a0a"]) },
                 {
                     id: "amet",
                     n: "Аметист",
@@ -2666,12 +3187,14 @@
                     id: "dia",
                     n: "Алмаз",
                     v: 30,
+                    nw: 1,
                     f: art(DIA, { k: "#0a4a55", W: "#ffffff", C: "#4fe8d8", D: "#1b9aa6" }),
                 },
                 {
                     id: "em",
                     n: "Изумруд",
                     v: 45,
+                    nw: 1,
                     f: art(EM2, { k: "#07351a", W: "#c9ffd8", L: "#5fe88a", G: "#24b85a", D: "#13803f", d: "#0c5a2c" }),
                 },
                 {
@@ -2713,41 +3236,16 @@
                     f: ingot(["#120c0c", "#7a6868", "#4a3f3f", "#2f2626"]),
                 },
                 { id: "brick", n: "Кирпич", v: 4, f: brickItem },
-                { id: "eapple", n: "Зачарованное золотое яблоко", v: 941, c: 1, f: eappleF },
-                {
-                    id: "bucket",
-                    n: "Ведро с водой",
-                    v: 24,
-                    c: 1,
-                    f: art(BUCKET, {
-                        k: "#23272f",
-                        L: "#eceff4",
-                        G: "#c4c9d2",
-                        g: "#9aa1ad",
-                        d: "#656c78",
-                        W: "#2f7fd8",
-                        w: "#8fd0ff",
-                    }),
-                },
-                {
-                    id: "table",
-                    n: "Верстак",
-                    v: 8,
-                    c: 1,
-                    f: tile(
-                        art(TABLE, {
-                            g: "#5a3e1a",
-                            t: "#d9b574",
-                            p: "#8a6a3a",
-                            P: "#b8945f",
-                            s: "#d0d0d0",
-                            m: "#8a8a8a",
-                            h: "#5e4524",
-                        })
-                    ),
-                },
-                { id: "furnace", n: "Печь", v: 24, c: 1, f: tile(furnaceTex) },
-                { id: "chest", n: "Сундук", v: 16, c: 1, f: tile(chestTex) },
+                /* руды: на колесе и в магазине, плавятся в печи в слитки и самоцветы */
+                { id: "coalore", n: "Угольная руда", v: 3, f: oreTile(["#1c1c1c", "#3a3a3a"]) },
+                { id: "copperore", n: "Медная руда", v: 4, f: oreTile(["#c8763c", "#e89a5e"]) },
+                { id: "ironore", n: "Железная руда", v: 6, f: oreTile(["#d8b79c", "#f0d2b8"]) },
+                { id: "lapisore", n: "Лазуритовая руда", v: 7, f: oreTile(["#2a4bd7", "#5f7bff"]) },
+                { id: "quartzore", n: "Кварцевая руда", v: 9, f: oreTile(["#e8ddcc", "#fffaf0"], netherBg) },
+                { id: "redore", n: "Редстоуновая руда", v: 11, f: oreTile(["#c81a1a", "#ff4a3a"]) },
+                { id: "goldore", n: "Золотая руда", v: 11, f: oreTile(["#f5c518", "#ffe680"]) },
+                { id: "diaore", n: "Алмазная руда", v: 26, f: oreTile(["#4fe8d8", "#a8fff6"]) },
+                { id: "emore", n: "Изумрудная руда", v: 40, f: oreTile(["#25d366", "#78f79a"]) },
                 {
                     id: "torch",
                     n: "Факел",
@@ -2780,6 +3278,13 @@
                     c: 1,
                     f: tile(metalBlock("#4fe8d8", "#d8fffa", "#1b9aa6")),
                 },
+                /* --- блоки из остальных руд: 9 материала → блок --- */
+                { id: "coalblock", n: "Угольный блок", v: 45, c: 1, f: tile(metalBlock("#2a2a2a", "#5a5a5a", "#101010")) },
+                { id: "cublock", n: "Медный блок", v: 54, c: 1, f: tile(metalBlock("#e0803f", "#ffbf94", "#a8501f")) },
+                { id: "lapblock", n: "Лазуритовый блок", v: 90, c: 1, f: tile(metalBlock("#2a4fd0", "#7f96ff", "#1a2f9a")) },
+                { id: "qblock", n: "Кварцевый блок", v: 126, c: 1, f: tile(metalBlock("#f3e8e2", "#ffffff", "#cfa28b")) },
+                { id: "redblock", n: "Редстоуновый блок", v: 162, c: 1, f: tile(metalBlock("#e01010", "#ff6a5a", "#9a0a0a")) },
+                { id: "eblock", n: "Изумрудный блок", v: 405, c: 1, f: tile(metalBlock("#24b85a", "#8bffae", "#0c5a2c")) },
                 { id: "wpick", n: "Деревянная кирка", v: 10, c: 1, f: pickG("#b8945f", "#7d5f35", "#d9b574") },
                 { id: "spick", n: "Каменная кирка", v: 13, c: 1, f: pickG("#8a8a8a", "#5a5a5a", "#b0b0b0") },
                 { id: "ipick", n: "Железная кирка", v: 28, c: 1, f: pickG("#d4d4d4", "#8a8a8a", "#ffffff") },
@@ -2806,12 +3311,39 @@
                     brick: 15, coal: 16, apple: 17, copper: 18, blazep: 19, torch: 20, wsword: 21,
                     iron: 22, table: 23, ssword: 24, gunp: 25, lapis: 26, wpick: 27, blaze: 28,
                     gold: 29, spick: 30, quartz: 31, chest: 32, red: 33, isword: 34, amet: 35,
-                    obs: 36, furnace: 37, bucket: 38, pearl: 39, ipick: 40, dia: 41, eye: 42,
+                    obs: 36, furnace: 37, pearl: 39, ipick: 40, dia: 41, eye: 42,
                     em: 43, tnt: 44, debris: 45, scrap: 46, dsword: 47, iblock: 48, eapple: 49,
                     neth: 50, dpick: 51, egg: 52, gapple: 53, gblock: 54, dblock: 55,
+                    coalore: 56, copperore: 57, ironore: 58, lapisore: 59, quartzore: 60,
+                    redore: 61, goldore: 62, diaore: 63, emore: 64,
+                    stone: 65, coalblock: 66, cublock: 67, lapblock: 68, qblock: 69,
+                    redblock: 70, eblock: 71,
                 },
                 seedOf = (i) => (i.s != null ? i.s : SEED[i.id] != null ? SEED[i.id] : 7);
             ITEMS.forEach((i) => (i.img = mk(seedOf(i), i.f)));
+            /* иконки удалённых предметов — чтобы в интерфейсе (меню, сундук, обновления) всё осталось как было */
+            const DECO = {
+                table: {
+                    n: "Верстак",
+                    img: mk(
+                        SEED.table,
+                        tile(
+                            art(TABLE, {
+                                g: "#5a3e1a",
+                                t: "#d9b574",
+                                p: "#8a6a3a",
+                                P: "#b8945f",
+                                s: "#d0d0d0",
+                                m: "#8a8a8a",
+                                h: "#5e4524",
+                            })
+                        )
+                    ),
+                },
+                chest: { n: "Сундук", img: mk(SEED.chest, tile(chestTex)) },
+                furnace: { n: "Печь", img: mk(SEED.furnace, tile(furnaceTex)) },
+                eapple: { n: "Зачарованное золотое яблоко", img: mk(SEED.eapple, eappleF) },
+            };
             const dirtTile = mk(3, DIRT);
             /* --- монета: валюта магазина (золотой кружок с ободком и бликом) --- */
             const coinImg = mk(77, (p) => {
@@ -2826,6 +3358,8 @@
                     }
             });
             const by = (id) => ITEMS.find((i) => i.id === id);
+            /* предмет для иконок: обычный или «декоративный» (удалённый из игры, но его иконка нужна в UI) */
+            const byAny = (id) => by(id) || DECO[id] || null;
             /* фон — затемнённая земля, как в Minecraft */
             document.body.style.backgroundImage = `radial-gradient(1100px 620px at 50% -12%, rgba(61,220,138,.10), transparent 62%), radial-gradient(900px 520px at 50% 112%, rgba(242,201,107,.07), transparent 62%), linear-gradient(#080b0eeb, #060809f7), url(${dirtTile})`;
             document.body.style.backgroundSize = "auto, auto, auto, 128px";
@@ -2836,18 +3370,12 @@
             const SL = 50,
                 ST = 64;
             /* --- размер стака как в Minecraft: 64 / 16 / 1 --- */
-            const S16 = new Set(["pearl", "bucket"]),
+            const S16 = new Set(["pearl"]),
                 S1 = new Set(["wpick", "spick", "ipick", "dpick", "wsword", "ssword", "isword", "dsword"]),
                 stk = (id) => (S1.has(id) ? 1 : S16.has(id) ? 16 : ST);
             /* --- ограничение: цель не может быть ценнее ставки больше чем в MAXR раз --- */
             const MAXR = 6;
             const MIG = {
-                    stone: "cobble",
-                    ironore: "iron",
-                    goldore: "gold",
-                    copperore: "copper",
-                    diaore: "dia",
-                    emore: "em",
                     gravel: "sand",
                     leaves: "sand",
                     ice: "cobble",
@@ -2865,8 +3393,8 @@
                     elytra: "egg",
                     candy: "apple",
                     ccorn: "apple",
-                    tomb: "chest",
-                    witchhat: "furnace",
+                    tomb: "gold",
+                    witchhat: "torch",
                     pumpkin: "quartz",
                     jacko: "dia",
                     bonemeal: "brick",
@@ -2916,17 +3444,41 @@
                 chest = {},
                 chestSL = 10,
                 MAXC = 50,
-                chestSel = null,
-                chestSelK = -1,
-                chestSelN = 0,
                 bet = null,
                 tgt = null,
                 coins = 0,
+                autoOwned = false,
+                autoPaused = false,
+                fIn = null,
+                fFuel = null,
+                fHeat = 0,
+                fBusy = false,
+                fNote = "",
+                fNoteBad = false,
+                fNoteTo = 0,
                 spinning = false,
                 rot = 0,
                 hold = false,
+                rMode = "wheel",
+                clkUsed = 0,
+                clkDay = "",
+                clkBusy = false,
+                clkLast = null,
+                clkNote = "",
+                clkMood = "",
                 ac,
                 note = "";
+            const CLICKS_MAX = 10;
+            const dayKey = () => {
+                const d = new Date();
+                return (
+                    d.getFullYear() +
+                    "-" +
+                    String(d.getMonth() + 1).padStart(2, "0") +
+                    "-" +
+                    String(d.getDate()).padStart(2, "0")
+                );
+            };
             let storeOk = true;
             function load() {
                 try {
@@ -2950,6 +3502,13 @@
                     if (s.got) for (const k in s.got) if (by(k)) got[k] = 1;
                     if (s.coins != null && isFinite(+s.coins)) coins = Math.max(0, Math.floor(+s.coins));
                     if (s.csl) chestSL = Math.max(10, Math.min(MAXC, Math.floor(+s.csl) || 10));
+                    if (s.auto != null && isFinite(+s.auto)) autoOwned = +s.auto > 0;
+                    autoPaused = !!s.ap;
+                    if (typeof s.cd === "string") clkDay = s.cd;
+                    if (s.cu != null && isFinite(+s.cu)) clkUsed = Math.max(0, Math.floor(+s.cu));
+                    if (typeof s.ff === "string") fFuel = s.ff;
+                    if (s.heat != null && isFinite(+s.heat)) fHeat = Math.max(0, Math.floor(+s.heat));
+                    else if (s.fb != null && isFinite(+s.fb)) fHeat = Math.max(0, Math.floor(+s.fb));
                     if (s.chest) {
                         const o = {};
                         for (const k in s.chest) {
@@ -2969,13 +3528,17 @@
             }
             function save(d) {
                 try {
-                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL, coins }));
+                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL, coins, auto: autoOwned ? 1 : 0, ap: autoPaused ? 1 : 0, ff: fFuel, heat: fHeat, cd: clkDay, cu: clkUsed }));
                 } catch (e) {
                     storeOk = false;
                 }
                 if (typeof dbSave === "function") dbSave();
             }
             load();
+            if (clkDay !== dayKey()) {
+                clkDay = dayKey();
+                clkUsed = 0;
+            }
             for (const k in inv) got[k] = 1;
             function snd(f, d, t, f2) {
                 try {
@@ -3002,7 +3565,12 @@
                 if (!bet || !tgt) return 0;
                 const bv = by(bet).v,
                     tv = by(tgt).v;
-                return Math.max(1, Math.min(97, Math.round((bv / (bv + tv)) * 100) + luck()));
+                return Math.max(1, Math.min(97, Math.round((bv / (bv + tv)) * 100)));
+            }
+            /* Скрытая подкрутка: на колесе и в подсказке показывается обычный шанс,
+               а бросок идёт по настоящему — с бонусом из админ-панели. */
+            function realChance() {
+                return Math.max(1, Math.min(99, chance() + luck()));
             }
             function slot(el, id, n) {
                 el.innerHTML = id
@@ -3088,15 +3656,14 @@
                 });
                 let sk = st.findIndex((e) => e[0].id === bet);
                 if (bet && st[betK] && st[betK][0].id === bet) sk = betK;
+                if (tab === "furnace" && fIn) sk = st.findIndex((e) => e[0].id === fIn);
                 for (let k = 0; k < SL; k++) {
                     const e = st[k],
                         i = e && e[0];
                     let b;
                     if (i) {
                         b = document.createElement("button");
-                        b.className =
-                            "slot" +
-                            ((tab === "craft" ? i.id === held : tab === "chest" ? k === chestSelK && i.id === chestSel : k === sk) ? " sel" : "");
+                        b.className = "slot" + (k === sk ? " sel" : "");
                         slot(b, i.id, e[1]);
                         b.disabled = spinning && tab !== "craft";
                         b.onclick = () => {
@@ -3107,16 +3674,11 @@
                                 return;
                             }
                             if (tab === "chest") {
-                                if (chestSelK === k) {
-                                    chestSel = null;
-                                    chestSelK = -1;
-                                    chestSelN = 0;
-                                } else {
-                                    chestSel = i.id;
-                                    chestSelK = k;
-                                    chestSelN = e[1];
-                                }
-                                render();
+                                toChest(i.id, e[1]);
+                                return;
+                            }
+                            if (tab === "furnace") {
+                                pickFurn(i.id);
                                 return;
                             }
                             if (k === sk) {
@@ -3135,14 +3697,6 @@
                         b.className = "slot";
                     }
                     box.appendChild(b);
-                }
-                if (tab === "chest") {
-                    const e2 = st[chestSelK];
-                    if (chestSelK >= 0 && (!e2 || e2[0].id !== chestSel)) {
-                        chestSel = null;
-                        chestSelK = -1;
-                        chestSelN = 0;
-                    } else if (e2) chestSelN = e2[1];
                 }
                 const c = chance();
                 paint(c);
@@ -3166,9 +3720,18 @@
                     );
                     note = "";
                 }
+                $("rwheel").hidden = rMode !== "wheel";
+                $("rclick").hidden = rMode !== "click";
+                $("mrWheel").classList.toggle("on", rMode === "wheel");
+                $("mrClick").classList.toggle("on", rMode === "click");
+                $("mrWheel").setAttribute("aria-selected", rMode === "wheel");
+                $("mrClick").setAttribute("aria-selected", rMode === "click");
+                renderClick();
                 renderCraft();
                 renderChest();
+                renderFurn();
                 if (tab === "shop") renderShop();
+                renderAutoBar();
                 wallet();
                 if (!spinning) save();
                 checkGameOver();
@@ -3185,7 +3748,7 @@
                 snd(500, 0.05, "square");
                 const g = $("grid");
                 g.innerHTML = "";
-                ITEMS.filter((i) => !i.c).forEach((i) => {
+                ITEMS.filter((i) => !i.c && !i.nw).forEach((i) => {
                     const bad = !ok(i.id),
                         b = document.createElement("button");
                     b.className = "slot" + (i.id === bet || bad ? " dim" : "");
@@ -3226,7 +3789,7 @@
                 if (spinning || !bet || !tgt || !(inv[bet] > 0) || room(tgt) < 1 || !ok(tgt)) return;
                 const c = chance(),
                     a = c * 3.6,
-                    win = Math.random() * 100 < c,
+                    win = Math.random() * 100 < realChance(),
                     pad = Math.min(6, (win ? a : 360 - a) / 4);
                 const lo = win ? pad : a + pad,
                     hi = win ? a - pad : 360 - pad,
@@ -3282,6 +3845,178 @@
                 }, 4700);
             };
             addEventListener("resize", () => labels(chance()));
+            /* ===== Кликер: генератор случайных предметов (10 в день) ===== */
+            const clkPrice = (id) => Math.max(1, Math.round(by(id).v * 0.6));
+            function coinWord(n) {
+                const a = Math.abs(n) % 100,
+                    b = a % 10;
+                if (a > 10 && a < 20) return "монет";
+                if (b === 1) return "монета";
+                if (b >= 2 && b <= 4) return "монеты";
+                return "монет";
+            }
+            /* чем дороже предмет, тем реже он выпадает — но выпасть может любой */
+            function clkPick() {
+                let total = 0;
+                const w = [];
+                ITEMS.forEach((i) => {
+                    const x = 1 / Math.pow(Math.max(1, i.v), 0.6);
+                    w.push(x);
+                    total += x;
+                });
+                let r = Math.random() * total;
+                for (let k = 0; k < ITEMS.length; k++) {
+                    r -= w[k];
+                    if (r <= 0) return ITEMS[k];
+                }
+                return ITEMS[ITEMS.length - 1];
+            }
+            function showClk(id) {
+                const it = by(id);
+                if (!it) return;
+                $("clkph").hidden = true;
+                const ic = $("clkic");
+                if (ic.getAttribute("src") !== it.img) ic.src = it.img;
+                ic.alt = it.n;
+                ic.hidden = false;
+                const nm = $("clknm");
+                nm.textContent = it.n;
+                nm.hidden = false;
+                const pr = $("clkpr"),
+                    p = clkPrice(id);
+                pr.innerHTML = "";
+                const im = document.createElement("img");
+                im.src = coinImg;
+                im.alt = "";
+                const b = document.createElement("b");
+                b.textContent = p;
+                const sp = document.createElement("span");
+                sp.textContent = coinWord(p);
+                pr.append(im, b, sp);
+                pr.title = "Цена продажи: " + p + " " + coinWord(p);
+                pr.hidden = false;
+            }
+            function clkBurst(v) {
+                const box = $("clkbox"),
+                    cols = v >= 100 ? ["#f2c96b", "#ffe9a8", "#ff9d95", "#fff"] : ["#3ddc8a", "#f2c96b", "#9ef7c2"],
+                    n = v >= 100 ? 24 : 14;
+                for (let k = 0; k < n; k++) {
+                    const s = document.createElement("i");
+                    s.className = "clk-spark";
+                    s.style.setProperty("--sc", cols[k % cols.length]);
+                    const a = Math.random() * Math.PI * 2,
+                        d = 46 + Math.random() * 96;
+                    s.style.setProperty("--dx", Math.cos(a) * d + "px");
+                    s.style.setProperty("--dy", Math.sin(a) * d + "px");
+                    s.style.left = 50 + (Math.random() * 26 - 13) + "%";
+                    s.style.top = 50 + (Math.random() * 26 - 13) + "%";
+                    const sz = 4 + ((Math.random() * 5) | 0);
+                    s.style.width = s.style.height = sz + "px";
+                    box.appendChild(s);
+                    setTimeout(() => s.remove(), 1000);
+                }
+            }
+            function renderClick() {
+                if (clkDay !== dayKey()) {
+                    clkDay = dayKey();
+                    clkUsed = 0;
+                }
+                const chip = $("clkleft"),
+                    go = $("clkgo");
+                if (!chip || !go) return;
+                const left = Math.max(0, CLICKS_MAX - clkUsed);
+                chip.textContent = left + " / " + CLICKS_MAX;
+                chip.classList.toggle("off", left < 1);
+                go.disabled = clkBusy || spinning || left < 1;
+                const bw = $("mrWheel"),
+                    bc = $("mrClick");
+                if (bw && bc) bw.disabled = bc.disabled = clkBusy;
+                if (clkBusy) return;
+                if (clkLast && by(clkLast)) showClk(clkLast);
+                else {
+                    $("clkph").hidden = false;
+                    $("clkic").hidden = true;
+                    $("clknm").hidden = true;
+                    $("clkpr").hidden = true;
+                }
+                const txt = $("clkmsg");
+                if (left < 1 && !clkNote) {
+                    txt.className = "clk-msg bad";
+                    txt.textContent = "Клики на сегодня закончились. Приходи завтра.";
+                } else {
+                    txt.className = "clk-msg " + clkMood;
+                    txt.textContent = clkNote || "10 кликов в день. Жми — предмет упадёт в инвентарь.";
+                }
+            }
+            $("mrWheel").onclick = () => {
+                if (clkBusy) return;
+                rMode = "wheel";
+                snd(500, 0.04, "square");
+                render();
+            };
+            $("mrClick").onclick = () => {
+                if (clkBusy) return;
+                rMode = "click";
+                snd(520, 0.05, "square");
+                render();
+            };
+            $("clkgo").onclick = () => {
+                if (clkBusy || spinning) return;
+                if (clkDay !== dayKey()) {
+                    clkDay = dayKey();
+                    clkUsed = 0;
+                }
+                if (CLICKS_MAX - clkUsed < 1) {
+                    clkNote = "";
+                    clkMood = "bad";
+                    render();
+                    return;
+                }
+                const it = clkPick();
+                if (room(it.id) < 1) {
+                    clkNote = "Инвентарь полон — освободи место.";
+                    clkMood = "bad";
+                    snd(220, 0.12, "sawtooth");
+                    render();
+                    return;
+                }
+                clkBusy = true;
+                clkNote = "Генератор крутит...";
+                clkMood = "";
+                $("clkmsg").className = "clk-msg";
+                $("clkmsg").textContent = clkNote;
+                $("clkgo").disabled = true;
+                $("mrWheel").disabled = $("mrClick").disabled = true;
+                const box = $("clkbox");
+                box.classList.remove("hit");
+                $("clkic").classList.remove("in");
+                box.classList.add("roll");
+                let tick = 0;
+                const roll = setInterval(() => {
+                    showClk(ITEMS[(Math.random() * ITEMS.length) | 0].id);
+                    if (tick++ % 2 === 0) snd(360 + Math.random() * 460, 0.02, "square");
+                }, 65);
+                setTimeout(() => {
+                    clearInterval(roll);
+                    box.classList.remove("roll");
+                    inv[it.id] = (inv[it.id] || 0) + 1;
+                    clkUsed = Math.min(CLICKS_MAX, clkUsed + 1);
+                    clkLast = it.id;
+                    clkBusy = false;
+                    showClk(it.id);
+                    $("clkic").classList.add("in");
+                    setTimeout(() => $("clkic").classList.remove("in"), 700);
+                    box.classList.add("hit");
+                    setTimeout(() => box.classList.remove("hit"), 620);
+                    clkBurst(it.v);
+                    clkNote = "Выпало: " + it.n + ". " + (clkUsed >= CLICKS_MAX ? "Клики на сегодня закончились." : "+1 в инвентарь.");
+                    clkMood = "win";
+                    snd(660, 0.1, "square");
+                    setTimeout(() => snd(880, 0.12, "square"), 100);
+                    setTimeout(() => snd(1180, 0.18, "square"), 200);
+                    render();
+                }, 1300);
+            };
             /* ===== Вход в админ панель по паролю (хранится только хэш SHA-256 от "mcw-admin:"+пароль) ===== */
             const PW_HASH = "2009e6378ae8b01d88b191ab684470642246544f2de844fff128fe69c9a7ef45";
             let unlocked = false,
@@ -3385,7 +4120,7 @@
                     d.className = "ev" + (on ? " on" : "") + (done ? " done" : "");
                     d.innerHTML = "<b></b><small></small>";
                     d.children[0].textContent =
-                        (e.it && by(e.it) ? by(e.it).n : "Любая цель") + ": +" + (e.lk || 20) + "%";
+                        (e.it && by(e.it) ? by(e.it).n : "Любая цель") + ": скрыто +" + (e.lk || 20) + "%";
                     d.children[1].textContent =
                         (on ? "Идёт сейчас, до " : done ? "Закончилось: " : "Начало: ") +
                         fmt(on || done ? e.at + e.dur * 6e4 : e.at) +
@@ -3498,11 +4233,16 @@
             /* ===== Монеты и очистка инвентаря (админ-панель) ===== */
             function admInfo() {
                 const a = $("acinfo"),
-                    b = $("ainfo");
+                    b = $("ainfo"),
+                    c = $("ainfoa");
                 if (a) a.textContent = "Сейчас: монет " + coins;
                 if (b)
                     b.textContent =
                         "Инвентарь: " + slotsOf(inv) + " / " + SL + " клеток · сундук: " + slotsOf(chest) + " / " + chestSL;
+                if (c)
+                    c.textContent = autoOwned
+                        ? "Сейчас: выдан (" + (autoPaused ? "выключен" : "включён") + ")"
+                        : "Сейчас: не выдан";
             }
             $("agivc").onclick = () => {
                 if (!unlocked) return;
@@ -3527,6 +4267,22 @@
                 betK = -1;
                 hold = false;
                 snd(220, 0.15, "sawtooth");
+                render();
+                admInfo();
+            };
+            $("agiva").onclick = () => {
+                if (!unlocked) return;
+                autoOwned = true;
+                autoPaused = true;
+                snd(660, 0.08, "square");
+                render();
+                admInfo();
+            };
+            $("atka").onclick = () => {
+                if (!unlocked) return;
+                autoOwned = false;
+                autoPaused = false;
+                snd(330, 0.08, "square");
                 render();
                 admInfo();
             };
@@ -3646,8 +4402,24 @@
             }, 5000);
             /* ===== Верстак: рецепты, стол 3x3 и сборка ===== */
             // плавка в печи (интерфейс печи добавим позже)
-            const SMELT = { debris: "scrap", sand: "glass", log: "charcoal" };
-            const FUEL = { coal: 8, charcoal: 8, log: 1.5, planks: 1.5, stick: 0.5 };
+            /* печь: что во что плавится (need — сколько предметов уходит на 1 результат) */
+            const SMELT = {
+                coalore: { out: "coal", need: 1 },
+                copperore: { out: "copper", need: 1 },
+                ironore: { out: "iron", need: 1 },
+                lapisore: { out: "lapis", need: 1 },
+                quartzore: { out: "quartz", need: 1 },
+                redore: { out: "red", need: 1 },
+                goldore: { out: "gold", need: 1 },
+                diaore: { out: "dia", need: 1 },
+                emore: { out: "em", need: 1 },
+                sand: { out: "glass", need: 1 },
+                log: { out: "charcoal", need: 1 },
+                debris: { out: "scrap", need: 1 },
+                cobble: { out: "stone", need: 1 },
+            };
+            /* топливо: сколько жара даёт 1 предмет */
+            const FUEL = { coalblock: 80, coal: 8, charcoal: 6, planks: 2, stick: 1 };
             const have = (id) => inv[id] || 0;
             /* @CRAFT-LOGIC-START */
             // pat — схема на столе ('.' = пусто), key — какой предмет за какой буквой; shapeless — без формы.
@@ -3655,11 +4427,9 @@
             const RECIPES = [
                 { id: "planks", out: "planks", n: 4, shapeless: ["log"] },
                 { id: "stick", out: "stick", n: 4, pat: ["p", "p"], key: { p: "planks" } },
-                { id: "furnace", out: "furnace", n: 1, pat: ["ccc", "c.c", "ccc"], key: { c: "cobble" } },
                 { id: "torch", out: "torch", n: 4, pat: ["c", "s"], key: { c: "coal", s: "stick" } },
                 { id: "torch2", out: "torch", n: 4, pat: ["c", "s"], key: { c: "charcoal", s: "stick" } },
                 { id: "tnt", out: "tnt", n: 1, pat: ["gsg", "sgs", "gsg"], key: { g: "gunp", s: "sand" } },
-                { id: "bucket", out: "bucket", n: 1, pat: ["i.i", ".i."], key: { i: "iron" } },
                 {
                     id: "neth",
                     out: "neth",
@@ -3672,6 +4442,12 @@
                 { id: "iblock", out: "iblock", n: 1, pat: ["iii", "iii", "iii"], key: { i: "iron" } },
                 { id: "gblock", out: "gblock", n: 1, pat: ["ggg", "ggg", "ggg"], key: { g: "gold" } },
                 { id: "dblock", out: "dblock", n: 1, pat: ["ddd", "ddd", "ddd"], key: { d: "dia" } },
+                { id: "coalblock", out: "coalblock", n: 1, pat: ["kkk", "kkk", "kkk"], key: { k: "coal" } },
+                { id: "cublock", out: "cublock", n: 1, pat: ["ccc", "ccc", "ccc"], key: { c: "copper" } },
+                { id: "lapblock", out: "lapblock", n: 1, pat: ["lll", "lll", "lll"], key: { l: "lapis" } },
+                { id: "redblock", out: "redblock", n: 1, pat: ["rrr", "rrr", "rrr"], key: { r: "red" } },
+                { id: "qblock", out: "qblock", n: 1, pat: ["qqq", "qqq", "qqq"], key: { q: "quartz" } },
+                { id: "eblock", out: "eblock", n: 1, pat: ["eee", "eee", "eee"], key: { e: "em" } },
             ];
             [
                 ["w", "planks"],
@@ -3685,10 +4461,7 @@
                 )
             );
             /* --- незеритовый блок --- */
-            RECIPES.push(
-                { id: "nblock", out: "nblock", n: 1, pat: ["nnn", "nnn", "nnn"], key: { n: "neth" } },
-                { id: "eapple", out: "eapple", n: 1, pat: ["ggg", "gag", "ggg"], key: { g: "gblock", a: "apple" } }
-            );
+            RECIPES.push({ id: "nblock", out: "nblock", n: 1, pat: ["nnn", "nnn", "nnn"], key: { n: "neth" } });
             // сколько чего нужно для рецепта
             function recipeNeed(rc) {
                 const need = {};
@@ -3825,22 +4598,10 @@
                     }
                     box.appendChild(b);
                 }
-                if (chestSel && !(inv[chestSel] > 0)) {
-                    chestSel = null;
-                    chestSelK = -1;
-                    chestSelN = 0;
-                }
-                const put = $("put");
-                if (put) {
-                    put.hidden = tab !== "chest" || !chestSel;
-                    if (chestSel)
-                        put.textContent = "Убрать в сундук: " + (chestSelN > 1 ? chestSelN + "× " : "") + by(chestSel).n;
-                }
                 chestInfo();
             }
-            function toChest() {
+            function toChest(id, want) {
                 if (spinning) return;
-                const id = chestSel;
                 if (!id || !(inv[id] > 0)) return;
                 const sp = chestRoom(id);
                 if (sp <= 0) {
@@ -3849,14 +4610,15 @@
                     return;
                 }
                 const total = inv[id],
-                    want = Math.max(1, Math.min(chestSelN || 1, total)),
-                    n = Math.min(total, sp, want);
+                    w = Math.max(1, Math.min(want || total, total)),
+                    n = Math.min(total, sp, w);
+                if (n <= 0) return;
                 inv[id] -= n;
                 if (inv[id] <= 0) delete inv[id];
                 chest[id] = (chest[id] || 0) + n;
                 snd(560, 0.08, "square");
                 chestMsg(
-                    "Перенесено " + n + "× " + by(id).n + " в сундук." + (n < want ? " В сундуке закончилось место." : "")
+                    "Перенесено " + n + "× " + by(id).n + " в сундук." + (n < w ? " В сундуке закончилось место." : "")
                 );
                 render();
             }
@@ -4013,7 +4775,7 @@
                 ["t5", "torch"],
             ].forEach(([id, item]) => {
                 const b = $(id),
-                    it = by(item);
+                    it = byAny(item);
                 if (b && it) {
                     const im = document.createElement("img");
                     im.src = it.img;
@@ -4024,11 +4786,11 @@
             });
             // иконки-предметы в кнопках улучшения сундука (как в меню)
             document.querySelectorAll(".uic").forEach((im) => {
-                const it = by(im.dataset.item);
+                const it = byAny(im.dataset.item);
                 if (it) im.src = it.img;
             });
-            // иконка монеты в кошельке и в магазине
-            ["wico", "sico"].forEach((id) => {
+            // иконка монеты в кошельке
+            ["wico"].forEach((id) => {
                 const e = $(id);
                 if (e) e.src = coinImg;
             });
@@ -4043,7 +4805,6 @@
             function wallet() {
                 const t = money(coins);
                 if ($("wcoins")) $("wcoins").textContent = t;
-                if ($("sbal")) $("sbal").textContent = t;
             }
             /* цена покупки и продажи считается от ценности предмета */
             const buyPrice = (id) => Math.max(2, Math.round(by(id).v * 2));
@@ -4058,7 +4819,78 @@
                 e.textContent = t || "";
                 e.className = "shmsg" + (t ? (bad ? " bad" : " good") : "");
             }
+            /* ===== Автокликер: акция появляется только по четвергам ===== */
+            const AUTO_COST = 3;
+            const isThursday = (d) => d.getDay() === 4;
+            function autoMsg(t, bad) {
+                const e = $("automsg");
+                if (!e) return;
+                e.textContent = t || "";
+                e.className = "offer-msg" + (t ? (bad ? " bad" : " good") : "");
+            }
+            function renderOffer() {
+                const card = $("offer"),
+                    b = $("autobuy");
+                if (!card || !b) return;
+                if (autoOwned || !isThursday(new Date())) {
+                    card.hidden = true;
+                    return;
+                }
+                card.hidden = false;
+                b.hidden = false;
+                b.disabled = false;
+                b.textContent = "Купить";
+                const can = (inv.nblock || 0) >= AUTO_COST;
+                b.disabled = !can;
+                autoMsg(can ? "Акция только сегодня." : "Нужно 3× Незеритовый блок.", !can);
+            }
+            function renderAutoBar() {
+                const bar = $("autobar");
+                if (!bar) return;
+                bar.hidden = !autoOwned;
+                if (!autoOwned) return;
+                bar.classList.toggle("paused", !!autoPaused);
+                $("autotxt").textContent = autoPaused ? "Автокликер выключен" : "Автокликер включён";
+                $("autopause").textContent = autoPaused ? "Включить" : "Пауза";
+            }
+            $("autobuy").onclick = () => {
+                if (spinning || autoOwned) return;
+                if (!isThursday(new Date())) {
+                    autoMsg("Акция доступна только в четверг.", true);
+                    snd(220, 0.15, "sawtooth");
+                    return;
+                }
+                if (!((inv.nblock || 0) >= AUTO_COST)) {
+                    autoMsg("Нужно 3× Незеритовый блок.", true);
+                    snd(220, 0.15, "sawtooth");
+                    return;
+                }
+                inv.nblock -= AUTO_COST;
+                if (inv.nblock <= 0) delete inv.nblock;
+                autoOwned = true;
+                autoPaused = true;
+                snd(660, 0.1, "square");
+                setTimeout(() => snd(880, 0.14, "square"), 110);
+                render();
+            };
+            $("autopause").onclick = () => {
+                autoPaused = !autoPaused;
+                snd(autoPaused ? 330 : 560, 0.06, "square");
+                render();
+            };
+            /* автокликер просто жмёт «Крутить!» с выбранными ставкой и целью */
+            function autoRun() {
+                if (!autoOwned || autoPaused || spinning) return;
+                if (!bet || !tgt || !by(bet) || !by(tgt) || !ok(tgt)) return;
+                if (!((inv[bet] || 0) > 0) || room(tgt) < 1) return;
+                if ($("upd").classList.contains("on") || $("gob").classList.contains("on")) return;
+                if ($("aov").classList.contains("on") || $("pov").classList.contains("on") || $("ov").classList.contains("on")) return;
+                const go = $("go");
+                if (!go.disabled) go.click();
+            }
+            setInterval(autoRun, 800);
             function renderShop() {
+                renderOffer();
                 const box = $("shlist");
                 if (!box) return;
                 const q = shQ.trim().toLowerCase(),
@@ -4173,11 +5005,12 @@
                         const ic = document.createElement("div");
                         ic.className = "uitems";
                         u.icons.forEach((id) => {
-                            if (!by(id)) return;
+                            const it = byAny(id);
+                            if (!it) return;
                             const im = document.createElement("img");
-                            im.src = by(id).img;
-                            im.alt = by(id).n;
-                            im.title = by(id).n;
+                            im.src = it.img;
+                            im.alt = it.n;
+                            im.title = it.n;
                             ic.appendChild(im);
                         });
                         if (ic.children.length) c.appendChild(ic);
@@ -4197,26 +5030,23 @@
             function setTab(t) {
                 tab = t;
                 held = null;
-                chestSel = null;
-                chestSelK = -1;
-                chestSelN = 0;
                 $("mnusc").classList.remove("on");
                 if (t !== "craft") grid = Array(9).fill(null);
                 $("pg1").hidden = t !== "roulette";
                 $("pg2").hidden = t !== "craft";
                 $("pg3").hidden = t !== "craft";
+                $("pg8").hidden = t !== "furnace";
                 $("pg4").hidden = t !== "chest";
                 $("pg5").hidden = t !== "shop";
                 $("pg6").hidden = t !== "updates";
-                $("pg7").hidden = t !== "tiktok";
-                $("invblock").hidden = t === "updates" || t === "tiktok";
+                $("invblock").hidden = t === "updates";
                 [
                     ["t1", "roulette"],
-                    ["t2", "craft"],
-                    ["t3", "chest"],
                     ["t4", "shop"],
+                    ["t2", "craft"],
+                    ["t7", "furnace"],
+                    ["t3", "chest"],
                     ["t5", "updates"],
-                    ["t6", "tiktok"],
                 ].forEach(([b, k]) => {
                     const e = $(b);
                     if (e) e.classList.toggle("on", t === k);
@@ -4226,29 +5056,11 @@
                 if (t === "shop") shopMsg("");
                 render();
             }
-            // выравниваем выдвижное меню по верхнему краю игрового прямоугольника,
-            // чтобы оно не заходило на земляной фон сверху
-            const alignMenu = () => {
-                const r = $("gui").getBoundingClientRect();
-                const p = document.querySelector("#mnusc .mnu");
-                p.style.top = Math.max(0, Math.round(r.top)) + "px";
-                p.style.bottom = Math.max(0, Math.round(window.innerHeight - r.bottom)) + "px";
-            };
+            // выдвижное меню — обычное, на весь экран (без подстройки под игровую панель)
             $("tmenu").onclick = () => {
-                alignMenu();
                 $("mnusc").classList.toggle("on");
                 snd(400, 0.04, "square");
             };
-            addEventListener(
-                "scroll",
-                () => {
-                    if ($("mnusc").classList.contains("on")) alignMenu();
-                },
-                { passive: true }
-            );
-            addEventListener("resize", () => {
-                if ($("mnusc").classList.contains("on")) alignMenu();
-            });
             $("mnusc").addEventListener("click", (e) => {
                 if (e.target === $("mnusc")) $("mnusc").classList.remove("on");
             });
@@ -4258,43 +5070,10 @@
             };
             $("t1").onclick = () => setTab("roulette");
             $("t2").onclick = () => setTab("craft");
+            $("t7").onclick = () => setTab("furnace");
             $("t3").onclick = () => setTab("chest");
             $("t4").onclick = () => setTab("shop");
             $("t5").onclick = () => setTab("updates");
-            $("t6").onclick = () => setTab("tiktok");
-            $("ttopen").onclick = () => snd(680, 0.06, "square");
-            $("ttname").onclick = () => snd(680, 0.06, "square");
-            $("ttcopy").onclick = () => {
-                const nick = "@mcupgrade",
-                    done = (v) => {
-                        const m = $("ttmsg");
-                        m.textContent = v ? "Ник " + nick + " скопирован." : "Не получилось скопировать — ник: " + nick;
-                        m.className = "tt-msg " + (v ? "good" : "bad");
-                        snd(v ? 660 : 220, 0.08, v ? "square" : "sawtooth");
-                    },
-                    fallback = () => {
-                        let ok = false;
-                        try {
-                            const ta = document.createElement("textarea");
-                            ta.value = nick;
-                            ta.setAttribute("readonly", "");
-                            ta.style.position = "fixed";
-                            ta.style.top = "-100px";
-                            document.body.appendChild(ta);
-                            ta.select();
-                            ok = document.execCommand("copy");
-                            ta.remove();
-                        } catch (e) {}
-                        done(ok);
-                    };
-                try {
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        navigator.clipboard.writeText(nick).then(() => done(true), fallback);
-                        return;
-                    }
-                } catch (e) {}
-                fallback();
-            };
             $("shbuy").onclick = () => {
                 shMode = "buy";
                 $("shbuy").classList.add("on");
@@ -4315,24 +5094,207 @@
                 shQ = $("shq").value;
                 renderShop();
             });
-            $("put").onclick = toChest;
             $("up1").onclick = () => upChest(1, "pearl", 1);
             $("up10").onclick = () => upChest(10, "dblock", 1);
-            function smelt(id, n = 1) {
-                if (spinning) return false;
-                const out = SMELT[id];
-                if (!out || have(id) < n || room(out) < n) return false;
-                const f = Object.keys(FUEL).find((k) => k !== id && have(k) > 0);
-                if (!f) return false;
-                const need = Math.ceil(n / FUEL[f]);
-                if (have(f) < need) return false;
-                inv[id] -= n;
-                if (inv[id] <= 0) delete inv[id];
-                inv[f] -= need;
-                if (inv[f] <= 0) delete inv[f];
-                inv[out] = have(out) + n;
-                got[out] = 1;
+            /* ===== Печь: переплавка ===== */
+            const fFuelOk = () => (fFuel && FUEL[fFuel] && have(fFuel) > 0 ? fFuel : null);
+            function fSay(t, bad, keep) {
+                fNote = t || "";
+                fNoteBad = !!bad;
+                clearTimeout(fNoteTo);
+                if (t && !keep)
+                    fNoteTo = setTimeout(() => {
+                        fNote = "";
+                        renderFurn();
+                    }, 2400);
+            }
+            const fBatches = () => {
+                if (!fIn || !SMELT[fIn]) return 0;
+                const r = SMELT[fIn],
+                    fp = fFuelOk();
+                return Math.min(Math.floor(have(fIn) / r.need), fHeat + (fp ? have(fp) * FUEL[fp] : 0));
+            };
+            function renderFurn() {
+                const box = $("fin");
+                if (!box) return;
+                if (fIn && (!SMELT[fIn] || !(inv[fIn] > 0))) fIn = null;
+                if (fFuel && !FUEL[fFuel]) fFuel = null;
+                if (fFuel && !(inv[fFuel] > 0)) fFuel = null;
+                const r = fIn ? SMELT[fIn] : null,
+                    fp = fFuelOk();
+                slot(box, fIn, 0);
+                box.disabled = !fIn;
+                box.classList.toggle("sel", !!fIn);
+                if (fIn) {
+                    const x = document.createElement("i");
+                    x.className = "fx";
+                    x.textContent = "×";
+                    box.appendChild(x);
+                }
+                const fb = $("ffuel");
+                slot(fb, fp, fp ? inv[fp] : 0);
+                fb.disabled = !fp;
+                fb.classList.toggle("sel", !!fp);
+                if (fp) {
+                    const x = document.createElement("i");
+                    x.className = "fx";
+                    x.textContent = "×";
+                    fb.appendChild(x);
+                }
+                slot($("fout"), r ? r.out : null, 0);
+                $("fdin").textContent = r ? inv[fIn] + " шт" : "";
+                $("fdfuel").textContent = fp ? inv[fp] + " шт" : "";
+                $("fdout").textContent = r ? "+1" : "";
+                const batches = fBatches(),
+                    full = r ? room(r.out) < 1 : false;
+                $("ftop").textContent = "Жар: " + fHeat;
+                $("fone").disabled = fBusy || spinning || !batches || full;
+                $("fall").disabled = $("fone").disabled;
+                let msg,
+                    bad = false;
+                if (fNote) {
+                    msg = fNote;
+                    bad = fNoteBad;
+                } else if (!r) msg = "Нажми на руду в инвентаре — печь покажет, что получится.";
+                else if (!fp && fHeat < 1) msg = "Нажми на топливо в инвентаре: угольный блок, уголь, древесный уголь, доски или палку.";
+                else if (!batches) msg = "Мало предметов: нужно " + r.need + " × " + by(fIn).n + ".";
+                else if (full) msg = "Инвентарь полон.";
+                else
+                    msg =
+                        "1 плавка: " +
+                        r.need +
+                        " × " +
+                        by(fIn).n +
+                        " → " +
+                        by(r.out).n +
+                        "." +
+                        (fp ? " 1 × " + by(fp).n + " = " + FUEL[fp] + " жара." : " Жар: " + fHeat + ".");
+                const e = $("fhint");
+                e.textContent = msg;
+                e.style.color = bad ? "#ff9d95" : "";
+                const rec = $("frec");
+                if (!rec) return;
+                rec.innerHTML = "";
+                Object.keys(SMELT).forEach((id) => {
+                    const rr = SMELT[id],
+                        b = document.createElement("button");
+                    b.type = "button";
+                    b.className = "frr" + (fIn === id ? " sel" : "") + (have(id) > 0 ? "" : " no");
+                    b.innerHTML =
+                        '<img src="' +
+                        by(id).img +
+                        '" alt="' +
+                        by(id).n +
+                        '"><span>×' +
+                        rr.need +
+                        '</span><span class="farr">→</span><img src="' +
+                        by(rr.out).img +
+                        '" alt="' +
+                        by(rr.out).n +
+                        '"><span class="fq">+1</span>';
+                    b.onclick = () => pickFurn(id);
+                    rec.appendChild(b);
+                });
+            }
+            function pickFurn(id) {
+                if (FUEL[id] && !SMELT[id]) {
+                    fFuel = fFuel === id ? null : id;
+                    snd(520, 0.05, "square");
+                    fSay("");
+                    render();
+                    return;
+                }
+                if (!SMELT[id]) {
+                    fSay("Это не плавится.", true);
+                    snd(220, 0.1, "sawtooth");
+                    renderFurn();
+                    return;
+                }
+                fIn = fIn === id ? null : id;
+                snd(520, 0.05, "square");
+                fSay("");
                 render();
+            }
+            function doSmelt(all) {
+                if (fBusy || spinning) return;
+                const r = fIn ? SMELT[fIn] : null;
+                if (!r) {
+                    fSay("Выбери, что плавить.", true);
+                    renderFurn();
+                    return;
+                }
+                const fp = fFuelOk();
+                if (!fp && fHeat < 1) {
+                    fSay("Выбери топливо: нажми на угольный блок, уголь, древесный уголь, доски или палку.", true);
+                    snd(220, 0.12, "sawtooth");
+                    renderFurn();
+                    return;
+                }
+                const max = fBatches();
+                if (max < 1) {
+                    fSay("Мало предметов: нужно " + r.need + " × " + by(fIn).n + ".", true);
+                    renderFurn();
+                    return;
+                }
+                const n = Math.min(all ? max : 1, room(r.out));
+                if (n < 1) {
+                    fSay("Инвентарь полон.", true);
+                    snd(220, 0.12, "sawtooth");
+                    renderFurn();
+                    return;
+                }
+                /* жар: дожигаем топливо, пока его не хватит на выбранное число плавок */
+                let heat = fHeat;
+                while (heat < n && fp && have(fp) > 0) {
+                    inv[fp] -= 1;
+                    if (inv[fp] <= 0) delete inv[fp];
+                    heat += FUEL[fp];
+                }
+                if (heat < n) {
+                    fSay("Не хватает топлива.", true);
+                    snd(220, 0.12, "sawtooth");
+                    renderFurn();
+                    return;
+                }
+                fHeat = heat - n;
+                const items = n * r.need;
+                inv[fIn] -= items;
+                if (inv[fIn] <= 0) delete inv[fIn];
+                inv[r.out] = have(r.out) + n;
+                got[r.out] = 1;
+                fBusy = true;
+                $("fflame").classList.add("on");
+                $("fbar").style.width = "100%";
+                fSay("Плавится…", false, true);
+                snd(300, 0.12, "sawtooth");
+                render();
+                setTimeout(() => {
+                    fBusy = false;
+                    $("fflame").classList.remove("on");
+                    $("fbar").style.width = "0%";
+                    fSay("Готово: " + by(r.out).n + " ×" + n + ".");
+                    snd(660, 0.09, "square");
+                    setTimeout(() => snd(880, 0.1, "square"), 100);
+                    render();
+                }, 640);
+            }
+            $("fin").onclick = () => {
+                fIn = null;
+                fSay("");
+                snd(380, 0.04, "square");
+                render();
+            };
+            $("ffuel").onclick = () => {
+                fFuel = null;
+                fSay("");
+                snd(380, 0.04, "square");
+                render();
+            };
+            $("fone").onclick = () => doSmelt(false);
+            $("fall").onclick = () => doSmelt(true);
+            function smelt(id, n = 1) {
+                fIn = id;
+                doSmelt(n > 1);
                 return true;
             }
             /* ===== Окно «Обновление» перед входом в игру =====
@@ -4340,6 +5302,58 @@
    (с новым значением v). Каждый игрок увидит это окно один раз — пока не нажмёт «Играть!».
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
+                {
+                    v: "2026.11.04.2",
+                    date: "4 ноября 2026",
+                    title: "Кликер и колесо фортуны",
+                    icons: ["dirt", "dblock", "nblock"],
+                    items: [
+                        ["new", "Вкладка «Рулетка» стала общей — «Колесо и кликер»: сверху переключатель между колесом фортуны и кликером."],
+                        ["new", "Кликер — генератор предметов: 10 нажатий в день. Каждое нажатие кладёт случайный предмет в инвентарь — выпасть может что угодно, от земли до незеритового блока."],
+                        ["new", "Под выпавшим предметом видна его цена в монетах — столько дадут при продаже."],
+                        ["chg", "Счётчик кликов сохраняется и сам обновляется раз в день."],
+                    ],
+                },
+                {
+                    v: "2026.11.04.1",
+                    date: "4 ноября 2026",
+                    title: "Камень, блоки и руда в аду",
+                    icons: ["stone", "qblock", "quartzore", "furnace"],
+                    items: [
+                        ["new", "Верстак: теперь блоки делаются из всех руд — угольный, медный, лазуритовый, кварцевый, редстоуновый и изумрудный (9 материала → 1 блок), как железный, золотой и алмазный."],
+                        ["new", "Печь: булыжник плавится в камень."],
+                        ["chg", "Из меню убрана вкладка «Мы в TikTok»."],
+                        ["chg", "Угольный блок теперь можно класть в печь как топливо, и в печи снова считается жар (верхний правый угол): блок — 80, уголь — 8, древесный уголь — 6, доски — 2, палка — 1."],
+                        ["chg", "Жар тратится по 1 на плавку, остаток сохраняется. Топливо выбирается вручную и убирается нажатием на слот."],
+                        ["chg", "Фон руды — гладкий камень, а у кварцевой руды — незеррак, потому что кварц добывают в аду."],
+                    ],
+                },
+                {
+                    v: "2026.11.03.3",
+                    date: "3 ноября 2026",
+                    title: "Руда в рулетке и печь без жара",
+                    icons: ["ironore", "goldore", "diaore", "furnace"],
+                    items: [
+                        ["new", "В рулетке и магазине появились руды: угольная, медная, железная, лазуритовая, кварцевая, редстоуновая, золотая, алмазная и изумрудная."],
+                        ["new", "Печь плавит руду в слитки и самоцветы: 1 руда + 1 топливо → 1 слиток. Песок → стекло, бревно → древесный уголь, древние обломки → незеритовый лом."],
+                        ["chg", "Слитки и самоцветы больше нельзя выбрать целью на колесе — их дают печь и магазин. На колесе вместо них руда."],
+                        ["chg", "Жар убран: топливо выбирается вручную нажатием на уголь, древесный уголь, доски или палку и тратится по 1 на плавку."],
+                        ["fix", "Убран рецепт «4 × Булыжник → Железный слиток». Уголь (или другое топливо) убирается из печи нажатием на слот топлива."],
+                    ],
+                },
+                {
+                    v: "2026.11.03.2",
+                    date: "3 ноября 2026",
+                    title: "Печь и переплавка",
+                    icons: ["furnace", "iron", "glass", "charcoal"],
+                    items: [
+                        ["new", "В меню появилась вкладка «Печь» со своей механикой: слот руды, топливо, полоса прогресса и список рецептов."],
+                        ["new", "Печь переплавляет: 2 × Песок → Стекло, 2 × Бревно → Древесный уголь, 4 × Булыжник → Железный слиток, 1 × Древние обломки → Незеритовый лом."],
+                        ["new", "Топливо: уголь и древесный уголь плавят 8 предметов, доски и бревно — 2, палка — 1. Остаток жара сохраняется."],
+                        ["new", "Кнопки «Разжечь» и «Разжечь всё»: плавят один раз или всю партию сразу."],
+                        ["chg", "Из игры убрано «Ведро с водой» — оно больше не выпадает, не продаётся и не крафтится."],
+                    ],
+                },
                 {
                     v: "2026.11.01.1",
                     date: "1 ноября 2026",
@@ -4413,11 +5427,12 @@
                 const ic = $("ui");
                 ic.innerHTML = "";
                 (u.icons || []).forEach((id) => {
-                    if (by(id)) {
+                    const it = byAny(id);
+                    if (it) {
                         const im = document.createElement("img");
-                        im.src = by(id).img;
-                        im.alt = by(id).n;
-                        im.title = by(id).n;
+                        im.src = it.img;
+                        im.alt = it.n;
+                        im.title = it.n;
                         ic.appendChild(im);
                     }
                 });
