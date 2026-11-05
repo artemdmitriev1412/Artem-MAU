@@ -387,6 +387,90 @@
                 background: rgba(234, 90, 82, 0.09);
                 border-color: rgba(234, 90, 82, 0.26);
             }
+            .clk-left.inf {
+                color: var(--gold);
+                background: rgba(242, 201, 107, 0.09);
+                border-color: rgba(242, 201, 107, 0.3);
+            }
+            .clk-side {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+            }
+            .clk-help {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 27px;
+                height: 27px;
+                padding: 0;
+                font: inherit;
+                font-size: 14px;
+                font-weight: 800;
+                line-height: 1;
+                color: var(--muted);
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--line);
+                border-radius: 50%;
+                cursor: pointer;
+                transition: color 0.15s, background 0.15s, border-color 0.15s, transform 0.12s;
+            }
+            .clk-help:hover {
+                color: #fff;
+                background: rgba(255, 255, 255, 0.09);
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+            .clk-help:active {
+                transform: scale(0.94);
+            }
+            /* список шансов */
+            .chlist {
+                display: flex;
+                flex-direction: column;
+                max-height: min(56vh, 430px);
+                overflow: auto;
+                margin: 4px 0 2px;
+                border: 1px solid var(--line-2);
+                border-radius: 12px;
+                background: rgba(0, 0, 0, 0.22);
+                box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.35);
+            }
+            .chrow {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                padding: 6px 10px;
+                border-bottom: 1px solid var(--line-2);
+            }
+            .chrow:last-child {
+                border-bottom: 0;
+            }
+            .chrow img {
+                width: 22px;
+                height: 22px;
+                flex: none;
+                image-rendering: pixelated;
+                filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+            }
+            .chrow .nm {
+                flex: 1 1 auto;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 12.5px;
+                color: #dbe4ee;
+            }
+            .chrow .pc {
+                flex: none;
+                font-size: 12.5px;
+                font-weight: 700;
+                font-variant-numeric: tabular-nums;
+                color: var(--em);
+            }
+            .chrow.rare .pc {
+                color: var(--gold);
+            }
             .clk-box {
                 position: relative;
                 display: flex;
@@ -1717,33 +1801,73 @@
             .shmsg.good {
                 color: #8ce9b4;
             }
-            /* ---------- акция недели ---------- */
+            /* ---------- акция: автокликер ---------- */
             .offer {
-                margin: 0 0 10px;
-                padding: 12px 12px 10px;
-                border-radius: var(--rad);
-                background: linear-gradient(180deg, rgba(94, 234, 160, 0.1), rgba(20, 25, 31, 0.55));
-                border: 1px solid rgba(94, 234, 160, 0.24);
-                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+                position: relative;
+                overflow: hidden;
+                margin: 0 0 12px;
+                padding: 14px;
+                border-radius: 16px;
+                background:
+                    radial-gradient(130% 110% at 100% 0%, rgba(94, 234, 160, 0.22), transparent 58%),
+                    radial-gradient(90% 90% at 0% 100%, rgba(242, 201, 107, 0.12), transparent 62%),
+                    linear-gradient(155deg, #17261e 0%, #101713 55%, #0b100d 100%);
+                border: 1px solid rgba(94, 234, 160, 0.38);
+                box-shadow:
+                    0 12px 32px -18px rgba(0, 0, 0, 0.95),
+                    0 0 26px -10px rgba(61, 220, 138, 0.35),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+            .offer::before {
+                content: "";
+                position: absolute;
+                inset: -40% -60%;
+                background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.1) 50%, transparent 58%);
+                transform: translateX(-70%);
+                animation: offerShine 6s ease-in-out infinite;
+                pointer-events: none;
+            }
+            .offer::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 14px;
+                right: 14px;
+                height: 2px;
+                border-radius: 999px;
+                background: linear-gradient(90deg, transparent, #59eda0 28%, #f5c518 58%, transparent 92%);
+                opacity: 0.85;
+            }
+            @keyframes offerShine {
+                0%,
+                55% {
+                    transform: translateX(-70%);
+                }
+                78%,
+                100% {
+                    transform: translateX(70%);
+                }
             }
             .offer-h {
+                position: relative;
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 12px;
             }
             .offer-ic {
                 flex: none;
                 display: grid;
                 place-items: center;
-                width: 38px;
-                height: 38px;
-                border-radius: 10px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid var(--line);
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+                background: linear-gradient(180deg, rgba(94, 234, 160, 0.2), rgba(4, 20, 12, 0.55));
+                border: 1px solid rgba(94, 234, 160, 0.45);
+                box-shadow: 0 0 18px rgba(61, 220, 138, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.14);
             }
             .offer-ic img {
-                width: 24px;
-                height: 24px;
+                width: 32px;
+                height: 32px;
                 image-rendering: pixelated;
             }
             .offer-tt {
@@ -1752,75 +1876,204 @@
             }
             .offer-tt b {
                 display: block;
-                font-size: 14px;
-                color: #eaf4ff;
+                font-size: 17px;
+                letter-spacing: -0.01em;
+                color: #f2fff8;
+                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
             }
             .offer-tt small {
                 display: block;
-                margin-top: 2px;
+                margin-top: 3px;
                 font-size: 11px;
-                color: var(--muted-2);
+                color: #a7c4b4;
             }
             .offer-badge {
                 flex: none;
-                padding: 3px 8px;
+                padding: 4px 9px;
                 border-radius: 999px;
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 0.08em;
+                font-size: 9.5px;
+                font-weight: 800;
+                letter-spacing: 0.07em;
                 text-transform: uppercase;
-                color: #0a2a18;
-                background: linear-gradient(180deg, #59eda0, #16a868);
+                color: #3a2600;
+                background: linear-gradient(180deg, #fff3a0, #f5c518 55%, #c98f12);
+                border: 1px solid rgba(255, 246, 192, 0.65);
+                box-shadow: 0 2px 10px rgba(245, 197, 24, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+                animation: offerBadge 2.4s ease-in-out infinite;
             }
-            .offer-badge.wait {
-                color: #cfd8e3;
-                background: rgba(255, 255, 255, 0.08);
-                border: 1px solid var(--line);
+            @keyframes offerBadge {
+                0%,
+                100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
             }
             .offer-txt {
-                margin: 8px 0 10px;
-                font-size: 11.5px;
-                line-height: 1.4;
-                color: var(--muted);
+                position: relative;
+                margin: 10px 0 9px;
+                font-size: 12px;
+                line-height: 1.45;
+                color: #b9cdc2;
+            }
+            .offer-txt b {
+                font-weight: 700;
+                color: #8ce9b4;
+            }
+            .offer-timer {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0 0 11px;
+                font-size: 11px;
+                color: #9fb3a8;
+            }
+            .ot-dot {
+                flex: none;
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: #59eda0;
+                box-shadow: 0 0 9px #59eda0;
+                animation: offerDot 1.4s ease-in-out infinite;
+            }
+            @keyframes offerDot {
+                0%,
+                100% {
+                    opacity: 0.55;
+                    transform: scale(0.9);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1.15);
+                }
+            }
+            #otdays {
+                flex: none;
+                font-weight: 600;
+                color: #cfe8db;
+            }
+            .ot-track {
+                flex: 1 1 auto;
+                min-width: 40px;
+                height: 5px;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.09);
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+                overflow: hidden;
+            }
+            .ot-track i {
+                display: block;
+                width: 100%;
+                height: 100%;
+                border-radius: 999px;
+                background: linear-gradient(90deg, #16a868, #59eda0 65%, #f5c518);
+                transition: width 0.5s ease;
             }
             .offer-foot {
+                position: relative;
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                padding-top: 10px;
+                border-top: 1px dashed rgba(94, 234, 160, 0.2);
             }
             .offer-price {
                 flex: 1 1 auto;
                 display: inline-flex;
                 align-items: center;
                 gap: 6px;
-                font-size: 12px;
-                color: #dfe8f2;
+                min-width: 0;
+                padding: 7px 10px;
+                border-radius: 12px;
+                background: rgba(0, 0, 0, 0.28);
+                border: 1px solid rgba(94, 234, 160, 0.18);
+                font-size: 11.5px;
+                color: #e6f4ec;
+                white-space: nowrap;
             }
             .offer-price b {
-                font-size: 14px;
+                font-size: 16px;
+                color: #fff3a0;
+                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
             .offer-price img {
-                width: 18px;
-                height: 18px;
+                width: 20px;
+                height: 20px;
                 image-rendering: pixelated;
             }
+            .offer-price span {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
             .offer-buy {
+                flex: none;
                 width: auto;
                 margin: 0;
-                padding: 9px 14px;
-                font-size: 12.5px;
+                padding: 11px 18px;
+                font-size: 13.5px;
+                border-radius: 12px;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 8px 20px -10px rgba(61, 220, 138, 0.9);
+            }
+            .btn.sm.offer-buy {
+                margin: 0;
+                border: 0;
+                color: #06210f;
+                background: linear-gradient(180deg, #7bffb0 0%, #2ec97f 48%, #14a564 100%);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 8px 20px -10px rgba(61, 220, 138, 0.95);
+            }
+            .btn.sm.offer-buy:hover:not(:disabled) {
+                background: linear-gradient(180deg, #8dffc0 0%, #39d98b 48%, #17b06b 100%);
+            }
+            .btn.sm.offer-buy:disabled {
+                opacity: 0.55;
+                filter: grayscale(0.35);
+                cursor: not-allowed;
             }
             .offer-msg {
-                min-height: 1.4em;
-                margin: 8px 0 0;
+                position: relative;
+                min-height: 1.35em;
+                margin: 9px 0 0;
                 font-size: 11.5px;
-                color: var(--muted-2);
+                color: #9fb3a8;
             }
             .offer-msg.good {
                 color: #8ce9b4;
             }
             .offer-msg.bad {
                 color: #ff9d95;
+            }
+            @media (max-width: 360px) {
+                .offer {
+                    padding: 12px;
+                }
+                .offer-ic {
+                    width: 42px;
+                    height: 42px;
+                }
+                .offer-ic img {
+                    width: 28px;
+                    height: 28px;
+                }
+                .offer-tt b {
+                    font-size: 15.5px;
+                }
+                .offer-badge {
+                    font-size: 8.5px;
+                    padding: 3px 7px;
+                }
+                .offer-buy {
+                    padding: 10px 14px;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .offer::before,
+                .offer-badge,
+                .ot-dot {
+                    animation: none;
+                }
             }
             /* ---------- автокликер ---------- */
             .autobar {
@@ -2225,7 +2478,10 @@
                         <div class="clk">
                             <div class="clk-h">
                                 <b>Генератор предметов</b>
-                                <span class="clk-left" id="clkleft">10 / 10</span>
+                                <span class="clk-side">
+                                    <span class="clk-left" id="clkleft">10 / 10</span>
+                                    <button class="clk-help" id="clkhelp" type="button" aria-label="Шансы предметов" title="Шансы предметов">?</button>
+                                </span>
                             </div>
                             <div class="clk-box" id="clkbox">
                                 <span class="clk-ph" id="clkph">?</span>
@@ -2317,14 +2573,19 @@
                             <div class="offer-ic"><img class="uic" data-item="nblock" alt="" aria-hidden="true" /></div>
                             <div class="offer-tt">
                                 <b>Автокликер</b>
-                                <small>Акция дня · только в четверг</small>
+                                <small id="osub">Временная акция · до 1 декабря</small>
                             </div>
-                            <span class="offer-badge" id="obadge">ЧТ</span>
+                            <span class="offer-badge" id="obadge">до 1 дек</span>
                         </div>
                         <p class="offer-txt">
-                            Сам нажимает «Крутить!» с твоей ставкой и целью. Появляется в магазине только по
-                            четвергам.
+                            Сам нажимает «Крутить!» с твоей ставкой и целью.
+                            <b id="odeadline">Успей забрать до 1 декабря</b> — потом предложение исчезнет.
                         </p>
+                        <div class="offer-timer" id="otimer">
+                            <span class="ot-dot"></span>
+                            <span id="otdays">Осталось 26 дней</span>
+                            <span class="ot-track"><i id="otbar"></i></span>
+                        </div>
                         <div class="offer-foot">
                             <span class="offer-price"
                                 ><b>3</b><img class="uic" data-item="nblock" alt="" aria-hidden="true" /><span
@@ -2367,7 +2628,7 @@
         <div class="mnu-sc" id="mnusc">
             <div class="mnu">
                 <div class="mnu-h"><h2>Меню</h2></div>
-                <button class="tab on" id="t1">Колесо и кликер</button>
+                <button class="tab on" id="t1">Фортуна</button>
                 <button class="tab" id="t4">Магазин</button>
                 <button class="tab" id="t2">Верстак</button>
                 <button class="tab" id="t7">Печь<img class="uic" data-item="furnace" alt="" aria-hidden="true" /></button>
@@ -2417,10 +2678,30 @@
                 <div class="sec">
                     <h2>Автокликер</h2>
                     <div class="row">
-                        <button class="btn sm" id="agiva" type="button">Выдать</button>
-                        <button class="btn sm" id="atka" type="button">Убрать</button>
+                        <button class="btn sm" id="agivo" type="button">Выдать акцию заново</button>
+                    </div>
+                    <p class="hint" id="ainfoo"></p>
+                    <div class="row">
+                        <button class="btn sm" id="agiva" type="button">Выдать автокликер</button>
+                        <button class="btn sm" id="atka" type="button">Убрать автокликер</button>
                     </div>
                     <p class="hint" id="ainfoa"></p>
+                </div>
+                <div class="sec">
+                    <h2>Кликер</h2>
+                    <div class="row">
+                        <button class="btn sm" id="agivck" type="button">Неограниченные клики</button>
+                        <button class="btn sm" id="atakck" type="button">Обычный лимит</button>
+                    </div>
+                    <p class="hint" id="ainfock"></p>
+                    <div class="row">
+                        <label>Скрытая удача кликера, % <input id="aclk" type="number" min="1" max="90" value="20" /></label>
+                    </div>
+                    <div class="row">
+                        <button class="btn sm" id="aclkadd" type="button">Включить удачу</button>
+                        <button class="btn sm" id="aclkoff" type="button">Выключить</button>
+                    </div>
+                    <p class="hint" id="ainfocl"></p>
                 </div>
                 <div class="sec">
                     <h2>Удача</h2>
@@ -2447,6 +2728,16 @@
             <div class="gui menu">
                 <h2 style="margin-top: 0">Выбери желаемый предмет</h2>
                 <div class="grid" id="grid"></div>
+            </div>
+        </div>
+        <div class="ov" id="clkov">
+            <div class="gui menu">
+                <h2 style="margin-top: 0">Шансы кликера</h2>
+                <p class="hint">
+                    Шанс зависит от ценности: чем дороже предмет, тем он реже. Указан шанс за один клик.
+                </p>
+                <div class="chlist" id="chlist"></div>
+                <button class="btn sm" data-close>Закрыть</button>
             </div>
         </div>
         <div id="upd">
@@ -3285,7 +3576,7 @@
                 { id: "qblock", n: "Кварцевый блок", v: 126, c: 1, f: tile(metalBlock("#f3e8e2", "#ffffff", "#cfa28b")) },
                 { id: "redblock", n: "Редстоуновый блок", v: 162, c: 1, f: tile(metalBlock("#e01010", "#ff6a5a", "#9a0a0a")) },
                 { id: "eblock", n: "Изумрудный блок", v: 405, c: 1, f: tile(metalBlock("#24b85a", "#8bffae", "#0c5a2c")) },
-                { id: "wpick", n: "Деревянная кирка", v: 10, c: 1, f: pickG("#b8945f", "#7d5f35", "#d9b574") },
+                { id: "wpick", n: "Деревянная кирка", v: 7, c: 1, f: pickG("#b8945f", "#7d5f35", "#d9b574") },
                 { id: "spick", n: "Каменная кирка", v: 13, c: 1, f: pickG("#8a8a8a", "#5a5a5a", "#b0b0b0") },
                 { id: "ipick", n: "Железная кирка", v: 28, c: 1, f: pickG("#d4d4d4", "#8a8a8a", "#ffffff") },
                 { id: "dpick", n: "Алмазная кирка", v: 94, c: 1, f: pickG("#4fe8d8", "#1b9aa6", "#d8fffa") },
@@ -3434,11 +3725,13 @@
                     p = (chest[id] || 0) % s;
                 return (chestSL - slotsOf(chest)) * s + (p ? s - p : 0);
             };
+            const NO_ROOM = "Инвентарь полон — освободи место в инвентаре.";
             let tab = "roulette",
                 held = null,
                 grid = Array(9).fill(null),
                 lastRc = null,
                 cmsg = "";
+            const OFFER_WINDOW = 26 * 86400000;
             let got = {},
                 inv = { dirt: 5 },
                 chest = {},
@@ -3449,6 +3742,7 @@
                 coins = 0,
                 autoOwned = false,
                 autoPaused = false,
+                offerEnd = new Date(2026, 11, 1, 0, 0, 0).getTime(),
                 fIn = null,
                 fFuel = null,
                 fHeat = 0,
@@ -3466,6 +3760,8 @@
                 clkLast = null,
                 clkNote = "",
                 clkMood = "",
+                clkLuck = 0,
+                clkInf = false,
                 ac,
                 note = "";
             const CLICKS_MAX = 10;
@@ -3504,8 +3800,11 @@
                     if (s.csl) chestSL = Math.max(10, Math.min(MAXC, Math.floor(+s.csl) || 10));
                     if (s.auto != null && isFinite(+s.auto)) autoOwned = +s.auto > 0;
                     autoPaused = !!s.ap;
+                    if (s.oe != null && isFinite(+s.oe)) offerEnd = Math.max(0, +s.oe);
                     if (typeof s.cd === "string") clkDay = s.cd;
                     if (s.cu != null && isFinite(+s.cu)) clkUsed = Math.max(0, Math.floor(+s.cu));
+                    if (s.cl != null && isFinite(+s.cl)) clkLuck = Math.max(0, Math.min(90, Math.floor(+s.cl)));
+                    clkInf = !!s.ci;
                     if (typeof s.ff === "string") fFuel = s.ff;
                     if (s.heat != null && isFinite(+s.heat)) fHeat = Math.max(0, Math.floor(+s.heat));
                     else if (s.fb != null && isFinite(+s.fb)) fHeat = Math.max(0, Math.floor(+s.fb));
@@ -3528,7 +3827,7 @@
             }
             function save(d) {
                 try {
-                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL, coins, auto: autoOwned ? 1 : 0, ap: autoPaused ? 1 : 0, ff: fFuel, heat: fHeat, cd: clkDay, cu: clkUsed }));
+                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL, coins, auto: autoOwned ? 1 : 0, ap: autoPaused ? 1 : 0, ff: fFuel, heat: fHeat, cd: clkDay, cu: clkUsed, cl: clkLuck, ci: clkInf ? 1 : 0, oe: offerEnd }));
                 } catch (e) {
                     storeOk = false;
                 }
@@ -3711,7 +4010,7 @@
                 if (!spinning && !hold) {
                     setInfo(
                         full
-                            ? "Инвентарь полон."
+                            ? NO_ROOM
                             : note
                               ? note
                               : bet && tgt
@@ -3846,7 +4145,7 @@
             };
             addEventListener("resize", () => labels(chance()));
             /* ===== Кликер: генератор случайных предметов (10 в день) ===== */
-            const clkPrice = (id) => Math.max(1, Math.round(by(id).v * 0.6));
+            const clkPrice = (id) => Math.max(1, Math.round(by(id).v));
             function coinWord(n) {
                 const a = Math.abs(n) % 100,
                     b = a % 10;
@@ -3855,21 +4154,65 @@
                 if (b >= 2 && b <= 4) return "монеты";
                 return "монет";
             }
-            /* чем дороже предмет, тем реже он выпадает — но выпасть может любой */
-            function clkPick() {
+            /* шанс зависит от ценности: вес = 1 / цена^0.6 */
+            const CLK_EXP = 0.6;
+            function clkWeights(list) {
                 let total = 0;
                 const w = [];
-                ITEMS.forEach((i) => {
-                    const x = 1 / Math.pow(Math.max(1, i.v), 0.6);
+                list.forEach((i) => {
+                    const x = 1 / Math.pow(Math.max(1, i.v), CLK_EXP);
                     w.push(x);
                     total += x;
                 });
+                return { w, total };
+            }
+            let clkBase = null;
+            const clkBaseData = () => (clkBase = clkBase || clkWeights(ITEMS));
+            function clkTable() {
+                const { w, total } = clkBaseData();
+                return ITEMS.map((it, k) => ({ it, p: (w[k] / total) * 100 })).sort((a, b) => b.p - a.p);
+            }
+            function clkPickOne() {
+                const { w, total } = clkBaseData();
                 let r = Math.random() * total;
                 for (let k = 0; k < ITEMS.length; k++) {
                     r -= w[k];
                     if (r <= 0) return ITEMS[k];
                 }
                 return ITEMS[ITEMS.length - 1];
+            }
+            /* скрытая удача: с шансом clkLuck% клик идёт по «богатому» пулу —
+               только самые дорогие предметы. В списке шансов это не отображается. */
+            const CLK_RICH_V = 100;
+            let clkRich = null;
+            const clkRichList = () => (clkRich = clkRich || ITEMS.filter((i) => i.v >= CLK_RICH_V));
+            function clkPick() {
+                if (clkLuck > 0 && Math.random() * 100 < clkLuck) {
+                    const list = clkRichList();
+                    return list[(Math.random() * list.length) | 0];
+                }
+                return clkPickOne();
+            }
+            const fmtPct = (p) => (p >= 10 ? String(Math.round(p * 10) / 10) : p >= 1 ? p.toFixed(1) : p.toFixed(2));
+            function renderChances() {
+                const box = $("chlist");
+                if (!box) return;
+                box.innerHTML = "";
+                clkTable().forEach(({ it, p }) => {
+                    const row = document.createElement("div");
+                    row.className = "chrow" + (p < 0.5 ? " rare" : "");
+                    const im = document.createElement("img");
+                    im.src = it.img;
+                    im.alt = "";
+                    const nm = document.createElement("span");
+                    nm.className = "nm";
+                    nm.textContent = it.n;
+                    const pc = document.createElement("span");
+                    pc.className = "pc";
+                    pc.textContent = fmtPct(p) + "%";
+                    row.append(im, nm, pc);
+                    box.appendChild(row);
+                });
             }
             function showClk(id) {
                 const it = by(id);
@@ -3924,10 +4267,11 @@
                 const chip = $("clkleft"),
                     go = $("clkgo");
                 if (!chip || !go) return;
-                const left = Math.max(0, CLICKS_MAX - clkUsed);
-                chip.textContent = left + " / " + CLICKS_MAX;
-                chip.classList.toggle("off", left < 1);
-                go.disabled = clkBusy || spinning || left < 1;
+                const left = clkInf ? CLICKS_MAX : Math.max(0, CLICKS_MAX - clkUsed);
+                chip.textContent = clkInf ? "∞" : left + " / " + CLICKS_MAX;
+                chip.classList.toggle("off", !clkInf && left < 1);
+                chip.classList.toggle("inf", clkInf);
+                go.disabled = clkBusy || spinning || (!clkInf && left < 1);
                 const bw = $("mrWheel"),
                     bc = $("mrClick");
                 if (bw && bc) bw.disabled = bc.disabled = clkBusy;
@@ -3940,7 +4284,7 @@
                     $("clkpr").hidden = true;
                 }
                 const txt = $("clkmsg");
-                if (left < 1 && !clkNote) {
+                if (!clkInf && left < 1 && !clkNote) {
                     txt.className = "clk-msg bad";
                     txt.textContent = "Клики на сегодня закончились. Приходи завтра.";
                 } else {
@@ -3966,7 +4310,7 @@
                     clkDay = dayKey();
                     clkUsed = 0;
                 }
-                if (CLICKS_MAX - clkUsed < 1) {
+                if (!clkInf && CLICKS_MAX - clkUsed < 1) {
                     clkNote = "";
                     clkMood = "bad";
                     render();
@@ -3974,7 +4318,7 @@
                 }
                 const it = clkPick();
                 if (room(it.id) < 1) {
-                    clkNote = "Инвентарь полон — освободи место.";
+                    clkNote = NO_ROOM;
                     clkMood = "bad";
                     snd(220, 0.12, "sawtooth");
                     render();
@@ -4000,7 +4344,7 @@
                     clearInterval(roll);
                     box.classList.remove("roll");
                     inv[it.id] = (inv[it.id] || 0) + 1;
-                    clkUsed = Math.min(CLICKS_MAX, clkUsed + 1);
+                    if (!clkInf) clkUsed = Math.min(CLICKS_MAX, clkUsed + 1);
                     clkLast = it.id;
                     clkBusy = false;
                     showClk(it.id);
@@ -4009,13 +4353,21 @@
                     box.classList.add("hit");
                     setTimeout(() => box.classList.remove("hit"), 620);
                     clkBurst(it.v);
-                    clkNote = "Выпало: " + it.n + ". " + (clkUsed >= CLICKS_MAX ? "Клики на сегодня закончились." : "+1 в инвентарь.");
+                    clkNote = "Выпало: " + it.n + ". " + (!clkInf && clkUsed >= CLICKS_MAX ? "Клики на сегодня закончились." : "+1 в инвентарь.");
                     clkMood = "win";
                     snd(660, 0.1, "square");
                     setTimeout(() => snd(880, 0.12, "square"), 100);
                     setTimeout(() => snd(1180, 0.18, "square"), 200);
                     render();
                 }, 1300);
+            };
+            $("clkhelp").onclick = () => {
+                snd(600, 0.05, "square");
+                renderChances();
+                $("clkov").classList.add("on");
+            };
+            $("clkov").onclick = (e) => {
+                if (e.target === e.currentTarget) e.currentTarget.classList.remove("on");
             };
             /* ===== Вход в админ панель по паролю (хранится только хэш SHA-256 от "mcw-admin:"+пароль) ===== */
             const PW_HASH = "2009e6378ae8b01d88b191ab684470642246544f2de844fff128fe69c9a7ef45";
@@ -4234,7 +4586,11 @@
             function admInfo() {
                 const a = $("acinfo"),
                     b = $("ainfo"),
-                    c = $("ainfoa");
+                    c = $("ainfoa"),
+                    d = $("ainfock"),
+                    e = $("ainfocl"),
+                    f = $("ainfoo"),
+                    g = $("agivo");
                 if (a) a.textContent = "Сейчас: монет " + coins;
                 if (b)
                     b.textContent =
@@ -4243,6 +4599,26 @@
                     c.textContent = autoOwned
                         ? "Сейчас: выдан (" + (autoPaused ? "выключен" : "включён") + ")"
                         : "Сейчас: не выдан";
+                if (f)
+                    f.textContent = autoOwned
+                        ? "Акция скрыта: автокликер уже выдан. Убери его, чтобы вернуть предложение."
+                        : offerLeft() > 0
+                          ? "Акция активна до " +
+                            new Date(offerEnd).toLocaleDateString("ru-RU", { day: "numeric", month: "long" }) +
+                            "."
+                          : "Акция завершена. Нажми «Выдать акцию заново».";
+                if (g) g.disabled = autoOwned;
+                if (d)
+                    d.textContent = clkInf
+                        ? "Сейчас: клики без ограничений"
+                        : "Сейчас: обычный лимит " + CLICKS_MAX + " в день (осталось " + Math.max(0, CLICKS_MAX - clkUsed) + ")";
+                if (e)
+                    e.textContent =
+                        clkLuck > 0
+                            ? "Скрытая удача: " +
+                              clkLuck +
+                              "% — с этим шансом клик берёт только самые дорогие предметы (в списке шансов не видно)"
+                            : "Скрытая удача выключена";
             }
             $("agivc").onclick = () => {
                 if (!unlocked) return;
@@ -4278,10 +4654,58 @@
                 render();
                 admInfo();
             };
+            $("agivo").onclick = () => {
+                if (!unlocked) return;
+                if (autoOwned) {
+                    const f = $("ainfoo");
+                    if (f) f.textContent = "Сначала убери автокликер — без него акция снова появится в магазине.";
+                    snd(220, 0.12, "sawtooth");
+                    return;
+                }
+                offerEnd = Date.now() + OFFER_WINDOW;
+                snd(660, 0.08, "square");
+                setTimeout(() => snd(880, 0.12, "square"), 90);
+                render();
+                renderOffer();
+                admInfo();
+            };
             $("atka").onclick = () => {
                 if (!unlocked) return;
                 autoOwned = false;
                 autoPaused = false;
+                snd(330, 0.08, "square");
+                render();
+                admInfo();
+            };
+            $("agivck").onclick = () => {
+                if (!unlocked) return;
+                clkInf = true;
+                snd(660, 0.08, "square");
+                render();
+                admInfo();
+            };
+            $("atakck").onclick = () => {
+                if (!unlocked) return;
+                clkInf = false;
+                clkDay = dayKey();
+                clkUsed = 0;
+                clkNote = "";
+                clkMood = "";
+                snd(330, 0.08, "square");
+                render();
+                admInfo();
+            };
+            $("aclkadd").onclick = () => {
+                if (!unlocked) return;
+                const n = Math.max(1, Math.min(90, Math.floor(+$("aclk").value || 0)));
+                clkLuck = n;
+                snd(660, 0.08, "square");
+                render();
+                admInfo();
+            };
+            $("aclkoff").onclick = () => {
+                if (!unlocked) return;
+                clkLuck = 0;
                 snd(330, 0.08, "square");
                 render();
                 admInfo();
@@ -4626,7 +5050,7 @@
                 if (spinning) return;
                 const sp = room(id);
                 if (sp <= 0) {
-                    chestMsg("В инвентаре нет места (50 клеток). Освободи место.");
+                    chestMsg(NO_ROOM);
                     snd(220, 0.15, "sawtooth");
                     return;
                 }
@@ -4638,7 +5062,7 @@
                 if (chest[id] <= 0) delete chest[id];
                 inv[id] = (inv[id] || 0) + n;
                 snd(500, 0.06, "square");
-                chestMsg("Возвращено " + n + "× " + by(id).n + " в инвентарь." + (n < w ? " В инвентаре нет места." : ""));
+                chestMsg("Возвращено " + n + "× " + by(id).n + " в инвентарь." + (n < w ? " " + NO_ROOM : ""));
                 render();
             }
             function upChest(n, costId, costN) {
@@ -4700,7 +5124,7 @@
                 $("cinfo").textContent =
                     cmsg ||
                     (full
-                        ? "Нет места в инвентаре для результата."
+                        ? NO_ROOM
                         : rc
                           ? `Готово: ${rc.n > 1 ? rc.n + "× " : ""}${by(rc.out).n}. Нажми на результат!`
                           : grid.some(Boolean)
@@ -4744,7 +5168,12 @@
             function doCraft() {
                 if (spinning) return;
                 const rc = gridMatch();
-                if (!rc || room(rc.out) < rc.n) return;
+                if (!rc) return;
+                if (room(rc.out) < rc.n) {
+                    cmsg = NO_ROOM;
+                    render();
+                    return;
+                }
                 grid.forEach((id) => {
                     if (id) {
                         inv[id]--;
@@ -4808,7 +5237,7 @@
             }
             /* цена покупки и продажи считается от ценности предмета */
             const buyPrice = (id) => Math.max(2, Math.round(by(id).v * 2));
-            const sellPrice = (id) => Math.max(1, Math.round(by(id).v * 0.6));
+            const sellPrice = (id) => Math.max(1, Math.round(by(id).v));
             let shMode = "buy",
                 shQ = "",
                 shNote = "";
@@ -4819,9 +5248,32 @@
                 e.textContent = t || "";
                 e.className = "shmsg" + (t ? (bad ? " bad" : " good") : "");
             }
-            /* ===== Автокликер: акция появляется только по четвергам ===== */
+            /* ===== Автокликер: временная акция до 1 декабря ===== */
             const AUTO_COST = 3;
-            const isThursday = (d) => d.getDay() === 4;
+            const offerLeft = () => Math.max(0, offerEnd - Date.now());
+            function offerTimer() {
+                const daysEl = $("otdays"),
+                    bar = $("otbar"),
+                    badge = $("obadge"),
+                    sub = $("osub"),
+                    deadline = $("odeadline");
+                if (!daysEl || !bar) return;
+                const left = offerLeft(),
+                    days = Math.ceil(left / 86400000),
+                    endDate = new Date(offerEnd),
+                    longDate = endDate.toLocaleDateString("ru-RU", { day: "numeric", month: "long" }),
+                    shortDate = endDate.toLocaleDateString("ru-RU", { day: "numeric", month: "short" }).replace(".", "");
+                if (sub) sub.textContent = "Временная акция · до " + longDate;
+                if (deadline) deadline.textContent = "Успей забрать до " + longDate;
+                daysEl.textContent =
+                    left <= 0
+                        ? "Акция завершена"
+                        : days <= 1
+                          ? "Последний день"
+                          : "Осталось " + days + " " + plural(days, "день", "дня", "дней");
+                bar.style.width = Math.max(0, Math.min(100, (left / OFFER_WINDOW) * 100)) + "%";
+                if (badge) badge.textContent = left <= 0 ? "завершена" : days <= 3 ? "последние дни" : "до " + shortDate;
+            }
             function autoMsg(t, bad) {
                 const e = $("automsg");
                 if (!e) return;
@@ -4832,7 +5284,7 @@
                 const card = $("offer"),
                     b = $("autobuy");
                 if (!card || !b) return;
-                if (autoOwned || !isThursday(new Date())) {
+                if (autoOwned || offerLeft() <= 0) {
                     card.hidden = true;
                     return;
                 }
@@ -4842,8 +5294,15 @@
                 b.textContent = "Купить";
                 const can = (inv.nblock || 0) >= AUTO_COST;
                 b.disabled = !can;
-                autoMsg(can ? "Акция только сегодня." : "Нужно 3× Незеритовый блок.", !can);
+                autoMsg(can ? "" : "Нужно 3× Незеритовый блок.", !can);
+                offerTimer();
             }
+            setInterval(() => {
+                const card = $("offer");
+                if (!card || card.hidden) return;
+                if (offerLeft() <= 0) card.hidden = true;
+                else offerTimer();
+            }, 60000);
             function renderAutoBar() {
                 const bar = $("autobar");
                 if (!bar) return;
@@ -4855,9 +5314,10 @@
             }
             $("autobuy").onclick = () => {
                 if (spinning || autoOwned) return;
-                if (!isThursday(new Date())) {
-                    autoMsg("Акция доступна только в четверг.", true);
+                if (offerLeft() <= 0) {
+                    autoMsg("Акция завершилась.", true);
                     snd(220, 0.15, "sawtooth");
+                    renderOffer();
                     return;
                 }
                 if (!((inv.nblock || 0) >= AUTO_COST)) {
@@ -4948,7 +5408,9 @@
                     row.append(ic, nm, bs);
                     box.appendChild(row);
                 });
-                shopMsg(shNote, false);
+                if (shNote) shopMsg(shNote, false);
+                else if (buy && list.length && list.every((i) => room(i.id) < 1)) shopMsg(NO_ROOM, true);
+                else shopMsg("", false);
                 shNote = "";
             }
             function shBuy(id, n) {
@@ -4956,7 +5418,7 @@
                 const price = buyPrice(id),
                     can = Math.min(n, room(id), Math.floor(coins / price));
                 if (can < 1) {
-                    shopMsg(coins < price ? "Не хватает монет." : "Нет места в инвентаре.", true);
+                    shopMsg(coins < price ? "Не хватает монет." : NO_ROOM, true);
                     snd(220, 0.15, "sawtooth");
                     return;
                 }
@@ -5158,7 +5620,7 @@
                 } else if (!r) msg = "Нажми на руду в инвентаре — печь покажет, что получится.";
                 else if (!fp && fHeat < 1) msg = "Нажми на топливо в инвентаре: угольный блок, уголь, древесный уголь, доски или палку.";
                 else if (!batches) msg = "Мало предметов: нужно " + r.need + " × " + by(fIn).n + ".";
-                else if (full) msg = "Инвентарь полон.";
+                else if (full) msg = NO_ROOM;
                 else
                     msg =
                         "1 плавка: " +
@@ -5238,7 +5700,7 @@
                 }
                 const n = Math.min(all ? max : 1, room(r.out));
                 if (n < 1) {
-                    fSay("Инвентарь полон.", true);
+                    fSay(NO_ROOM, true);
                     snd(220, 0.12, "sawtooth");
                     renderFurn();
                     return;
@@ -5302,6 +5764,66 @@
    (с новым значением v). Каждый игрок увидит это окно один раз — пока не нажмёт «Играть!».
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
+                {
+                    v: "2026.11.05.6",
+                    date: "5 ноября 2026",
+                    title: "Перевыдача акции автокликера",
+                    icons: ["nblock"],
+                    items: [
+                        ["new", "В админ-панели появилась кнопка «Выдать акцию заново»: она возвращает предложение автокликера в магазин и перезапускает отсчёт на 26 дней, не выдавая сам автокликер."],
+                        ["chg", "Если автокликер уже выдан, сначала убери его — иначе акция останется скрытой."],
+                    ],
+                },
+                {
+                    v: "2026.11.05.5",
+                    date: "5 ноября 2026",
+                    title: "Автокликер: акция до 1 декабря",
+                    icons: ["nblock"],
+                    items: [
+                        ["chg", "Автокликер теперь продаётся по временной акции — только до 1 декабря."],
+                        ["new", "Карточка предложения оформлена заново: таймер, полоса до конца акции и заметная кнопка."],
+                    ],
+                },
+                {
+                    v: "2026.11.05.4",
+                    date: "5 ноября 2026",
+                    title: "Автокликер доступен всегда",
+                    icons: ["nblock"],
+                    items: [
+                        ["chg", "Предложение автокликера теперь появляется в магазине каждый день, а не только по четвергам."],
+                    ],
+                },
+                {
+                    v: "2026.11.05.3",
+                    date: "5 ноября 2026",
+                    title: "Цены без путаницы",
+                    icons: ["spick", "wpick", "ssword"],
+                    items: [
+                        ["fix", "Цена предмета теперь везде совпадает с его ценностью: каменная кирка стоит 13, а не 8."],
+                        ["chg", "В магазине продажа идёт по ценности предмета, а покупка — за двойную ценность."],
+                        ["fix", "Деревянная кирка подешевела до 7 и больше не дороже каменного меча."],
+                    ],
+                },
+                {
+                    v: "2026.11.05.2",
+                    date: "5 ноября 2026",
+                    title: "Подсказка при полном инвентаре",
+                    icons: ["chest", "dirt"],
+                    items: [
+                        ["fix", "Если инвентарь заполнен, игра теперь везде пишет: «Инвентарь полон — освободи место в инвентаре»."],
+                    ],
+                },
+                {
+                    v: "2026.11.05.1",
+                    date: "5 ноября 2026",
+                    title: "Шансы кликера и «Фортуна»",
+                    icons: ["dirt", "dblock", "nblock"],
+                    items: [
+                        ["new", "Вкладка в меню теперь называется «Фортуна» — внутри колесо фортуны и кликер."],
+                        ["new", "У кликера появился знак «?» в правом верхнем углу: там расписаны шансы всех предметов за один клик."],
+                        ["chg", "Шанс выпадения зависит от ценности: чем дороже предмет, тем он реже. Самые дорогие — редкие, но выпасть может любой."],
+                    ],
+                },
                 {
                     v: "2026.11.04.2",
                     date: "4 ноября 2026",
