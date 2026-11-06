@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
     <head>
-        <meta charset="UTF-8">
+         <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-store">
     <meta http-equiv="Pragma" content="no-cache">
@@ -132,9 +132,6 @@
             }
             /* ---------- шапка ---------- */
             .hdr {
-                position: sticky;
-                top: env(safe-area-inset-top, 0px);
-                z-index: 6;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -145,60 +142,6 @@
                 border-bottom: 1px solid var(--line-2);
                 border-radius: 12px;
                 box-shadow: 0 10px 20px -18px #000;
-            }
-            .vpn-note {
-                display: flex;
-                align-items: flex-start;
-                gap: 9px;
-                margin: 0 0 12px;
-                padding: 9px 11px;
-                font-size: 12px;
-                font-weight: 500;
-                line-height: 1.45;
-                color: #ffe2a1;
-                background: linear-gradient(180deg, rgba(242, 201, 107, 0.1), rgba(242, 201, 107, 0.04));
-                border: 1px solid rgba(242, 201, 107, 0.28);
-                border-radius: 10px;
-            }
-            .vpn-note .vn-mark {
-                flex: none;
-                display: grid;
-                place-items: center;
-                width: 18px;
-                height: 18px;
-                margin-top: 1px;
-                border-radius: 50%;
-                background: #f2c96b;
-                color: #1b1f24;
-                font-size: 12px;
-                font-weight: 800;
-                line-height: 1;
-            }
-            .vpn-note .vn-body {
-                min-width: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .vn-ok {
-                padding: 4px 12px;
-                border: 1px solid rgba(242, 201, 107, 0.42);
-                border-radius: 8px;
-                background: rgba(242, 201, 107, 0.14);
-                color: #ffe2a1;
-                font: inherit;
-                font-size: 11.5px;
-                font-weight: 700;
-                line-height: 1.2;
-                cursor: pointer;
-                transition: background 0.16s, transform 0.16s;
-            }
-            .vn-ok:hover {
-                background: rgba(242, 201, 107, 0.24);
-            }
-            .vn-ok:active {
-                transform: scale(0.97);
             }
             .menu-btn {
                 flex: none;
@@ -2458,20 +2401,6 @@
                     margin-bottom: 8px;
                     padding: 8px 2px;
                 }
-                .vpn-note {
-                    gap: 7px;
-                    margin-bottom: 10px;
-                    padding: 8px 9px;
-                    font-size: 11.5px;
-                }
-                .vpn-note .vn-mark {
-                    width: 17px;
-                    height: 17px;
-                    font-size: 11px;
-                }
-                .vpn-note .vn-body {
-                    gap: 6px;
-                }
                 .menu-btn {
                     width: 40px;
                     height: 40px;
@@ -2588,13 +2517,6 @@
                     <div class="wallet" id="wbox"><img id="wico" alt="" /><b id="wcoins">0</b></div>
                 </div>
                 <div id="pg1">
-                    <div class="vpn-note" id="vpnNote" role="note">
-                        <b class="vn-mark" aria-hidden="true">!</b>
-                        <div class="vn-body">
-                            <span>Переустановите приложение, если оно у вас установлено. После переустановки веб-приложения оно будет работать без VPN.</span>
-                            <button class="vn-ok" id="vpnOk" type="button">Хорошо</button>
-                        </div>
-                    </div>
                     <div class="rmode" role="tablist" aria-label="Режим">
                         <button class="on" id="mrWheel" type="button" role="tab" aria-selected="true">Колесо</button>
                         <button id="mrClick" type="button" role="tab" aria-selected="false">Кликер</button>
@@ -5926,14 +5848,12 @@
                 {
                     v: "2026.11.06",
                     date: "6 ноября 2026",
-                    title: "Булыжник и памятка",
+                    title: "Булыжник и акция",
                     icons: ["cobble", "nblock"],
                     items: [
                         ["new", "У булыжника новая, более реалистичная текстура."],
                         ["chg", "Камень убран из игры: булыжник больше не плавится в камень, а старые запасы камня автоматически превращаются в булыжник."],
                         ["fix", "Акция автокликера теперь заканчивается 1 декабря, а не 2-го."],
-                        ["new", "Под шапкой появилась памятка о переустановке веб-приложения для работы без VPN."],
-                        ["new", "Под памяткой появилась кнопка «Хорошо»: нажми — памятка скроется и больше не будет появляться."],
                     ],
                 },
                 {
@@ -5941,7 +5861,6 @@
                     date: "6 ноября 2026",
                     title: "Мобильная версия и колесо",
                     items: [
-                        ["new", "Меню закреплено сверху: кнопка меню остаётся под рукой, пока листаешь страницу."],
                         ["fix", "Колесо больше не сливается с кликером: при переключении проценты не собираются в центре."],
                         ["fix", "Акция автокликера на узких экранах больше не разъезжается: цена и кнопка «Купить» стоят на своих местах."],
                         ["chg", "Убраны светлые полосы прокрутки по вертикали и горизонтали, на телефоне стало больше места."],
@@ -6156,20 +6075,6 @@
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape" && $("upd").classList.contains("on")) hideUpd();
             });
-            (function initVpnNote() {
-                const note = $("vpnNote"),
-                    ok = $("vpnOk");
-                if (!note || !ok) return;
-                try {
-                    if (localStorage.getItem("mcw_vpn_note") === "1") note.hidden = true;
-                } catch (e) {}
-                ok.onclick = () => {
-                    note.hidden = true;
-                    try {
-                        localStorage.setItem("mcw_vpn_note", "1");
-                    } catch (e) {}
-                };
-            })();
             window.MCW = { SMELT, FUEL, RECIPES, smelt, craft: doCraft, showUpd };
             render();
             renderUpdates();
