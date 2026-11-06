@@ -45,18 +45,16 @@
                 -webkit-text-size-adjust: 100%;
                 text-size-adjust: 100%;
                 background: #070a0d;
-            }
-            @media (min-width: 521px) {
-                html {
-                    scrollbar-gutter: stable both-edges;
-                }
+                overflow-x: clip;
             }
             body {
                 margin: 0;
+                width: 100%;
                 min-height: 100vh;
                 min-height: 100dvh;
                 display: flex;
                 flex-direction: column;
+                overflow-x: clip;
                 background-color: var(--bg);
                 color: var(--ink);
                 font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Inter", Arial, sans-serif;
@@ -64,6 +62,21 @@
                 line-height: 1.45;
                 -webkit-tap-highlight-color: transparent;
                 -webkit-font-smoothing: antialiased;
+            }
+            body.lock {
+                overflow: hidden;
+            }
+            /* никаких светлых полос прокрутки — ни вертикальных, ни горизонтальных */
+            *,
+            *::before,
+            *::after {
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+            }
+            *::-webkit-scrollbar {
+                width: 0 !important;
+                height: 0 !important;
+                display: none !important;
             }
             img {
                 -webkit-user-drag: none;
@@ -119,11 +132,73 @@
             }
             /* ---------- шапка ---------- */
             .hdr {
+                position: sticky;
+                top: env(safe-area-inset-top, 0px);
+                z-index: 6;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 10px;
-                margin: 0 0 14px;
+                margin: -2px 0 12px;
+                padding: 10px 2px;
+                background: linear-gradient(180deg, #1a2129 0%, #171d24 100%);
+                border-bottom: 1px solid var(--line-2);
+                border-radius: 12px;
+                box-shadow: 0 10px 20px -18px #000;
+            }
+            .vpn-note {
+                display: flex;
+                align-items: flex-start;
+                gap: 9px;
+                margin: 0 0 12px;
+                padding: 9px 11px;
+                font-size: 12px;
+                font-weight: 500;
+                line-height: 1.45;
+                color: #ffe2a1;
+                background: linear-gradient(180deg, rgba(242, 201, 107, 0.1), rgba(242, 201, 107, 0.04));
+                border: 1px solid rgba(242, 201, 107, 0.28);
+                border-radius: 10px;
+            }
+            .vpn-note .vn-mark {
+                flex: none;
+                display: grid;
+                place-items: center;
+                width: 18px;
+                height: 18px;
+                margin-top: 1px;
+                border-radius: 50%;
+                background: #f2c96b;
+                color: #1b1f24;
+                font-size: 12px;
+                font-weight: 800;
+                line-height: 1;
+            }
+            .vpn-note .vn-body {
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .vn-ok {
+                padding: 4px 12px;
+                border: 1px solid rgba(242, 201, 107, 0.42);
+                border-radius: 8px;
+                background: rgba(242, 201, 107, 0.14);
+                color: #ffe2a1;
+                font: inherit;
+                font-size: 11.5px;
+                font-weight: 700;
+                line-height: 1.2;
+                cursor: pointer;
+                transition: background 0.16s, transform 0.16s;
+            }
+            .vn-ok:hover {
+                background: rgba(242, 201, 107, 0.24);
+            }
+            .vn-ok:active {
+                transform: scale(0.97);
             }
             .menu-btn {
                 flex: none;
@@ -1197,10 +1272,11 @@
                 position: fixed;
                 inset: 0;
                 z-index: 20;
-                background: rgba(4, 6, 8, 0.66);
+                background: rgba(4, 6, 8, 0.72);
                 backdrop-filter: blur(4px);
                 opacity: 0;
                 pointer-events: none;
+                overscroll-behavior: contain;
                 transition: opacity 0.2s ease;
             }
             .mnu-sc.on {
@@ -1215,12 +1291,14 @@
                 display: flex;
                 flex-direction: column;
                 gap: 4px;
-                width: min(238px, 76vw);
+                width: min(280px, 86vw);
+                max-height: 100dvh;
                 padding: 16px 12px;
                 padding-top: calc(16px + env(safe-area-inset-top, 0px));
                 padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
                 overflow-y: auto;
-                background: linear-gradient(180deg, rgba(20, 25, 31, 0.99), rgba(11, 14, 18, 0.99));
+                overscroll-behavior: contain;
+                background: linear-gradient(180deg, #141a20 0%, #0b0f13 100%);
                 border-right: 1px solid var(--line);
                 border-radius: 0 20px 20px 0;
                 box-shadow: 24px 0 60px -20px #000;
@@ -1254,10 +1332,11 @@
                 width: 100%;
                 flex: none;
                 align-self: stretch;
+                min-height: 46px;
                 margin: 0;
-                padding: 11px 12px;
+                padding: 12px 13px;
                 font: inherit;
-                font-size: 13.5px;
+                font-size: 14px;
                 font-weight: 600;
                 text-align: left;
                 color: #c8d3df;
@@ -1265,6 +1344,7 @@
                 border: 1px solid transparent;
                 border-radius: 11px;
                 cursor: pointer;
+                touch-action: manipulation;
                 transition: background 0.15s, color 0.15s, border-color 0.15s;
             }
             .mnu .tab:hover {
@@ -1851,8 +1931,9 @@
             .offer-h {
                 position: relative;
                 display: flex;
+                flex-wrap: wrap;
                 align-items: center;
-                gap: 12px;
+                gap: 8px 12px;
             }
             .offer-ic {
                 flex: none;
@@ -1871,7 +1952,7 @@
                 image-rendering: pixelated;
             }
             .offer-tt {
-                flex: 1 1 auto;
+                flex: 1 1 120px;
                 min-width: 0;
             }
             .offer-tt b {
@@ -1880,6 +1961,7 @@
                 letter-spacing: -0.01em;
                 color: #f2fff8;
                 text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+                overflow-wrap: anywhere;
             }
             .offer-tt small {
                 display: block;
@@ -1889,6 +1971,7 @@
             }
             .offer-badge {
                 flex: none;
+                margin-left: auto;
                 padding: 4px 9px;
                 border-radius: 999px;
                 font-size: 9.5px;
@@ -1981,11 +2064,12 @@
                 border-top: 1px dashed rgba(94, 234, 160, 0.2);
             }
             .offer-price {
-                flex: 1 1 auto;
+                flex: 1 1 0;
                 display: inline-flex;
                 align-items: center;
                 gap: 6px;
                 min-width: 0;
+                overflow: hidden;
                 padding: 7px 10px;
                 border-radius: 12px;
                 background: rgba(0, 0, 0, 0.28);
@@ -1995,16 +2079,20 @@
                 white-space: nowrap;
             }
             .offer-price b {
+                flex: none;
                 font-size: 16px;
                 color: #fff3a0;
                 text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
             .offer-price img {
+                flex: none;
                 width: 20px;
                 height: 20px;
                 image-rendering: pixelated;
             }
             .offer-price span {
+                display: block;
+                min-width: 0;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
@@ -2018,7 +2106,11 @@
                 box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 8px 20px -10px rgba(61, 220, 138, 0.9);
             }
             .btn.sm.offer-buy {
+                flex: 0 0 auto;
+                width: auto;
+                min-width: 92px;
                 margin: 0;
+                padding: 11px 16px;
                 border: 0;
                 color: #06210f;
                 background: linear-gradient(180deg, #7bffb0 0%, #2ec97f 48%, #14a564 100%);
@@ -2049,6 +2141,9 @@
                 .offer {
                     padding: 12px;
                 }
+                .offer-h {
+                    gap: 7px 9px;
+                }
                 .offer-ic {
                     width: 42px;
                     height: 42px;
@@ -2061,11 +2156,21 @@
                     font-size: 15.5px;
                 }
                 .offer-badge {
-                    font-size: 8.5px;
-                    padding: 3px 7px;
+                    display: none;
                 }
-                .offer-buy {
-                    padding: 10px 14px;
+                .offer-txt {
+                    font-size: 11.5px;
+                }
+                .offer-foot {
+                    gap: 8px;
+                }
+                .offer-price {
+                    padding: 6px 8px;
+                    font-size: 11px;
+                }
+                .btn.sm.offer-buy {
+                    min-width: 80px;
+                    padding: 10px 12px;
                 }
             }
             @media (prefers-reduced-motion: reduce) {
@@ -2342,24 +2447,39 @@
             /* ---------- телефон ---------- */
             @media (max-width: 520px) {
                 .wrap {
-                    padding-left: 14px;
-                    padding-right: 14px;
+                    padding-left: 10px;
+                    padding-right: 10px;
                 }
                 .gui {
-                    padding: 12px;
+                    padding: 10px;
                 }
                 .hdr {
                     gap: 8px;
+                    margin-bottom: 8px;
+                    padding: 8px 2px;
+                }
+                .vpn-note {
+                    gap: 7px;
                     margin-bottom: 10px;
+                    padding: 8px 9px;
+                    font-size: 11.5px;
+                }
+                .vpn-note .vn-mark {
+                    width: 17px;
+                    height: 17px;
+                    font-size: 11px;
+                }
+                .vpn-note .vn-body {
+                    gap: 6px;
                 }
                 .menu-btn {
-                    width: 36px;
-                    height: 36px;
+                    width: 40px;
+                    height: 40px;
                     border-radius: 11px;
                 }
                 .menu-btn svg {
-                    width: 17px;
-                    height: 17px;
+                    width: 18px;
+                    height: 18px;
                 }
                 .wallet {
                     padding: 5px 9px 5px 7px;
@@ -2394,10 +2514,26 @@
                     max-height: min(47vh, 380px);
                 }
                 .mnu {
-                    width: min(228px, 78vw);
+                    width: min(280px, 86vw);
                 }
                 .paper {
                     padding: 18px 14px 14px;
+                }
+                .offer {
+                    padding: 13px;
+                }
+                .offer-foot {
+                    gap: 8px;
+                }
+                .offer-price {
+                    padding: 7px 9px;
+                }
+                .btn.sm.offer-buy {
+                    min-width: 86px;
+                }
+                #toast {
+                    max-width: calc(100vw - 20px);
+                    min-width: 0;
                 }
             }
             @media (max-width: 380px) {
@@ -2409,8 +2545,8 @@
                     font-size: 13.5px;
                 }
                 .menu-btn {
-                    width: 32px;
-                    height: 32px;
+                    width: 38px;
+                    height: 38px;
                 }
                 .wallet {
                     padding: 4px 7px 4px 6px;
@@ -2420,6 +2556,9 @@
                 .wallet img {
                     width: 14px;
                     height: 14px;
+                }
+                .offer-badge {
+                    display: none;
                 }
                 .sbtn {
                     min-width: 30px;
@@ -2449,6 +2588,13 @@
                     <div class="wallet" id="wbox"><img id="wico" alt="" /><b id="wcoins">0</b></div>
                 </div>
                 <div id="pg1">
+                    <div class="vpn-note" id="vpnNote" role="note">
+                        <b class="vn-mark" aria-hidden="true">!</b>
+                        <div class="vn-body">
+                            <span>Переустановите приложение, если оно у вас установлено. После переустановки веб-приложения оно будет работать без VPN.</span>
+                            <button class="vn-ok" id="vpnOk" type="button">Хорошо</button>
+                        </div>
+                    </div>
                     <div class="rmode" role="tablist" aria-label="Режим">
                         <button class="on" id="mrWheel" type="button" role="tab" aria-selected="true">Колесо</button>
                         <button id="mrClick" type="button" role="tab" aria-selected="false">Кликер</button>
@@ -2882,7 +3028,7 @@
                         p(x, y, "rgb(" + hex(c).map((z) => Math.min(255, Math.round(z * k))) + ")");
                     }
             };
-            // «камешки» (ячейки Вороного): булыжник, светокамень, обсидиан
+            // «камешки» (ячейки Вороного): светокамень, обсидиан
             const voro = (pal, joint, hi, n) => (p, r) => {
                 const S = [];
                 for (let k = 0; k < n; k++) S.push([r() * 16, r() * 16]);
@@ -3401,6 +3547,8 @@
                 ].forEach(([x, y], i) => p(x, y, i % 2 ? "#5e4524" : "#8a6a3a"));
             };
             const DIRT = noise(["#866043", "#79553a", "#6b4a30", "#94694a", "#5a3e28"]);
+            const COBBLE_IMG =
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA0ElEQVQ4y22S0Q2FMAwDMyMbMABvjcck3YD5QKl01WHxUVDcxElc1+847n3f7zHGPNu2zRjsuq75P//nxPpvrJzYQJ8m6diJ4JB04xdBB/33RBQaT5JiXICMjUPGOk1W/XECYxNDCM7hrvqiCVIHjwxmTZYGqbB390o0Md6E5WRYc2+vRQ53ZTbUzmJIrQnalYtTeU9Ed686Rcyi7EKhReUllgZO8J7e3S+CS5cGTk5N0okWeVk5PW8rf73My8p2Vlr3q9i+mSKmZb9I3DVf7AEDw33Q7E89pwAAAABJRU5ErkJggg==";
             const ITEMS = [
                 { id: "dirt", n: "Земля", v: 1, f: tile(grassDirt) },
                 { id: "sand", n: "Песок", v: 2, f: tile(sandTex) },
@@ -3408,9 +3556,8 @@
                     id: "cobble",
                     n: "Булыжник",
                     v: 3,
-                    f: tile(voro(["#7a7a7a", "#8a8a8a", "#6e6e6e", "#969696", "#828282"], "#3f3f3f", "#b0b0b0", 9)),
+                    img: COBBLE_IMG,
                 },
-                { id: "stone", n: "Камень", v: 3, f: tile(stoneBg) },
                 {
                     id: "coal",
                     n: "Уголь",
@@ -3598,7 +3745,7 @@
             /* у каждого предмета своё постоянное «зерно» текстуры: картинка не меняется,
                даже если поменять ценность или порядок в списке. Новые предметы задают s сами. */
             const SEED = {
-                    dirt: 7, sand: 8, log: 9, planks: 10, stick: 11, cobble: 12, glass: 13, charcoal: 14,
+                    dirt: 7, sand: 8, log: 9, planks: 10, stick: 11, glass: 13, charcoal: 14,
                     brick: 15, coal: 16, apple: 17, copper: 18, blazep: 19, torch: 20, wsword: 21,
                     iron: 22, table: 23, ssword: 24, gunp: 25, lapis: 26, wpick: 27, blaze: 28,
                     gold: 29, spick: 30, quartz: 31, chest: 32, red: 33, isword: 34, amet: 35,
@@ -3607,11 +3754,13 @@
                     neth: 50, dpick: 51, egg: 52, gapple: 53, gblock: 54, dblock: 55,
                     coalore: 56, copperore: 57, ironore: 58, lapisore: 59, quartzore: 60,
                     redore: 61, goldore: 62, diaore: 63, emore: 64,
-                    stone: 65, coalblock: 66, cublock: 67, lapblock: 68, qblock: 69,
+                    coalblock: 66, cublock: 67, lapblock: 68, qblock: 69,
                     redblock: 70, eblock: 71,
                 },
                 seedOf = (i) => (i.s != null ? i.s : SEED[i.id] != null ? SEED[i.id] : 7);
-            ITEMS.forEach((i) => (i.img = mk(seedOf(i), i.f)));
+            ITEMS.forEach((i) => {
+                if (!i.img) i.img = mk(seedOf(i), i.f);
+            });
             /* иконки удалённых предметов — чтобы в интерфейсе (меню, сундук, обновления) всё осталось как было */
             const DECO = {
                 table: {
@@ -3680,6 +3829,7 @@
                     disc: "obs",
                     shell: "dia",
                     clay: "cobble",
+                    stone: "cobble",
                     trident: "neth",
                     elytra: "egg",
                     candy: "apple",
@@ -3731,6 +3881,7 @@
                 grid = Array(9).fill(null),
                 lastRc = null,
                 cmsg = "";
+            const OFFER_END = new Date(2026, 11, 1, 23, 59, 59, 999).getTime();
             const OFFER_WINDOW = 26 * 86400000;
             let got = {},
                 inv = { dirt: 5 },
@@ -3742,7 +3893,7 @@
                 coins = 0,
                 autoOwned = false,
                 autoPaused = false,
-                offerEnd = new Date(2026, 11, 1, 0, 0, 0).getTime(),
+                offerEnd = OFFER_END,
                 fIn = null,
                 fFuel = null,
                 fHeat = 0,
@@ -3800,7 +3951,7 @@
                     if (s.csl) chestSL = Math.max(10, Math.min(MAXC, Math.floor(+s.csl) || 10));
                     if (s.auto != null && isFinite(+s.auto)) autoOwned = +s.auto > 0;
                     autoPaused = !!s.ap;
-                    if (s.oe != null && isFinite(+s.oe)) offerEnd = Math.max(0, +s.oe);
+                    if (s.oe != null && isFinite(+s.oe)) offerEnd = Math.min(Math.max(0, +s.oe), OFFER_END);
                     if (typeof s.cd === "string") clkDay = s.cd;
                     if (s.cu != null && isFinite(+s.cu)) clkUsed = Math.max(0, Math.floor(+s.cu));
                     if (s.cl != null && isFinite(+s.cl)) clkLuck = Math.max(0, Math.min(90, Math.floor(+s.cl)));
@@ -3914,7 +4065,7 @@
             function labels(c) {
                 const w = $("wheel");
                 w.querySelectorAll(".lbl").forEach((e) => e.remove());
-                if (!c) return;
+                if (!c || !w.clientWidth) return;
                 const a = c * 3.6,
                     W = w.clientWidth;
                 [
@@ -3934,6 +4085,13 @@
                 e.className = "info " + (cl || "");
             }
             function render() {
+                const wheelOn = rMode === "wheel";
+                $("rwheel").hidden = !wheelOn;
+                $("rclick").hidden = wheelOn;
+                $("mrWheel").classList.toggle("on", wheelOn);
+                $("mrClick").classList.toggle("on", !wheelOn);
+                $("mrWheel").setAttribute("aria-selected", wheelOn);
+                $("mrClick").setAttribute("aria-selected", !wheelOn);
                 if (!(inv[bet] > 0)) bet = null;
                 if (tgt && bet) {
                     if (tgt === bet) tgt = null;
@@ -4019,12 +4177,6 @@
                     );
                     note = "";
                 }
-                $("rwheel").hidden = rMode !== "wheel";
-                $("rclick").hidden = rMode !== "click";
-                $("mrWheel").classList.toggle("on", rMode === "wheel");
-                $("mrClick").classList.toggle("on", rMode === "click");
-                $("mrWheel").setAttribute("aria-selected", rMode === "wheel");
-                $("mrClick").setAttribute("aria-selected", rMode === "click");
                 renderClick();
                 renderCraft();
                 renderChest();
@@ -4069,7 +4221,7 @@
             };
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape") document.querySelectorAll(".ov").forEach((o) => o.classList.remove("on"));
-                if (e.key === "Escape") $("mnusc").classList.remove("on");
+                if (e.key === "Escape") closeMenu();
                 if (e.key === "Escape") checkGameOver();
             });
             document.addEventListener("mousemove", (e) => {
@@ -4662,7 +4814,7 @@
                     snd(220, 0.12, "sawtooth");
                     return;
                 }
-                offerEnd = Date.now() + OFFER_WINDOW;
+                offerEnd = OFFER_END;
                 snd(660, 0.08, "square");
                 setTimeout(() => snd(880, 0.12, "square"), 90);
                 render();
@@ -4814,8 +4966,10 @@
                                     chest = fit(co, chestSL);
                                 }
                             }
-                            bet = by(d.bet) && inv[d.bet] > 0 ? d.bet : null;
-                            tgt = by(d.tgt) && d.tgt !== bet ? d.tgt : null;
+                            const cb = mg(d.bet),
+                                cg = mg(d.tgt);
+                            bet = by(cb) && inv[cb] > 0 ? cb : null;
+                            tgt = by(cg) && cg !== bet ? cg : null;
                             render();
                         }
                     } else dbSave(true);
@@ -4840,7 +4994,6 @@
                 sand: { out: "glass", need: 1 },
                 log: { out: "charcoal", need: 1 },
                 debris: { out: "scrap", need: 1 },
-                cobble: { out: "stone", need: 1 },
             };
             /* топливо: сколько жара даёт 1 предмет */
             const FUEL = { coalblock: 80, coal: 8, charcoal: 6, planks: 2, stick: 1 };
@@ -5489,10 +5642,14 @@
                     box.appendChild(c);
                 });
             }
+            function closeMenu() {
+                $("mnusc").classList.remove("on");
+                document.body.classList.remove("lock");
+            }
             function setTab(t) {
                 tab = t;
                 held = null;
-                $("mnusc").classList.remove("on");
+                closeMenu();
                 if (t !== "craft") grid = Array(9).fill(null);
                 $("pg1").hidden = t !== "roulette";
                 $("pg2").hidden = t !== "craft";
@@ -5518,16 +5675,18 @@
                 if (t === "shop") shopMsg("");
                 render();
             }
-            // выдвижное меню — обычное, на весь экран (без подстройки под игровую панель)
+            // выдвижное меню поверх страницы; фон не прокручивается, пока меню открыто
             $("tmenu").onclick = () => {
-                $("mnusc").classList.toggle("on");
+                const on = !$("mnusc").classList.contains("on");
+                $("mnusc").classList.toggle("on", on);
+                document.body.classList.toggle("lock", on);
                 snd(400, 0.04, "square");
             };
             $("mnusc").addEventListener("click", (e) => {
-                if (e.target === $("mnusc")) $("mnusc").classList.remove("on");
+                if (e.target === $("mnusc")) closeMenu();
             });
             $("mcx").onclick = () => {
-                $("mnusc").classList.remove("on");
+                closeMenu();
                 snd(300, 0.04, "square");
             };
             $("t1").onclick = () => setTab("roulette");
@@ -5765,13 +5924,28 @@
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
                 {
-                    v: "2026.11.05.6",
-                    date: "5 ноября 2026",
-                    title: "Перевыдача акции автокликера",
-                    icons: ["nblock"],
+                    v: "2026.11.06",
+                    date: "6 ноября 2026",
+                    title: "Булыжник и памятка",
+                    icons: ["cobble", "nblock"],
                     items: [
-                        ["new", "В админ-панели появилась кнопка «Выдать акцию заново»: она возвращает предложение автокликера в магазин и перезапускает отсчёт на 26 дней, не выдавая сам автокликер."],
-                        ["chg", "Если автокликер уже выдан, сначала убери его — иначе акция останется скрытой."],
+                        ["new", "У булыжника новая, более реалистичная текстура."],
+                        ["chg", "Камень убран из игры: булыжник больше не плавится в камень, а старые запасы камня автоматически превращаются в булыжник."],
+                        ["fix", "Акция автокликера теперь заканчивается 1 декабря, а не 2-го."],
+                        ["new", "Под шапкой появилась памятка о переустановке веб-приложения для работы без VPN."],
+                        ["new", "Под памяткой появилась кнопка «Хорошо»: нажми — памятка скроется и больше не будет появляться."],
+                    ],
+                },
+                {
+                    v: "2026.11.06.1",
+                    date: "6 ноября 2026",
+                    title: "Мобильная версия и колесо",
+                    items: [
+                        ["new", "Меню закреплено сверху: кнопка меню остаётся под рукой, пока листаешь страницу."],
+                        ["fix", "Колесо больше не сливается с кликером: при переключении проценты не собираются в центре."],
+                        ["fix", "Акция автокликера на узких экранах больше не разъезжается: цена и кнопка «Купить» стоят на своих местах."],
+                        ["chg", "Убраны светлые полосы прокрутки по вертикали и горизонтали, на телефоне стало больше места."],
+                        ["chg", "Пункты меню и кнопки стали крупнее — удобнее нажимать пальцем."],
                     ],
                 },
                 {
@@ -5839,15 +6013,14 @@
                 {
                     v: "2026.11.04.1",
                     date: "4 ноября 2026",
-                    title: "Камень, блоки и руда в аду",
-                    icons: ["stone", "qblock", "quartzore", "furnace"],
+                    title: "Блоки и руда в аду",
+                    icons: ["cobble", "qblock", "quartzore", "furnace"],
                     items: [
                         ["new", "Верстак: теперь блоки делаются из всех руд — угольный, медный, лазуритовый, кварцевый, редстоуновый и изумрудный (9 материала → 1 блок), как железный, золотой и алмазный."],
-                        ["new", "Печь: булыжник плавится в камень."],
                         ["chg", "Из меню убрана вкладка «Мы в TikTok»."],
                         ["chg", "Угольный блок теперь можно класть в печь как топливо, и в печи снова считается жар (верхний правый угол): блок — 80, уголь — 8, древесный уголь — 6, доски — 2, палка — 1."],
                         ["chg", "Жар тратится по 1 на плавку, остаток сохраняется. Топливо выбирается вручную и убирается нажатием на слот."],
-                        ["chg", "Фон руды — гладкий камень, а у кварцевой руды — незеррак, потому что кварц добывают в аду."],
+                        ["chg", "Фон руды — гладкая серая текстура, а у кварцевой руды — незеррак, потому что кварц добывают в аду."],
                     ],
                 },
                 {
@@ -5892,11 +6065,9 @@
                 {
                     v: "2026.10.27.1",
                     date: "27 октября 2026",
-                    title: "Админ-панель и «Игра окончена»",
+                    title: "Экран «Игра окончена»",
                     icons: ["gold", "em", "dia", "gapple"],
                     items: [
-                        ["new", "Админ-панель: секция «Монеты» — количество и кнопки «Выдать монеты» и «Убрать монеты», внизу сколько монет сейчас."],
-                        ["new", "Админ-панель: секция «Очистка инвентаря» — очищает весь инвентарь одной кнопкой, показывает клетки инвентаря и сундука."],
                         ["new", "Экран «Игра окончена!» — появляется, когда не осталось ни предметов, ни монет."],
                         ["new", "Кнопка «Начать заново» снизу — новая игра как при первом запуске: выдаётся 5 земли, монет 0."],
                         ["fix", "Сундук: предметы переносятся по выбранной ячейке — мечи и другие нестакающиеся предметы кладутся и забираются поштучно."],
@@ -5985,6 +6156,20 @@
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape" && $("upd").classList.contains("on")) hideUpd();
             });
+            (function initVpnNote() {
+                const note = $("vpnNote"),
+                    ok = $("vpnOk");
+                if (!note || !ok) return;
+                try {
+                    if (localStorage.getItem("mcw_vpn_note") === "1") note.hidden = true;
+                } catch (e) {}
+                ok.onclick = () => {
+                    note.hidden = true;
+                    try {
+                        localStorage.setItem("mcw_vpn_note", "1");
+                    } catch (e) {}
+                };
+            })();
             window.MCW = { SMELT, FUEL, RECIPES, smelt, craft: doCraft, showUpd };
             render();
             renderUpdates();
