@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
     <head>
-         <meta charset="UTF-8">
+        <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-store">
     <meta http-equiv="Pragma" content="no-cache">
@@ -489,6 +489,11 @@
             .chrow.rare .pc {
                 color: var(--gold);
             }
+            .chrow.secret .pc {
+                color: var(--red);
+                font-weight: 800;
+                text-shadow: 0 0 8px rgba(234, 90, 82, 0.35);
+            }
             .clk-box {
                 position: relative;
                 display: flex;
@@ -687,6 +692,62 @@
             }
             .clk-msg.bad {
                 color: #ff9d95;
+            }
+            .clk-msg.secret {
+                color: #ffb2a8;
+                font-weight: 700;
+                text-shadow: 0 0 12px rgba(234, 90, 82, 0.45);
+            }
+            /* ===== редкое выпадение бедрока: замедление, ч/б свечение, красный контур ===== */
+            #clkbox.secret-roll {
+                animation: clkShake 0.52s linear infinite, secretRollGlow 1.1s ease-in-out infinite;
+                filter: grayscale(1) contrast(1.06);
+            }
+            #clkbox.secret-roll .clk-ic {
+                animation: none;
+                filter: grayscale(1) brightness(1.25) drop-shadow(0 0 22px rgba(255, 255, 255, 0.6));
+            }
+            #clkbox.secret-hit {
+                border-color: rgba(234, 90, 82, 0.72);
+                animation: secretHit 1.8s ease-out both;
+            }
+            @keyframes secretRollGlow {
+                0%,
+                100% {
+                    box-shadow:
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                        inset 0 -20px 40px -30px #000,
+                        0 0 0 rgba(255, 255, 255, 0);
+                }
+                50% {
+                    box-shadow:
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                        inset 0 -20px 40px -30px #000,
+                        0 0 0 1px rgba(255, 255, 255, 0.26),
+                        0 0 34px rgba(255, 255, 255, 0.42);
+                }
+            }
+            @keyframes secretHit {
+                0% {
+                    border-color: rgba(255, 255, 255, 0.65);
+                    box-shadow:
+                        0 0 0 1px rgba(255, 255, 255, 0.3),
+                        0 0 34px rgba(255, 255, 255, 0.45);
+                }
+                24%,
+                100% {
+                    border-color: rgba(234, 90, 82, 0.72);
+                    box-shadow:
+                        0 0 0 2px rgba(234, 90, 82, 0.2),
+                        0 0 38px rgba(234, 90, 82, 0.34),
+                        inset 0 0 28px rgba(255, 255, 255, 0.08);
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                #clkbox.secret-roll,
+                #clkbox.secret-hit {
+                    animation: none !important;
+                }
             }
             @media (max-width: 520px) {
                 .clk-box {
@@ -1141,6 +1202,47 @@
                 border: 1px solid var(--line);
                 border-radius: 8px;
                 cursor: pointer;
+            }
+            /* ---------- админ-панель ---------- */
+            #aov .menu,
+            #pov .menu {
+                max-width: 500px;
+            }
+            .adm-actions {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
+                margin: 8px 0;
+            }
+            .adm-actions .btn.sm {
+                width: 100%;
+                height: 44px;
+                margin: 0;
+                padding: 0 14px;
+                justify-content: flex-start;
+                text-align: left;
+                font-size: 13.5px;
+            }
+            .adm-actions .btn.sm + .btn.sm {
+                margin-top: 0;
+            }
+            .adm-actions.adm-close {
+                margin-left: 13px;
+                margin-right: 13px;
+            }
+            .bico {
+                flex: none;
+                display: grid;
+                place-items: center;
+                width: 22px;
+                height: 22px;
+                border-radius: 7px;
+                background: rgba(255, 255, 255, 0.07);
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                color: #9fe9c2;
+                font-size: 13px;
+                font-weight: 800;
+                line-height: 1;
             }
             #pm {
                 min-height: 1.4em;
@@ -2713,8 +2815,10 @@
                     <input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="Пароль" />
                 </div>
                 <p class="hint" id="pm"></p>
-                <button class="btn sm" id="pok">Войти</button>
-                <button class="btn sm" data-close>Отмена</button>
+                <div class="adm-actions">
+                    <button class="btn sm" id="pok" type="button"><span class="bico" aria-hidden="true">→</span>Войти</button>
+                    <button class="btn sm" data-close type="button"><span class="bico" aria-hidden="true">×</span>Отмена</button>
+                </div>
             </div>
         </div>
         <div class="ov" id="aov">
@@ -2732,64 +2836,54 @@
                     <div class="row">
                         <label>Количество <input id="acoin" type="number" min="1" max="999999" value="100" /></label>
                     </div>
-                    <div class="row">
-                        <button class="btn sm" id="agivc" type="button">Выдать монеты</button>
-                        <button class="btn sm" id="atakc" type="button">Убрать монеты</button>
+                    <div class="adm-actions">
+                        <button class="btn sm" id="agivc" type="button"><span class="bico" aria-hidden="true">+</span>Выдать</button>
+                        <button class="btn sm" id="atakc" type="button"><span class="bico" aria-hidden="true">−</span>Убрать</button>
+                        <button class="btn sm" id="agivinf" type="button"><span class="bico" aria-hidden="true">∞</span>Неограниченно</button>
                     </div>
                     <p class="hint" id="acinfo"></p>
                 </div>
                 <div class="sec">
-                    <h2>Очистка инвентаря</h2>
-                    <button class="btn sm" id="aclr" type="button">Очистить инвентарь</button>
-                    <p class="hint" id="ainfo"></p>
-                </div>
-                <div class="sec">
                     <h2>Автокликер</h2>
-                    <div class="row">
-                        <button class="btn sm" id="agivo" type="button">Выдать акцию заново</button>
+                    <div class="adm-actions">
+                        <button class="btn sm" id="agivo" type="button"><span class="bico" aria-hidden="true">↻</span>Выдать акцию</button>
+                        <button class="btn sm" id="agiva" type="button"><span class="bico" aria-hidden="true">▶</span>Выдать автокликер</button>
+                        <button class="btn sm" id="atka" type="button"><span class="bico" aria-hidden="true">■</span>Убрать</button>
                     </div>
                     <p class="hint" id="ainfoo"></p>
-                    <div class="row">
-                        <button class="btn sm" id="agiva" type="button">Выдать автокликер</button>
-                        <button class="btn sm" id="atka" type="button">Убрать автокликер</button>
-                    </div>
                     <p class="hint" id="ainfoa"></p>
                 </div>
                 <div class="sec">
                     <h2>Кликер</h2>
-                    <div class="row">
-                        <button class="btn sm" id="agivck" type="button">Неограниченные клики</button>
-                        <button class="btn sm" id="atakck" type="button">Обычный лимит</button>
+                    <div class="adm-actions">
+                        <button class="btn sm" id="agivck" type="button"><span class="bico" aria-hidden="true">∞</span>Без лимита</button>
+                        <button class="btn sm" id="atakck" type="button"><span class="bico" aria-hidden="true">↺</span>Обычный лимит</button>
                     </div>
                     <p class="hint" id="ainfock"></p>
                     <div class="row">
-                        <label>Скрытая удача кликера, % <input id="aclk" type="number" min="1" max="90" value="20" /></label>
+                        <label>Бонус, % <input id="aclk" type="number" min="1" max="100" value="100" /></label>
                     </div>
-                    <div class="row">
-                        <button class="btn sm" id="aclkadd" type="button">Включить удачу</button>
-                        <button class="btn sm" id="aclkoff" type="button">Выключить</button>
+                    <div class="adm-actions">
+                        <button class="btn sm" id="aclkadd" type="button"><span class="bico" aria-hidden="true">✓</span>Включить</button>
+                        <button class="btn sm" id="aclkoff" type="button"><span class="bico" aria-hidden="true">×</span>Выключить</button>
                     </div>
-                    <p class="hint" id="ainfocl"></p>
                 </div>
                 <div class="sec">
                     <h2>Удача</h2>
-                    <p class="hint">
-                        Скрытая подкрутка: на колесе и в подсказке шанс не меняется, а настоящий шанс выигрыша
-                        увеличивается на указанный процент.
-                    </p>
-                    <div class="evf">
-                        <label class="full"
-                            >Предмет
-                            <select id="ei"></select
-                        ></label>
-                        <label>Скрытый бонус, % <input id="el" type="number" min="1" max="90" value="20" /></label>
-                        <label>Длит., мин <input id="ed" type="number" min="1" value="60" /></label>
-                        <label class="full">Начало <input id="ea" type="datetime-local" /></label>
+                    <div class="row">
+                        <label>Предмет <select id="ei"></select></label>
                     </div>
-                    <button class="btn sm" id="eadd">Включить удачу</button>
-                    <div id="alist"></div>
+                    <div class="row">
+                        <label>Бонус, % <input id="el" type="number" min="1" max="90" value="20" /></label>
+                    </div>
+                    <div class="adm-actions">
+                        <button class="btn sm" id="eadd" type="button"><span class="bico" aria-hidden="true">✓</span>Включить</button>
+                        <button class="btn sm" id="elkoff" type="button"><span class="bico" aria-hidden="true">×</span>Выключить</button>
+                    </div>
                 </div>
-                <button class="btn sm" data-close>Закрыть</button>
+                <div class="adm-actions adm-close">
+                    <button class="btn sm" data-close type="button"><span class="bico" aria-hidden="true">×</span>Закрыть</button>
+                </div>
             </div>
         </div>
         <div class="ov" id="ov">
@@ -2981,6 +3075,31 @@
                                   ? hi
                                   : pal[(M[y * 16 + x] * 3) % pal.length]
                         );
+            };
+            /* бедрок: текстура как в Minecraft — слоистые серые сколы и тёмные трещины */
+            const BEDROCK_ROWS = [
+                "dbbbbcedcecbbcbc",
+                "bddededebeedabcb",
+                "babbabbbebcccecd",
+                "ceddcaceccbbbbbc",
+                "abebbbbcbbdeeddb",
+                "bcccbccbbaccbbab",
+                "eedcdeedcdeedeba",
+                "cccbcccbbabbcbdc",
+                "deecbbccdeedeeee",
+                "cbbabcbcbdcbbbed",
+                "ddebdeebabeeedbb",
+                "acccbbcdeecddeea",
+                "cbbbdcbbdebbbbbc",
+                "dedecacbbbabcdee",
+                "ddcbbcbbcdeecbbc",
+                "babbaeedbcdabbcd",
+            ];
+            const BEDROCK_COLORS = { a: "#222222", b: "#333333", c: "#575757", d: "#636363", e: "#979797" };
+            const bedrockF = (p) => {
+                BEDROCK_ROWS.forEach((row, y) => {
+                    for (let x = 0; x < 16; x++) p(x, y, BEDROCK_COLORS[row[x]]);
+                });
             };
             const grassDirt = (p, r) => {
                 for (let x = 0; x < 16; x++) {
@@ -3662,6 +3781,16 @@
                     s: 910,
                     f: tile(metalBlock("#3a3030", "#6a5858", "#181212")),
                 },
+                {
+                    id: "bedrock",
+                    n: "Бедрок",
+                    v: 100000,
+                    smin: 100000,
+                    smax: 110000,
+                    nw: 1,
+                    secret: 1,
+                    f: tile(bedrockF),
+                },
             ];
             ITEMS.sort((a, b) => a.v - b.v);
             /* у каждого предмета своё постоянное «зерно» текстуры: картинка не меняется,
@@ -3678,6 +3807,7 @@
                     redore: 61, goldore: 62, diaore: 63, emore: 64,
                     coalblock: 66, cublock: 67, lapblock: 68, qblock: 69,
                     redblock: 70, eblock: 71,
+                    bedrock: 72,
                 },
                 seedOf = (i) => (i.s != null ? i.s : SEED[i.id] != null ? SEED[i.id] : 7);
             ITEMS.forEach((i) => {
@@ -3722,6 +3852,11 @@
             const by = (id) => ITEMS.find((i) => i.id === id);
             /* предмет для иконок: обычный или «декоративный» (удалённый из игры, но его иконка нужна в UI) */
             const byAny = (id) => by(id) || DECO[id] || null;
+            /* у некоторых предметов цена продажи не фиксирована, а выбирается из диапазона */
+            const sellRange = (id) => {
+                const it = by(id);
+                return it && it.smin != null && it.smax != null ? [it.smin, it.smax] : null;
+            };
             /* фон — затемнённая земля, как в Minecraft */
             document.body.style.backgroundImage = `radial-gradient(1100px 620px at 50% -12%, rgba(61,220,138,.10), transparent 62%), radial-gradient(900px 520px at 50% 112%, rgba(242,201,107,.07), transparent 62%), linear-gradient(#080b0eeb, #060809f7), url(${dirtTile})`;
             document.body.style.backgroundSize = "auto, auto, auto, 128px";
@@ -3770,7 +3905,7 @@
                     skull: "eye",
                 },
                 mg = (k) => MIG[k] || k;
-            const ok = (t) => !bet || by(t).v <= by(bet).v * MAXR;
+            const ok = (t) => !bet || (by(t) && !by(t).nw && by(t).v <= by(bet).v * MAXR);
             const slotsOf = (o) => Object.entries(o).reduce((a, [k, n]) => a + Math.ceil(n / stk(k)), 0);
             function fit(o, lim) {
                 const L = lim || SL;
@@ -3813,6 +3948,7 @@
                 bet = null,
                 tgt = null,
                 coins = 0,
+                coinInf = false,
                 autoOwned = false,
                 autoPaused = false,
                 offerEnd = OFFER_END,
@@ -3866,17 +4002,18 @@
                         const sb = mg(s.bet),
                             sg = mg(s.tgt);
                         if (by(sb) && inv[sb] > 0) bet = sb;
-                        if (by(sg) && sg !== bet && ok(sg)) tgt = sg;
+                        if (by(sg) && !by(sg).nw && sg !== bet && ok(sg)) tgt = sg;
                     }
                     if (s.got) for (const k in s.got) if (by(k)) got[k] = 1;
                     if (s.coins != null && isFinite(+s.coins)) coins = Math.max(0, Math.floor(+s.coins));
+                    coinInf = !!s.cinf;
                     if (s.csl) chestSL = Math.max(10, Math.min(MAXC, Math.floor(+s.csl) || 10));
                     if (s.auto != null && isFinite(+s.auto)) autoOwned = +s.auto > 0;
                     autoPaused = !!s.ap;
                     if (s.oe != null && isFinite(+s.oe)) offerEnd = Math.min(Math.max(0, +s.oe), OFFER_END);
                     if (typeof s.cd === "string") clkDay = s.cd;
                     if (s.cu != null && isFinite(+s.cu)) clkUsed = Math.max(0, Math.floor(+s.cu));
-                    if (s.cl != null && isFinite(+s.cl)) clkLuck = Math.max(0, Math.min(90, Math.floor(+s.cl)));
+                    if (s.cl != null && isFinite(+s.cl)) clkLuck = Math.max(0, Math.min(100, Math.floor(+s.cl)));
                     clkInf = !!s.ci;
                     if (typeof s.ff === "string") fFuel = s.ff;
                     if (s.heat != null && isFinite(+s.heat)) fHeat = Math.max(0, Math.floor(+s.heat));
@@ -3900,7 +4037,7 @@
             }
             function save(d) {
                 try {
-                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL, coins, auto: autoOwned ? 1 : 0, ap: autoPaused ? 1 : 0, ff: fFuel, heat: fHeat, cd: clkDay, cu: clkUsed, cl: clkLuck, ci: clkInf ? 1 : 0, oe: offerEnd }));
+                    localStorage.setItem("mcw2", JSON.stringify({ inv: d || inv, bet, tgt, got, chest, csl: chestSL, coins, cinf: coinInf ? 1 : 0, auto: autoOwned ? 1 : 0, ap: autoPaused ? 1 : 0, ff: fFuel, heat: fHeat, cd: clkDay, cu: clkUsed, cl: clkLuck, ci: clkInf ? 1 : 0, oe: offerEnd }));
                 } catch (e) {
                     storeOk = false;
                 }
@@ -3939,8 +4076,7 @@
                     tv = by(tgt).v;
                 return Math.max(1, Math.min(97, Math.round((bv / (bv + tv)) * 100)));
             }
-            /* Скрытая подкрутка: на колесе и в подсказке показывается обычный шанс,
-               а бросок идёт по настоящему — с бонусом из админ-панели. */
+            /* Бонус удачи учитывается при броске. */
             function realChance() {
                 return Math.max(1, Math.min(99, chance() + luck()));
             }
@@ -3949,8 +4085,10 @@
                     ? `<img class="ic" src="${by(id).img}" alt="">` + (n > 1 ? `<span class="n">${n}</span>` : "")
                     : '<span class="q">?</span>';
                 if (id) {
-                    el.dataset.tip = by(id).n;
-                    el.dataset.sub = "Ценность: " + by(id).v;
+                    const it = by(id),
+                        rg = sellRange(id);
+                    el.dataset.tip = it.n;
+                    el.dataset.sub = "Ценность: " + (rg ? rg[0].toLocaleString("ru-RU") + "+" : it.v);
                 } else {
                     delete el.dataset.tip;
                 }
@@ -4015,6 +4153,7 @@
                 $("mrWheel").setAttribute("aria-selected", wheelOn);
                 $("mrClick").setAttribute("aria-selected", !wheelOn);
                 if (!(inv[bet] > 0)) bet = null;
+                if (tgt && by(tgt) && by(tgt).nw) tgt = null;
                 if (tgt && bet) {
                     if (tgt === bet) tgt = null;
                     else if (!ok(tgt)) tgt = null;
@@ -4230,6 +4369,9 @@
             }
             /* шанс зависит от ценности: вес = 1 / цена^0.6 */
             const CLK_EXP = 0.6;
+            const CLK_SECRET_ID = "bedrock";
+            const CLK_SECRET_PCT = 0.0001;
+            const clkNormal = () => ITEMS.filter((i) => !i.secret);
             function clkWeights(list) {
                 let total = 0;
                 const w = [];
@@ -4241,40 +4383,55 @@
                 return { w, total };
             }
             let clkBase = null;
-            const clkBaseData = () => (clkBase = clkBase || clkWeights(ITEMS));
+            const clkBaseData = () => (clkBase = clkBase || clkWeights(clkNormal()));
             function clkTable() {
+                const list = clkNormal();
                 const { w, total } = clkBaseData();
-                return ITEMS.map((it, k) => ({ it, p: (w[k] / total) * 100 })).sort((a, b) => b.p - a.p);
+                const rows = list.map((it, k) => ({ it, p: (w[k] / total) * (100 - CLK_SECRET_PCT) }));
+                const secret = by(CLK_SECRET_ID);
+                if (secret) rows.push({ it: secret, p: CLK_SECRET_PCT });
+                return rows.sort((a, b) => b.p - a.p);
             }
             function clkPickOne() {
+                const list = clkNormal();
                 const { w, total } = clkBaseData();
                 let r = Math.random() * total;
-                for (let k = 0; k < ITEMS.length; k++) {
+                for (let k = 0; k < list.length; k++) {
                     r -= w[k];
-                    if (r <= 0) return ITEMS[k];
+                    if (r <= 0) return list[k];
                 }
-                return ITEMS[ITEMS.length - 1];
+                return list[list.length - 1];
             }
-            /* скрытая удача: с шансом clkLuck% клик идёт по «богатому» пулу —
-               только самые дорогие предметы. В списке шансов это не отображается. */
+            /* Бонус кликера: с шансом clkLuck% выпадают самые дорогие предметы.
+               Секретный бедрок тоже входит в богатый пул: с включённым бонусом его
+               реально увидеть за 20–30 нажатий, а без бонуса остаётся базовый 0,0001%. */
             const CLK_RICH_V = 100;
-            let clkRich = null;
-            const clkRichList = () => (clkRich = clkRich || ITEMS.filter((i) => i.v >= CLK_RICH_V));
+            const clkRichList = () => {
+                const list = ITEMS.filter((i) => i.v >= CLK_RICH_V || i.secret);
+                const secret = list.find((i) => i.secret);
+                if (secret && clkLuck >= 100) list.push(secret);
+                return list;
+            };
             function clkPick() {
+                if (Math.random() * 100 < CLK_SECRET_PCT) return by(CLK_SECRET_ID);
                 if (clkLuck > 0 && Math.random() * 100 < clkLuck) {
                     const list = clkRichList();
                     return list[(Math.random() * list.length) | 0];
                 }
                 return clkPickOne();
             }
-            const fmtPct = (p) => (p >= 10 ? String(Math.round(p * 10) / 10) : p >= 1 ? p.toFixed(1) : p.toFixed(2));
+            const fmtPct = (p) =>
+                (p >= 10 ? String(Math.round(p * 10) / 10) : p >= 1 ? p.toFixed(1) : p >= 0.01 ? p.toFixed(2) : p.toFixed(4)).replace(
+                    ".",
+                    ","
+                );
             function renderChances() {
                 const box = $("chlist");
                 if (!box) return;
                 box.innerHTML = "";
                 clkTable().forEach(({ it, p }) => {
                     const row = document.createElement("div");
-                    row.className = "chrow" + (p < 0.5 ? " rare" : "");
+                    row.className = "chrow" + (p < 0.5 ? " rare" : "") + (it.secret ? " secret" : "");
                     const im = document.createElement("img");
                     im.src = it.img;
                     im.alt = "";
@@ -4300,17 +4457,19 @@
                 nm.textContent = it.n;
                 nm.hidden = false;
                 const pr = $("clkpr"),
-                    p = clkPrice(id);
+                    p = clkPrice(id),
+                    rg = sellRange(id),
+                    priceText = rg ? money(rg[0]) + "+" : money(p);
                 pr.innerHTML = "";
                 const im = document.createElement("img");
                 im.src = coinImg;
                 im.alt = "";
                 const b = document.createElement("b");
-                b.textContent = p;
+                b.textContent = priceText;
                 const sp = document.createElement("span");
                 sp.textContent = coinWord(p);
                 pr.append(im, b, sp);
-                pr.title = "Цена продажи: " + p + " " + coinWord(p);
+                pr.title = "Цена продажи: " + (rg ? "от " : "") + priceText + " " + coinWord(p);
                 pr.hidden = false;
             }
             function clkBurst(v) {
@@ -4406,17 +4565,31 @@
                 $("clkgo").disabled = true;
                 $("mrWheel").disabled = $("mrClick").disabled = true;
                 const box = $("clkbox");
-                box.classList.remove("hit");
+                box.classList.remove("hit", "secret-hit", "secret-roll");
                 $("clkic").classList.remove("in");
                 box.classList.add("roll");
-                let tick = 0;
-                const roll = setInterval(() => {
+                const secret = !!it.secret,
+                    started = performance.now(),
+                    total = secret ? 1700 : 1300;
+                let tick = 0,
+                    stopped = false,
+                    rollTimer = 0;
+                const rollStep = () => {
+                    if (stopped) return;
                     showClk(ITEMS[(Math.random() * ITEMS.length) | 0].id);
                     if (tick++ % 2 === 0) snd(360 + Math.random() * 460, 0.02, "square");
-                }, 65);
+                    const elapsed = performance.now() - started;
+                    if (elapsed >= total) return;
+                    let delay = 65;
+                    if (secret && elapsed > 420) delay = 95 + Math.min(240, (elapsed - 420) * 0.28);
+                    rollTimer = setTimeout(rollStep, delay);
+                };
+                rollStep();
+                if (secret) setTimeout(() => box.classList.add("secret-roll"), 400);
                 setTimeout(() => {
-                    clearInterval(roll);
-                    box.classList.remove("roll");
+                    stopped = true;
+                    clearTimeout(rollTimer);
+                    box.classList.remove("roll", "secret-roll");
                     inv[it.id] = (inv[it.id] || 0) + 1;
                     if (!clkInf) clkUsed = Math.min(CLICKS_MAX, clkUsed + 1);
                     clkLast = it.id;
@@ -4426,14 +4599,24 @@
                     setTimeout(() => $("clkic").classList.remove("in"), 700);
                     box.classList.add("hit");
                     setTimeout(() => box.classList.remove("hit"), 620);
-                    clkBurst(it.v);
-                    clkNote = "Выпало: " + it.n + ". " + (!clkInf && clkUsed >= CLICKS_MAX ? "Клики на сегодня закончились." : "+1 в инвентарь.");
-                    clkMood = "win";
-                    snd(660, 0.1, "square");
-                    setTimeout(() => snd(880, 0.12, "square"), 100);
-                    setTimeout(() => snd(1180, 0.18, "square"), 200);
+                    const tail = !clkInf && clkUsed >= CLICKS_MAX ? "Клики на сегодня закончились." : "+1 в инвентарь.";
+                    if (secret) {
+                        clkNote = "Секретная находка: " + it.n + "! " + tail;
+                        clkMood = "secret";
+                        box.classList.add("secret-hit");
+                        setTimeout(() => box.classList.remove("secret-hit"), 2200);
+                        snd(110, 0.35, "sawtooth", 55);
+                        setTimeout(() => snd(980, 0.18, "triangle", 1470), 90);
+                    } else {
+                        clkBurst(it.v);
+                        clkNote = "Выпало: " + it.n + ". " + tail;
+                        clkMood = "win";
+                        snd(660, 0.1, "square");
+                        setTimeout(() => snd(880, 0.12, "square"), 100);
+                        setTimeout(() => snd(1180, 0.18, "square"), 200);
+                    }
                     render();
-                }, 1300);
+                }, total);
             };
             $("clkhelp").onclick = () => {
                 snd(600, 0.05, "square");
@@ -4459,10 +4642,6 @@
                 }
             }
             function openAdm() {
-                if (!$("ea").value)
-                    $("ea").value = new Date(Date.now() - new Date().getTimezoneOffset() * 6e4)
-                        .toISOString()
-                        .slice(0, 16);
                 evRender();
                 admInfo();
                 $("aov").classList.add("on");
@@ -4520,46 +4699,10 @@
                 udoc = null,
                 dt = 0,
                 ll = 0;
-            const fmt = (t) =>
-                new Date(t).toLocaleString("ru-RU", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                });
-            const act = (e) => e.fx !== "none" && Date.now() >= e.at && Date.now() < e.at + e.dur * 6e4;
             function luck() {
-                return (
-                    EV.filter((e) => act(e) && (!e.it || e.it === tgt)).reduce((a, e) => a + (e.lk || 20), 0)
-                );
-            }
-            function evList() {
-                const box = $("alist"),
-                    n = Date.now();
-                box.innerHTML = "";
-                const L = [...EV].sort((a, b) => a.at - b.at);
-                if (!L.length) box.textContent = "Событий нет.";
-                L.forEach((e) => {
-                    const d = document.createElement("div"),
-                        on = act(e),
-                        done = n >= e.at + e.dur * 6e4;
-                    d.className = "ev" + (on ? " on" : "") + (done ? " done" : "");
-                    d.innerHTML = "<b></b><small></small>";
-                    d.children[0].textContent =
-                        (e.it && by(e.it) ? by(e.it).n : "Любая цель") + ": скрыто +" + (e.lk || 20) + "%";
-                    d.children[1].textContent =
-                        (on ? "Идёт сейчас, до " : done ? "Закончилось: " : "Начало: ") +
-                        fmt(on || done ? e.at + e.dur * 6e4 : e.at) +
-                        (!on && !done ? ", длит. " + e.dur + " мин" : "");
-                    const b = document.createElement("button");
-                    b.textContent = "Удалить";
-                    b.onclick = () => evDel(e.id);
-                    d.appendChild(b);
-                    box.appendChild(d);
-                });
+                return EV.filter((e) => e && (!e.it || e.it === tgt)).reduce((a, e) => a + (e.lk || 0), 0);
             }
             function evRender() {
-                evList();
                 const l = luck();
                 if (l !== ll) {
                     ll = l;
@@ -4580,19 +4723,6 @@
                         .catch(() => {});
                 else {
                     EV.push(e);
-                    evLs();
-                }
-                evRender();
-            }
-            function evDel(id) {
-                if (!unlocked) return;
-                if (evCol)
-                    evCol
-                        .doc(id)
-                        .delete()
-                        .catch(() => {});
-                else {
-                    EV = EV.filter((e) => e.id !== id);
                     evLs();
                 }
                 evRender();
@@ -4620,18 +4750,26 @@
             };
             $("eadd").onclick = () => {
                 if (!unlocked) return;
-                const a = new Date($("ea").value).getTime();
-                if (isNaN(a) || !$("ei").value) return;
-                evPut({
-                    id: "e" + Date.now(),
-                    at: a,
-                    fx: "luck",
-                    lk: Math.max(1, Math.min(90, Math.floor(+$("el").value || 20))),
-                    it: $("ei").value,
-                    dur: Math.max(1, Math.floor(+$("ed").value || 60)),
+                const it = $("ei").value;
+                if (!it) return;
+                const n = Math.max(1, Math.min(90, Math.floor(+$("el").value || 20)));
+                EV.filter((e) => e.it === it).forEach((e) => {
+                    if (evCol) evCol.doc(e.id).delete().catch(() => {});
                 });
+                EV = EV.filter((e) => e.it !== it);
+                evPut({ id: "e" + Date.now(), fx: "luck", lk: n, it });
             };
-            ITEMS.filter((i) => !i.c).forEach((i) => {
+            $("elkoff").onclick = () => {
+                if (!unlocked) return;
+                const old = EV.slice();
+                EV = [];
+                evLs();
+                old.forEach((e) => {
+                    if (evCol) evCol.doc(e.id).delete().catch(() => {});
+                });
+                evRender();
+            };
+            ITEMS.filter((i) => !i.c && !i.secret).forEach((i) => {
                 const o = document.createElement("option");
                 o.value = i.id;
                 o.textContent = i.n;
@@ -4656,47 +4794,36 @@
                 };
                 $("agrid").appendChild(b);
             });
-            /* ===== Монеты и очистка инвентаря (админ-панель) ===== */
+            /* ===== Монеты, кликер и удача (админ-панель) ===== */
             function admInfo() {
                 const a = $("acinfo"),
-                    b = $("ainfo"),
                     c = $("ainfoa"),
                     d = $("ainfock"),
-                    e = $("ainfocl"),
                     f = $("ainfoo"),
                     g = $("agivo");
-                if (a) a.textContent = "Сейчас: монет " + coins;
-                if (b)
-                    b.textContent =
-                        "Инвентарь: " + slotsOf(inv) + " / " + SL + " клеток · сундук: " + slotsOf(chest) + " / " + chestSL;
+                if (a) a.textContent = coinInf ? "Сейчас: монет ∞" : "Сейчас: монет " + money(coins);
                 if (c)
                     c.textContent = autoOwned
                         ? "Сейчас: выдан (" + (autoPaused ? "выключен" : "включён") + ")"
                         : "Сейчас: не выдан";
                 if (f)
                     f.textContent = autoOwned
-                        ? "Акция скрыта: автокликер уже выдан. Убери его, чтобы вернуть предложение."
+                        ? "Сейчас: акция недоступна"
                         : offerLeft() > 0
                           ? "Акция активна до " +
                             new Date(offerEnd).toLocaleDateString("ru-RU", { day: "numeric", month: "long" }) +
                             "."
-                          : "Акция завершена. Нажми «Выдать акцию заново».";
+                          : "Акция завершена.";
                 if (g) g.disabled = autoOwned;
                 if (d)
                     d.textContent = clkInf
                         ? "Сейчас: клики без ограничений"
                         : "Сейчас: обычный лимит " + CLICKS_MAX + " в день (осталось " + Math.max(0, CLICKS_MAX - clkUsed) + ")";
-                if (e)
-                    e.textContent =
-                        clkLuck > 0
-                            ? "Скрытая удача: " +
-                              clkLuck +
-                              "% — с этим шансом клик берёт только самые дорогие предметы (в списке шансов не видно)"
-                            : "Скрытая удача выключена";
             }
             $("agivc").onclick = () => {
                 if (!unlocked) return;
                 const n = Math.max(1, Math.min(999999, Math.floor(+$("acoin").value || 0)));
+                coinInf = false;
                 coins += n;
                 snd(660, 0.07, "square");
                 render();
@@ -4705,18 +4832,16 @@
             $("atakc").onclick = () => {
                 if (!unlocked) return;
                 const n = Math.max(1, Math.min(999999, Math.floor(+$("acoin").value || 0)));
+                coinInf = false;
                 coins = Math.max(0, coins - n);
                 snd(330, 0.07, "square");
                 render();
                 admInfo();
             };
-            $("aclr").onclick = () => {
+            $("agivinf").onclick = () => {
                 if (!unlocked) return;
-                inv = {};
-                bet = null;
-                betK = -1;
-                hold = false;
-                snd(220, 0.15, "sawtooth");
+                coinInf = true;
+                snd(660, 0.07, "square");
                 render();
                 admInfo();
             };
@@ -4771,7 +4896,7 @@
             };
             $("aclkadd").onclick = () => {
                 if (!unlocked) return;
-                const n = Math.max(1, Math.min(90, Math.floor(+$("aclk").value || 0)));
+                const n = Math.max(1, Math.min(100, Math.floor(+$("aclk").value || 0)));
                 clkLuck = n;
                 snd(660, 0.08, "square");
                 render();
@@ -4786,7 +4911,7 @@
             };
             /* ===== Игра окончена ===== */
             function gameOverOn() {
-                return slotsOf(inv) === 0 && coins === 0;
+                return slotsOf(inv) === 0 && !coinInf && coins === 0;
             }
             function checkGameOver() {
                 const g = $("gob");
@@ -4821,6 +4946,7 @@
                 betK = -1;
                 tgt = null;
                 coins = 0;
+                coinInf = false;
                 grid = Array(9).fill(null);
                 lastRc = null;
                 cmsg = "";
@@ -4835,7 +4961,7 @@
             function dbSave(now) {
                 if (!udoc) return Promise.resolve();
                 clearTimeout(dt);
-                const w = () => udoc.set({ inv, bet: bet || "", tgt: tgt || "", got, chest, csl: chestSL, coins }).catch(() => {});
+                const w = () => udoc.set({ inv, bet: bet || "", tgt: tgt || "", got, chest, csl: chestSL, coins, cinf: coinInf ? 1 : 0 }).catch(() => {});
                 if (now) return w();
                 dt = setTimeout(w, 2000);
             }
@@ -4875,6 +5001,7 @@
                             for (const k in inv) got[k] = 1;
                             if (d.csl) chestSL = Math.max(10, Math.min(MAXC, Math.floor(+d.csl) || 10));
                             if (d.coins != null && isFinite(+d.coins)) coins = Math.max(coins, Math.floor(+d.coins));
+                            if (d.cinf) coinInf = true;
                             {
                                 const co = {};
                                 for (const k in d.chest || {}) {
@@ -5307,16 +5434,21 @@
             };
             const coinsWord = (n) => plural(n, "монету", "монеты", "монет");
             function wallet() {
-                const t = money(coins);
+                const t = coinInf ? "∞" : money(coins);
                 if ($("wcoins")) $("wcoins").textContent = t;
             }
             /* цена покупки и продажи считается от ценности предмета */
             const buyPrice = (id) => Math.max(2, Math.round(by(id).v * 2));
             const sellPrice = (id) => Math.max(1, Math.round(by(id).v));
+            const saleRoll = (id) => {
+                const rg = sellRange(id);
+                return rg ? rg[0] + Math.floor(Math.random() * (rg[1] - rg[0] + 1)) : sellPrice(id);
+            };
             let shMode = "buy",
                 shQ = "",
                 shNote = "";
             const coinTag = (n) => `<img src="${coinImg}" alt="">` + money(n);
+            const coinPlusTag = (a) => `<img src="${coinImg}" alt="">` + money(a) + "+";
             function shopMsg(t, bad) {
                 const e = $("shmsg");
                 if (!e) return;
@@ -5431,6 +5563,7 @@
                 const q = shQ.trim().toLowerCase(),
                     buy = shMode === "buy";
                 const list = ITEMS.filter((i) => {
+                    if (buy && i.secret) return false;
                     if (!buy && !(inv[i.id] > 0)) return false;
                     if (!q) return true;
                     return i.n.toLowerCase().includes(q) || i.id.includes(q);
@@ -5445,6 +5578,7 @@
                 }
                 list.forEach((it) => {
                     const price = buy ? buyPrice(it.id) : sellPrice(it.id),
+                        rg = buy ? null : sellRange(it.id),
                         row = document.createElement("div");
                     row.className = "srow";
                     const ic = document.createElement("div");
@@ -5459,7 +5593,7 @@
                         "<b></b><small class=\"" +
                         (buy ? "buy" : "sell") +
                         '">' +
-                        coinTag(price) +
+                        (rg ? coinPlusTag(rg[0]) : coinTag(price)) +
                         "</small>";
                     nm.querySelector("b").textContent = it.n;
                     nm.querySelector("small").insertAdjacentText("beforeend", " за штуку");
@@ -5472,7 +5606,7 @@
                         b.className = "sbtn" + (buy ? "" : " sec");
                         b.textContent = n ? "×" + n : "всё";
                         if (buy) {
-                            b.disabled = spinning || coins < price || room(it.id) < 1;
+                            b.disabled = spinning || (!coinInf && coins < price) || room(it.id) < 1;
                             b.onclick = () => shBuy(it.id, n);
                         } else {
                             b.disabled = spinning || has < 1 || (n > 0 && has < n);
@@ -5489,15 +5623,15 @@
                 shNote = "";
             }
             function shBuy(id, n) {
-                if (spinning) return;
+                if (spinning || by(id).secret) return;
                 const price = buyPrice(id),
-                    can = Math.min(n, room(id), Math.floor(coins / price));
+                    can = Math.min(n, room(id), coinInf ? Infinity : Math.floor(coins / price));
                 if (can < 1) {
-                    shopMsg(coins < price ? "Не хватает монет." : NO_ROOM, true);
+                    shopMsg(!coinInf && coins < price ? "Не хватает монет." : NO_ROOM, true);
                     snd(220, 0.15, "sawtooth");
                     return;
                 }
-                coins -= price * can;
+                if (!coinInf) coins -= price * can;
                 inv[id] = (inv[id] || 0) + can;
                 got[id] = 1;
                 snd(660, 0.07, "square");
@@ -5509,7 +5643,7 @@
                 const have = inv[id] || 0;
                 if (have < 1) return;
                 const cnt = Math.min(n, have),
-                    price = sellPrice(id);
+                    price = saleRoll(id);
                 inv[id] -= cnt;
                 if (inv[id] <= 0) delete inv[id];
                 coins += price * cnt;
@@ -5846,6 +5980,19 @@
    Типы строк: 'new' — новое, 'chg' — изменено, 'fix' — исправлено. icons — id предметов для картинок. */
             const UPDATES = [
                 {
+                    v: "2026.11.08",
+                    date: "8 ноября 2026",
+                    title: "Секретный бедрок",
+                    icons: ["bedrock"],
+                    items: [
+                        ["new", "В кликере появился секретный блок — бедрок. Шанс: 0,0001% за один клик."],
+                        ["chg", "У бедрока новая, более реалистичная текстура."],
+                        ["chg", "Бедрок нельзя купить или скрафтить, а в рулетке он не выпадает."],
+                        ["chg", "Ценность бедрока — 100 000+ монет: цена продажи зависит от удачи."],
+                        ["new", "При выпадении бедрока срабатывает секретная анимация."],
+                    ],
+                },
+                {
                     v: "2026.11.06",
                     date: "6 ноября 2026",
                     title: "Булыжник и акция",
@@ -6085,4 +6232,5 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js');
   }
+    </script>
 </html>
