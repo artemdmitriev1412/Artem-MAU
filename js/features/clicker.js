@@ -135,6 +135,8 @@ function clkBurst(v) {
         setTimeout(() => s.remove(), 1000);
     }
 }
+/* Инвентарь полон: свободных клеток нет, значит генератору некуда класть предмет. */
+const clkFull = () => slotsOf(inv) >= SL;
 function renderClick() {
     if (clkDay !== dayKey()) {
         clkDay = dayKey();
@@ -144,10 +146,11 @@ function renderClick() {
         go = $("clkgo");
     if (!chip || !go) return;
     const left = clkInf ? CLICKS_MAX : Math.max(0, CLICKS_MAX - clkUsed);
+    const full = clkFull();
     chip.textContent = clkInf ? "∞" : left + " / " + CLICKS_MAX;
     chip.classList.toggle("off", !clkInf && left < 1);
     chip.classList.toggle("inf", clkInf);
-    go.disabled = clkBusy || (!clkInf && left < 1);
+    go.disabled = clkBusy || full || (!clkInf && left < 1);
     const bw = $("mrWheel"),
         bc = $("mrClick");
     if (bw && bc) bw.disabled = bc.disabled = clkBusy;
@@ -160,7 +163,10 @@ function renderClick() {
         $("clkpr").hidden = true;
     }
     const txt = $("clkmsg");
-    if (!clkInf && left < 1 && !clkNote) {
+    if (full) {
+        txt.className = "clk-msg bad";
+        txt.textContent = NO_ROOM;
+    } else if (!clkInf && left < 1 && !clkNote) {
         txt.className = "clk-msg bad";
         txt.textContent = "Клики на сегодня закончились. Приходи завтра.";
     } else {
@@ -197,6 +203,12 @@ $("clkgo").onclick = () => {
         clkUsed = 0;
     }
     if (!clkInf && CLICKS_MAX - clkUsed < 1) {
+        clkNote = "";
+        clkMood = "bad";
+        render();
+        return;
+    }
+    if (clkFull()) {
         clkNote = "";
         clkMood = "bad";
         render();
