@@ -1,0 +1,141 @@
+/* Выдвижное меню и его пункты. */
+
+/* ---------- меню ---------- */
+.mnu-sc {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgba(4, 6, 8, 0.72);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    overscroll-behavior: contain;
+    transition: opacity 0.2s ease;
+}
+.mnu-sc.on {
+    opacity: 1;
+    pointer-events: auto;
+}
+.mnu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: min(280px, 86vw);
+    max-height: 100dvh;
+    padding: 16px 12px;
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: linear-gradient(180deg, #141a20 0%, #0b0f13 100%);
+    border-right: 1px solid var(--line);
+    border-radius: 0 20px 20px 0;
+    box-shadow: 24px 0 60px -20px #000;
+    transform: translateX(-10px);
+    transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.mnu-sc.on .mnu {
+    transform: none;
+}
+.mnu-h {
+    margin: 0 4px 12px;
+    padding: 0 2px 12px;
+    border-bottom: 1px solid var(--line-2);
+}
+.mnu h2 {
+    margin: 0;
+    font-family: "Arial Black", "Segoe UI", Arial, sans-serif;
+    font-weight: 900;
+    font-size: 17px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: #fff;
+}
+.mnu .tab,
+.mnu .btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    flex: none;
+    align-self: stretch;
+    min-height: 46px;
+    margin: 0;
+    padding: 12px 13px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    color: #c8d3df;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.mnu .tab:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+.mnu .tab.on {
+    color: #fff;
+    background: linear-gradient(90deg, rgba(61, 220, 138, 0.18), rgba(61, 220, 138, 0.04));
+    border-color: rgba(61, 220, 138, 0.32);
+}
+.mnu .tab.on:before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    width: 3px;
+    height: 20px;
+    margin-top: -10px;
+    border-radius: 0 3px 3px 0;
+    background: var(--em);
+    box-shadow: 0 0 12px rgba(61, 220, 138, 0.8);
+}
+.mnu .tab img {
+    flex: none;
+    order: 2;
+    width: 20px;
+    height: 20px;
+    display: block;
+    image-rendering: pixelated;
+    opacity: 0.9;
+}
+.mnu .tab .tmi {
+    flex: none;
+    order: 2;
+    width: 18px;
+    height: 18px;
+    fill: #c8d3df;
+    opacity: 0.9;
+    transition: fill 0.15s;
+}
+.mnu .tab.on .tmi {
+    fill: #8ef0bd;
+}
+.mnu-line {
+    flex: none;
+    height: 1px;
+    margin: 7px 6px;
+    background: var(--line-2);
+}
+.mnu .btn {
+    justify-content: center;
+    margin-top: auto;
+    color: #aeb9c6;
+    border-color: var(--line-2);
+    background: rgba(255, 255, 255, 0.03);
+}
+.mnu .btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.07);
+}

@@ -1,0 +1,48 @@
+/* Эффекты нажатия кнопок. */
+
+/* Never keep a hover/pressed look after a tap. Color is not changed
+   here: .btn.sm / .btn.up must keep their own base background. */
+.btn:hover:not(:disabled),
+.btn:active:not(:disabled) {
+    transform: none;
+    filter: none;
+}
+.btn:not(.sm):hover:not(:disabled) {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+        0 10px 22px -10px rgba(61, 220, 138, 0.8);
+}
+.btn:focus:not(:focus-visible),
+.sbtn:focus:not(:focus-visible) {
+    outline: none;
+}
+.sbtn:hover:not(:disabled) {
+    background: rgba(61, 220, 138, 0.12);
+    border-color: rgba(61, 220, 138, 0.26);
+}
+.sbtn.sec:hover:not(:disabled) {
+    background: rgba(242, 201, 107, 0.1);
+    border-color: rgba(242, 201, 107, 0.24);
+}
+.sbtn:active:not(:disabled) {
+    transform: none;
+}
+.btn.tapped,
+.sbtn.tapped {
+    animation: tapPop 0.26s cubic-bezier(0.2, 0.8, 0.25, 1.15);
+}
+@keyframes tapPop {
+    0% {
+        transform: scale(0.95);
+        filter: brightness(0.92);
+    }
+    48% {
+        transform: scale(1.018);
+        filter: brightness(1.07);
+    }
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
