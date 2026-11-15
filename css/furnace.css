@@ -1,0 +1,192 @@
+/* Печь: слоты, прогресс и список рецептов. */
+
+/* ---------- печь ---------- */
+.furn {
+    margin: 4px 0 12px;
+    padding: 14px 12px 14px;
+    border-radius: 16px;
+    background:
+        radial-gradient(120% 90% at 50% 100%, rgba(255, 138, 26, 0.12), transparent 62%),
+        linear-gradient(180deg, #241a17, #150f0d);
+    border: 1px solid rgba(255, 138, 26, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.furn-h {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 0 12px;
+}
+.furn-h h2 {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: #e8b98a;
+    text-transform: uppercase;
+}
+.furn-note {
+    font-size: 11px;
+    color: var(--muted-2);
+    white-space: nowrap;
+}
+.furn-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(6px, 2.4vw, 16px);
+    flex-wrap: nowrap;
+}
+.fcol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+}
+.flab {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #b39782;
+    white-space: nowrap;
+}
+.fsub {
+    min-height: 13px;
+    font-size: 10.5px;
+    color: var(--muted-2);
+    white-space: nowrap;
+}
+.furn .slot.big {
+    width: clamp(46px, 13vw, 74px);
+    border-color: rgba(255, 138, 26, 0.2);
+}
+.furn .slot.big.sel {
+    border-color: rgba(255, 154, 60, 0.75);
+}
+.furn .slot .fx {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: #2a1a12;
+    border: 1px solid rgba(255, 154, 60, 0.75);
+    color: #ffb46a;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 15px;
+    text-align: center;
+    pointer-events: none;
+}
+.fmid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: clamp(26px, 8vw, 46px);
+}
+.flame {
+    width: 16px;
+    height: 20px;
+    border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+    background: radial-gradient(circle at 50% 75%, #ffd36b, #ff8a1a 60%, #d1440a);
+    opacity: 0.3;
+    filter: drop-shadow(0 0 6px rgba(255, 138, 26, 0.5));
+    transition: opacity 0.2s;
+}
+.flame.on {
+    opacity: 1;
+    animation: flick 0.35s ease-in-out infinite alternate;
+}
+@keyframes flick {
+    from {
+        transform: scaleY(0.9) translateY(1px);
+    }
+    to {
+        transform: scaleY(1.08) translateY(-1px);
+    }
+}
+.fbar {
+    width: 100%;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+}
+.fbar i {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ffb347, #ff7a18);
+    transition: width 0.45s ease;
+}
+.fhint {
+    min-height: 2.2em;
+    margin: 12px 0 8px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--muted);
+}
+.frow {
+    display: flex;
+    gap: 8px;
+}
+.frow .btn {
+    flex: 1;
+}
+.frec {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.frr {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    padding: 7px 8px;
+    font-size: 11.5px;
+    color: #dbe4ee;
+    background: rgba(255, 255, 255, 0.028);
+    border: 1px solid var(--line-2);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+.frr:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+.frr.sel {
+    border-color: rgba(255, 154, 60, 0.55);
+    background: rgba(255, 138, 26, 0.08);
+}
+.frr.no {
+    opacity: 0.45;
+}
+.frr img {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    image-rendering: pixelated;
+}
+.frr .fq {
+    margin-left: auto;
+    font-size: 10.5px;
+    color: var(--muted-2);
+    white-space: nowrap;
+}
+.frr .farr {
+    flex: none;
+    font-size: 11px;
+    color: #b39782;
+}
+.frr > span:not(.fq):not(.farr) {
+    font-size: 10.5px;
+    color: var(--muted);
+}

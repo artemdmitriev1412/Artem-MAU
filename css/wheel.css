@@ -1,0 +1,131 @@
+/* Колесо фортуны и переключатель «Колесо / Кликер». */
+
+/* ---------- колесо ---------- */
+.stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 3vw, 20px);
+    margin: 4px 0 12px;
+}
+.sb {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+}
+.stage .sb:first-child {
+    color: #cfd8e2;
+}
+.stage .sb.gt {
+    color: var(--em);
+}
+.ww {
+    position: relative;
+    width: clamp(190px, 50vw, 270px);
+    aspect-ratio: 1;
+    flex: none;
+}
+.ww:before {
+    content: "";
+    position: absolute;
+    inset: -14%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 45%, rgba(61, 220, 138, 0.14), rgba(61, 220, 138, 0) 62%);
+    pointer-events: none;
+}
+.wheel {
+    position: absolute;
+    inset: 0;
+    transition: transform 4.6s cubic-bezier(0.12, 0.65, 0.08, 1);
+    will-change: transform;
+}
+.wheel canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 50%;
+    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+    image-rendering: pixelated;
+}
+.lbl {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: #fff;
+    font-size: clamp(17px, 4.6vw, 25px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000,
+        2px 2px 0 rgba(0, 0, 0, 0.65);
+    white-space: nowrap;
+}
+.ptr {
+    position: absolute;
+    left: 50%;
+    top: -12px;
+    transform: translateX(-50%);
+    border: 13px solid transparent;
+    border-top: 28px solid #f5c518;
+    border-bottom: 0;
+    filter: drop-shadow(0 0 0 #000) drop-shadow(2px 2px 0 #000);
+    z-index: 3;
+}
+.info {
+    min-height: 2.6em;
+    margin: 4px 0 10px;
+    text-align: center;
+    font-size: 13.5px;
+    line-height: 1.35;
+    color: var(--muted);
+}
+.info.win {
+    color: #7ef0b0;
+}
+.info.lose {
+    color: #ff9d95;
+}
+/* ---------- переключатель: колесо / кликер ---------- */
+.rmode {
+    display: flex;
+    gap: 5px;
+    padding: 4px;
+    margin: 0 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.035);
+}
+.rmode button {
+    flex: 1 1 0;
+    padding: 9px 8px;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--muted-2);
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+.rmode button:active:not(:disabled) {
+    transform: scale(0.985);
+}
+.rmode button.on {
+    color: #06210f;
+    background: linear-gradient(180deg, #59eda0, #2ec97f 55%, #14a564);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        0 6px 16px -8px rgba(61, 220, 138, 0.8);
+}
+.rmode button:disabled {
+    cursor: default;
+    opacity: 0.6;
+}
