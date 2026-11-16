@@ -133,7 +133,7 @@ async function resetAppCache() {
     } catch (e) {}
 
     try {
-        if ("serviceWorker" in navigator) {
+        if ("serviceWorker" in navigator && navigator.serviceWorker.getRegistrations) {
             const regs = await navigator.serviceWorker.getRegistrations();
             await Promise.all(regs.map((reg) => reg.unregister()));
         }
@@ -141,7 +141,7 @@ async function resetAppCache() {
 
     // Удаляем только Cache Storage. localStorage (прогресс игры) не трогаем.
     try {
-        if ("caches" in window) {
+        if (typeof caches !== "undefined" && caches.keys) {
             const keys = await caches.keys();
             await Promise.all(
                 keys
