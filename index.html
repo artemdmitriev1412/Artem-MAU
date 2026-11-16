@@ -3,8 +3,6 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Cache-Control" content="no-store">
-        <meta http-equiv="Pragma" content="no-cache">
         <title>McUpgrade</title>
 
         <link rel="manifest" href="/manifest.json">
@@ -286,6 +284,10 @@
                 <div id="admBody" hidden inert></div>
             </div>
         </div>
+        <div id="appUpdBar" class="app-upd" hidden>
+            <span>Доступно обновление <b id="appUpdV"></b></span>
+            <button class="btn sm" type="button" id="appUpdBtn">Обновить</button>
+        </div>
         <script src="js/admin-vault.js"></script>
         <script src="js/core/utils.js"></script>
         <script src="js/data/items.js"></script>
@@ -303,6 +305,7 @@
         <script src="js/features/offers.js"></script>
         <script src="js/data/updates.js"></script>
         <script src="js/features/updates.js"></script>
+        <script src="js/core/version-check.js"></script>
         <script src="js/ui/menu.js"></script>
         <script src="js/ui/icons.js"></script>
         <script src="js/admin/admin.js"></script>

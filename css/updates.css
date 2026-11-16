@@ -210,3 +210,36 @@
     border: 1px solid var(--line-2);
     border-radius: 12px;
 }
+
+/* Плашка доступного обновления приложения. */
+.app-upd {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    color: #fff;
+    background: #1f7a4c;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.app-upd[hidden] {
+    display: none;
+}
+.app-upd span {
+    min-width: 0;
+    font-size: 13px;
+    line-height: 1.35;
+}
+.app-upd b {
+    font-weight: 700;
+}
+.app-upd .btn {
+    flex: 0 0 auto;
+}
