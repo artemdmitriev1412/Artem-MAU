@@ -182,6 +182,8 @@ self.addEventListener("fetch", (event) => {
   // Оболочка приложения отдаётся из кэша: установленная версия не меняется,
   // пока пользователь сам не нажмёт «Обновить».
   if (url.origin === self.location.origin) {
+    // Запросы API и явные no-store всегда идут в сеть.
+    if (url.pathname.indexOf("/api/") >= 0 || req.cache === "no-store") return;
     event.respondWith(cacheFirst(req, SHELL_CACHE));
   }
 });
