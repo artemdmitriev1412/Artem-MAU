@@ -129,7 +129,12 @@ async function resetAppCache() {
     }
 
     try {
-        if (typeof dbSave === "function") await dbSave(true);
+        if (typeof dbSave === "function") {
+            await Promise.race([
+                dbSave(true),
+                new Promise((resolve) => setTimeout(resolve, 1500)),
+            ]);
+        }
     } catch (e) {}
 
     try {
@@ -161,8 +166,14 @@ function startVersionChecks() {
         setTimeout(() => checkAppUpdate(), 1500);
     });
     window.addEventListener("online", () => checkAppUpdate({ force: true }));
-    window.addEventListener("mcw:update-seen", () => checkAppUpdate({ force: true }));
+    window.addEventListener("mcw:update-seen", () => {
+        if (pendingAppVersion) renderAppUpdate();
+        checkAppUpdate({ force: true });
+    });
     window.addEventListener("mcw:update-open", hideAppUpdate);
+    window.addEventListener("storage", (e) => {
+        if (e.key === "mcw_upd") checkAppUpdate({ force: true });
+    });
     document.addEventListener("visibilitychange", () => {
         if (!document.hidden) checkAppUpdate();
     });
