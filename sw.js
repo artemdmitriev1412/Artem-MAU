@@ -132,7 +132,6 @@ self.addEventListener("install", (event) => {
           }
         })
       );
-      await self.skipWaiting();
     })()
   );
 });
@@ -166,7 +165,7 @@ self.addEventListener("fetch", (event) => {
   if (url.pathname.endsWith("/version.json")) return;
 
   if (req.mode === "navigate") {
-    event.respondWith(networkFirst(req, SHELL_CACHE, "./index.html"));
+    event.respondWith(cacheFirst(req, SHELL_CACHE, "./index.html", true));
     return;
   }
 
@@ -180,12 +179,10 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Оболочка приложения отдаётся из кэша: установленная версия не меняется,
+  // пока пользователь сам не нажмёт «Обновить».
   if (url.origin === self.location.origin) {
-    if (req.destination === "image" || req.destination === "font") {
-      event.respondWith(cacheFirst(req, SHELL_CACHE));
-    } else {
-      event.respondWith(networkFirst(req, SHELL_CACHE));
-    }
+    event.respondWith(cacheFirst(req, SHELL_CACHE));
   }
 });
 
@@ -213,12 +210,22 @@ async function networkFirst(req, cacheName, fallbackUrl, ignoreSearch = false) {
   }
 }
 
-async function cacheFirst(req, cacheName) {
+async function cacheFirst(req, cacheName, fallbackUrl, ignoreSearch = false) {
   const cache = await caches.open(cacheName);
-  const cached = await cache.match(req);
+  const cached = await cache.match(req, { ignoreSearch });
   if (cached) return cached;
 
-  const res = await fetch(req);
-  if (res && res.ok) await cache.put(req, res.clone());
-  return res;
+  try {
+    // cache: "reload" обходит HTTP-кэш браузера, чтобы после сброса
+    // кэша установилась действительно свежая версия файлов.
+    const res = await fetch(req, { cache: "reload" });
+    if (res && res.ok) await cache.put(req, res.clone());
+    return res;
+  } catch (e) {
+    if (fallbackUrl) {
+      const shell = await caches.match(fallbackUrl, { ignoreSearch: true });
+      if (shell) return shell;
+    }
+    return Response.error();
+  }
 }
