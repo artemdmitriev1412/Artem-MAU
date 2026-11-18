@@ -86,12 +86,14 @@ function showUpd(force) {
     });
     $("upd").classList.add("on");
     $("upd").scrollTop = 0;
+    window.dispatchEvent(new CustomEvent("mcw:update-open"));
 }
 function hideUpd() {
     $("upd").classList.remove("on");
     try {
         localStorage.setItem("mcw_upd", updSeenKey());
     } catch (e) {}
+    window.dispatchEvent(new CustomEvent("mcw:update-seen"));
     checkGameOver();
 }
 $("up").onclick = hideUpd;
