@@ -164,7 +164,7 @@ function renderClick() {
     }
     const txt = $("clkmsg");
     if (full) {
-        txt.className = "clk-msg bad";
+        txt.className = "clk-msg";
         txt.textContent = NO_ROOM;
     } else if (!clkInf && left < 1 && !clkNote) {
         txt.className = "clk-msg bad";
@@ -210,14 +210,14 @@ $("clkgo").onclick = () => {
     }
     if (clkFull()) {
         clkNote = "";
-        clkMood = "bad";
+        clkMood = "";
         render();
         return;
     }
     const it = clkPick();
     if (room(it.id) < 1) {
         clkNote = NO_ROOM;
-        clkMood = "bad";
+        clkMood = "";
         snd(220, 0.12, "sawtooth");
         render();
         return;

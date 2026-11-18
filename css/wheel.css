@@ -86,10 +86,10 @@
     color: var(--muted);
 }
 .info.win {
-    color: #7ef0b0;
+    color: var(--muted);
 }
 .info.lose {
-    color: #ff9d95;
+    color: var(--muted);
 }
 /* ---------- переключатель: колесо / кликер ---------- */
 .rmode {

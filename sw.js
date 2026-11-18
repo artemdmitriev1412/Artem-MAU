@@ -1,5 +1,5 @@
 // Service Worker: офлайн-оболочка приложения.
-const VERSION = "2026.11.16";
+const VERSION = "2026.11.18";
 const SHELL_CACHE = `mcw-shell-${VERSION}`;
 const RUNTIME_CACHE = `mcw-runtime-${VERSION}`;
 const NETWORK_TIMEOUT = 4000;
@@ -51,6 +51,7 @@ const SHELL = [
   "./js/effects/tap.js",
   "./assets/img/coin.png",
   "./assets/img/dirt.png",
+  "./assets/img/lock.png",
   "./assets/img/deco/chest.png",
   "./assets/img/deco/eapple.png",
   "./assets/img/deco/furnace.png",

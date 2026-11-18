@@ -321,15 +321,14 @@
     color: var(--muted);
 }
 .clk-msg.win {
-    color: #7ef0b0;
+    color: var(--muted);
 }
 .clk-msg.bad {
-    color: #ff9d95;
+    color: var(--muted);
 }
 .clk-msg.secret {
-    color: #ffb2a8;
+    color: var(--muted);
     font-weight: 700;
-    text-shadow: 0 0 12px rgba(234, 90, 82, 0.45);
 }
 /* ===== редкое выпадение бедрока: замедление, ч/б свечение, красный контур ===== */
 #clkbox.secret-roll {
